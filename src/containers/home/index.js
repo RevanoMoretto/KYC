@@ -1,11 +1,18 @@
+import Dashboard from '../Dashboard';
+import CollapseForm from '../CollapseForm';
 import classes from './style.module.less';
 
-const Index = () => {
+const Home = () => {
 	return (
-		<>
-			<label className={classes.wrapper}>Welcome to MASS Screening 3 KYC</label>
-		</>
+		<div className={classes.background}>
+			<div className={classes.wrapper}>
+				<h3>Know Your Customer (KYC)</h3>
+				<div className={classes.line}></div>
+				<Dashboard />
+				<CollapseForm />
+			</div>
+		</div>
 	);
 };
 
-export default Index;
+export default Home;

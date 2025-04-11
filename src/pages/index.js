@@ -1,6 +1,6 @@
 import React from 'react'
-import TestKomponen from '../containers/screeningDua'
 import Head from 'next/head';
+import Home from '../containers/home';
 
 function Index() {
   return (
@@ -9,7 +9,7 @@ function Index() {
       <Head>
         <link rel="shortcut icon" href="test.jpeg" />
       </Head>
-      <TestKomponen />
+      <Home />
     </>
   )
 }
