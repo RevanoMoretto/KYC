@@ -1,6 +1,7 @@
 import Dashboard from '../Dashboard';
 import CollapseForm from '../CollapseForm';
 import classes from './style.module.less';
+import FooterBtn from '../FooterBtn';
 
 const Home = () => {
 	return (
@@ -10,6 +11,7 @@ const Home = () => {
 				<div className={classes.line}></div>
 				<Dashboard />
 				<CollapseForm />
+				<FooterBtn />
 			</div>
 		</div>
 	);
