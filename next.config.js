@@ -1,13 +1,15 @@
 const withAntdLess = require('next-plugin-antd-less');
 
 module.exports = withAntdLess({
-  // enable react strict mode feature
+  // enable react strict mode
   reactStrictMode: true,
 
-  // Custom theme Ant Design in variables.less file (if needed)
-  lessVarsFilePath: './styles/variables.less',
+  lessVarsFilePathAppendToEndOfContent: false,
 
-  // Loader for file .less with naming convention .module.less
+  // Custom theme Ant Design for a component in variables.less file (if needed)
+  lessVarsFilePath: './src/styles/variables.less',
+
+  // Loader for file .less in a module with naming convention .module.less
   cssLoaderOptions: {
     modules: {
       auto: (resourcePath) => resourcePath.endsWith('.module.less'),

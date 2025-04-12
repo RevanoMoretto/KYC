@@ -9,12 +9,13 @@ function FooterBtn() {
         <Space>
           <Button 
             type="primary"
-            style={{ backgroundColor: "#dc3545" }}
+            className={classes.btn_cancel}
           >
             Cancel Application
           </Button>
           <Button 
             type="primary"
+            className={classes.btn_submit}
           >
             Submit
           </Button>
@@ -23,7 +24,7 @@ function FooterBtn() {
       <Col>
         <Button 
           type="primary"
-          style={{ backgroundColor: "#ffc107", color: "#000" }}
+          className={classes.btn_return_sc3}
         >
           Return to Screening 3
         </Button>

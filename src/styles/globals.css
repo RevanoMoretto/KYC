@@ -1,3 +1,22 @@
+/* CUSTOM FONT */
+@font-face {
+  font-family: 'Slate For OnePlus';
+  src: url('/fonts/OPSlate/SlateForOnePlus-Black.ttf') format('truetype');
+  src: url('/fonts/OPSlate/SlateForOnePlus-Bold.ttf') format('truetype');
+  src: url('/fonts/OPSlate/SlateForOnePlus-Book.ttf') format('truetype');
+  src: url('/fonts/OPSlate/SlateForOnePlus-Light.ttf') format('truetype');
+  src: url('/fonts/OPSlate/SlateForOnePlus-Medium.ttf') format('truetype');
+  src: url('/fonts/OPSlate/SlateForOnePlus-Thin.ttf') format('truetype');
+  src: url('/fonts/OPSlate/SlateForOnePlus-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: normal;
+}
+
+/* OVERWRITE ANT DESIGN STYLES */
+@import "./antd_custom/input_antd.css";
+@import "./antd_custom/tabs_antd.css";
+
+/* GLOBAL CSS */
 *,
 *::before,
 *::after {
@@ -7,47 +26,5 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
-}
-
-/* ANTD STYLE OVERWRITE */
-.ant-input:hover {
-  border-color: #d9d9d9;
-}
-
-.ant-input:focus {
-  border-color: #d9d9d9;
-}
-
-/* Semua tab */
-.ant-tabs-card .ant-tabs-tab {
-  background-color: #f5f5f5 !important;
-  border-radius: 8px 8px 0 0 !important;
-  font-weight: 500 !important;
-}
-
-/* Tab aktif */
-.ant-tabs-card .ant-tabs-tab-active {
-  background-color: #204a7e !important;
-  color: #fff !important;
-  font-weight: 500 !important;
-}
-
-/* Supaya teks-nya ikut keputih kalau aktif */
-.ant-tabs-card .ant-tabs-tab-active .ant-tabs-tab-btn {
-  color: #fff !important;
-}
-
-/* Optional: efek hover */
-.ant-tabs-card .ant-tabs-tab:hover {
-  background-color: #204a7e !important;
-  color: #fff !important;
-}
-
-/* Optional: Nonaktifin warna biru saat fokus/tab ditekan */
-.ant-tabs-card .ant-tabs-tab-btn:focus,
-.ant-tabs-card .ant-tabs-tab-btn:active {
-  color: #fff !important;
-  outline: none !important;
-  box-shadow: none !important;
+  font-family: 'Slate For OnePlus', sans-serif;
 }

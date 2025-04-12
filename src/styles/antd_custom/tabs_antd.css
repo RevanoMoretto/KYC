@@ -1,0 +1,32 @@
+/* Semua tab */
+.ant-tabs-card .ant-tabs-tab {
+  background-color: #f5f5f5 !important;
+  border-radius: 8px 8px 0 0 !important;
+  font-weight: 500 !important;
+}
+
+/* Tab yang sedang aktif */
+.ant-tabs-card .ant-tabs-tab-active {
+  background-color: #204a7e !important;
+  color: #fff !important;
+  font-weight: 500 !important;
+}
+
+/* Supaya teks-nya ikut keputih kalau tab sedang aktif */
+.ant-tabs-card .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #fff !important;
+}
+
+/* Efek ketika tab di hover */
+.ant-tabs-card .ant-tabs-tab:hover {
+  background-color: #204a7e !important;
+  color: #fff !important;
+}
+
+/* Style pada saat tab fokus/tab ditekan */
+.ant-tabs-card .ant-tabs-tab-btn:focus,
+.ant-tabs-card .ant-tabs-tab-btn:active {
+  color: #fff !important;
+  outline: none !important;
+  box-shadow: none !important;
+}

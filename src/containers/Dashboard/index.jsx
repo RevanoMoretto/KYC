@@ -22,34 +22,34 @@ function Dashboard() {
         <Col xs={24} md={12}>
           <Form.Item
             label="NOMOR APLIKASI"
-            className={classes.input_field} 
+            className={classes.wrap_input_field} 
             name="nomor_aplikasi"
           >
             <Input 
               readOnly
-              style={{ backgroundColor: "rgba(0, 0, 0, 0.04)" }}  
+              className={classes.input_field} 
             />
           </Form.Item>
 
           <Form.Item
             label="NAMA SESUAI KTP" 
-            className={classes.input_field} 
+            className={classes.wrap_input_field} 
             name="nama_ktp"
           >
             <Input 
               readOnly
-              style={{ backgroundColor: "rgba(0, 0, 0, 0.04)" }}  
+              className={classes.input_field} 
             />
           </Form.Item>
 
           <Form.Item
             label="TIPE NASABAH" 
-            className={classes.input_field} 
+            className={classes.wrap_input_field} 
             name="tipe_nasabah"
           >
             <Input 
               readOnly
-              style={{ backgroundColor: "rgba(0, 0, 0, 0.04)" }}  
+              className={classes.input_field} 
             />
           </Form.Item>
         </Col>
@@ -57,45 +57,44 @@ function Dashboard() {
         <Col xs={24} md={12}>
           <Form.Item 
             label="TANGGAL APLIKASI" 
-            className={classes.input_field} 
+            className={classes.wrap_input_field} 
             name="tgl_aplikasi"
           >
             <Input 
               readOnly
-              style={{ backgroundColor: "rgba(0, 0, 0, 0.04)" }}  
+              className={classes.input_field} 
             />
           </Form.Item>
 
           <Form.Item
             label="SOURCE ORDER" 
-            className={classes.input_field} 
+            className={classes.wrap_input_field} 
             name="source_order"
           >
             <Input 
               readOnly
-              style={{ backgroundColor: "rgba(0, 0, 0, 0.04)" }}  
+              className={classes.input_field} 
             />
           </Form.Item>
 
           <Form.Item
             label="CABANG" 
-            className={classes.input_field} 
+            className={classes.wrap_input_field} 
             name="cabang"
           >
             <Input 
               readOnly
-              style={{ backgroundColor: "rgba(0, 0, 0, 0.04)" }}  
+              className={classes.input_field} 
             />
           </Form.Item>
 
           <Form.Item
-            className={classes.btn_detail}
+            className={classes.wrap_btn_detail}
             wrapperCol={{ span: 24 }}
-            style={{ textAlign: "right" }}
           >
             <Button 
               type="primary" 
-              style={{ backgroundColor: "#28a745" }}
+              className={classes.btn_detail}
               onClick={() => { console.log("test") }}
             >
               Detail Application

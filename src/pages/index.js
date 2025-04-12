@@ -1,6 +1,6 @@
 import React from 'react'
 import Head from 'next/head';
-import Home from '../containers/home';
+import Home from '../containers/Home';
 
 function Index() {
   return (

@@ -1,5 +1,6 @@
 import { Collapse, Space } from 'antd'
 import React from 'react'
+import classes from './style.module.less';
 
 function InstantApproval() {
     const items = [
@@ -31,7 +32,7 @@ function InstantApproval() {
     ]
 
   return (
-    <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+    <Space direction="vertical" size="middle" className={classes.space}>
       {items.map((e, i) => {
         return (
           <Collapse
