@@ -1,6 +1,7 @@
 import { Button, Col, Form, Input, Row } from 'antd'
 import classes from './style.module.less';
 import React, { useEffect } from 'react'
+import { BiDetail } from "react-icons/bi";
 
 function Dashboard() {
   const [form] = Form.useForm();
@@ -95,6 +96,7 @@ function Dashboard() {
             <Button 
               type="primary" 
               className={classes.btn_detail}
+              icon={<BiDetail size={17} />}
               onClick={() => { console.log("test") }}
             >
               Detail Application

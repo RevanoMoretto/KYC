@@ -39,15 +39,13 @@ function CollapseForm() {
   }
 
   return (
-    <>
-      <Tabs
-        defaultActiveKey="1"
-        type="card"
-        items={showItem(items)}
-        onChange={() => { console.log("abdu") }}
-        tabBarGutter={6}
-      />
-    </>
+    <Tabs
+      defaultActiveKey="1"
+      type="card"
+      items={showItem(items)}
+      onChange={() => { console.log("abdu") }}
+      tabBarGutter={6}
+    />
   )
 }
 
