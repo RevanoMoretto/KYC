@@ -2,7 +2,7 @@ import { Collapse, Space } from 'antd'
 import React from 'react'
 import classes from './style.module.less';
 
-function InstantApproval() {
+function KnowYourCustomer() {
     const items = [
       {
         key: "1",
@@ -46,4 +46,4 @@ function InstantApproval() {
   )
 }
 
-export default InstantApproval
+export default KnowYourCustomer

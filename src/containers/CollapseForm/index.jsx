@@ -1,6 +1,6 @@
 import React from 'react'
 import { Tabs, Typography, Input } from 'antd';
-import InstantApproval from '../InstantApproval';
+import KnowYourCustomer from '../KnowYourCustomer';
 import classes from './style.module.less';
 
 function CollapseForm() {
@@ -11,7 +11,7 @@ function CollapseForm() {
     {
       key: "1",
       label: "Instant Approval",
-      children: <InstantApproval />
+      children: <KnowYourCustomer />
     },
     {
       key: "2",
@@ -62,7 +62,7 @@ function CollapseForm() {
           showCount
           maxLength={250}
           onChange={() => { console.log("eunha")} }
-          placeholder="Anything you can text here :))"
+          placeholder="You can text anything here :))"
           className={classes.text_area}
           style={{ resize: "none" }}
         />
