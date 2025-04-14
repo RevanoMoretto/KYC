@@ -1,6 +1,7 @@
 import { Collapse, Space } from 'antd'
 import React from 'react'
 import classes from './style.module.less';
+import EmergencyContact from '../../components/EmergencyContact';
 
 function KnowYourCustomer() {
     const items = [
@@ -27,7 +28,7 @@ function KnowYourCustomer() {
       {
         key: "5",
         label: "Emergency Contact",
-        children: "Test 5"
+        children: <EmergencyContact />
       }
     ]
 
