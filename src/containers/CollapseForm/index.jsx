@@ -1,8 +1,12 @@
 import React from 'react'
-import { Tabs } from 'antd';
+import { Tabs, Typography, Input } from 'antd';
 import InstantApproval from '../InstantApproval';
+import classes from './style.module.less';
 
 function CollapseForm() {
+  const { Title } = Typography;
+  const { TextArea } = Input;
+
   const items = [
     {
       key: "1",
@@ -39,13 +43,31 @@ function CollapseForm() {
   }
 
   return (
-    <Tabs
-      defaultActiveKey="1"
-      type="card"
-      items={showItem(items)}
-      onChange={() => { console.log("abdu") }}
-      tabBarGutter={6}
-    />
+    <>
+      <Tabs
+        defaultActiveKey="1"
+        type="card"
+        items={showItem(items)}
+        onChange={() => { console.log("abdu") }}
+        tabBarGutter={6}
+      />
+      <div>
+        <Title 
+          level={5}
+          className={classes.title}
+        >
+          Hasil KYC<span style={{ color: "red" }}>*</span>
+        </Title>
+        <TextArea
+          showCount
+          maxLength={250}
+          onChange={() => { console.log("eunha")} }
+          placeholder="Anything you can text here :))"
+          className={classes.text_area}
+          style={{ resize: "none" }}
+        />
+      </div>
+    </>
   )
 }
 

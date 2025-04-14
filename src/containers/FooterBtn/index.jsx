@@ -1,6 +1,6 @@
 import React from 'react'
 import classes from './style.module.less';
-import { Button, Col, Row, Space } from 'antd';
+import { Button, Col, Row } from 'antd';
 import { FaShareSquare } from "react-icons/fa";
 import { LuFileX2 } from "react-icons/lu";
 
@@ -18,24 +18,24 @@ function FooterBtn() {
         </Col>
       </Row>
 
-      <Row className={classes.footer}>
+      <Row className={classes.footer} gutter={[13, 13]}>
         <Col>
-          <Space>
-            <Button 
-              type="primary"
-              className={classes.btn_cancel}
-              icon={<LuFileX2 size={17} />}
-            >
-              Cancel Application
-            </Button>
-            <Button 
-              type="primary"
-              className={classes.btn_submit}
-              icon={<FaShareSquare size={17} />}
-            >
-              Submit
-            </Button>
-          </Space>
+          <Button 
+            type="primary"
+            className={classes.btn_cancel}
+            icon={<LuFileX2 size={17} />}
+          >
+            Cancel Application
+          </Button>
+        </Col>
+        <Col>
+          <Button 
+            type="primary"
+            className={classes.btn_submit}
+            icon={<FaShareSquare size={17} />}
+          >
+            Submit
+          </Button>
         </Col>
       </Row>
     </>
