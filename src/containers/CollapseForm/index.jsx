@@ -56,7 +56,7 @@ function CollapseForm() {
           level={5}
           className={classes.title}
         >
-          Hasil KYC<span style={{ color: "red" }}>*</span>
+          Hasil KYC <span style={{ color: "red" }}>*</span>
         </Title>
         <TextArea
           showCount

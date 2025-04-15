@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import classes from './style.module.less';
-import { Col, Form, Input, Row, Select } from 'antd';
+import { Col, Form, Input, Row, Select, Upload, Button } from 'antd';
 import RenderIf from '../../utils/renderif';
 
 function ObjectPembiayaan() {
@@ -156,7 +156,7 @@ function ObjectPembiayaan() {
             <Select
               showSearch
               allowClear
-              placeholder="PILIH KETERSEDIAAN UNIT"
+              placeholder="PILIH PRODUCT MARKETING"
               onChange={handleChangeProductMarketing}
               className={classes.select_field_ec}
               options={options}
@@ -180,7 +180,19 @@ function ObjectPembiayaan() {
         </Col>
 
         <Col xs={24} md={8}>
-
+          <Form.Item 
+            label="SPK Dealer" 
+            name="spk_dealer"
+            className={classes.wrap_form_item}
+            >
+            <Upload style={{ width: "100%" }}>
+              <Input 
+                readOnly
+                className={classes.readonly_input_field} 
+                placeholder="Choose File"
+              />
+            </Upload>
+          </Form.Item>
         </Col>
       </Row>
     </Form>
