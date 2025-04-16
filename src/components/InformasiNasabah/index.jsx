@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 import style from './style.module.less';
 
 const DebiturFieldsSection = ({ isVisible }) => {
+    const { TextArea } = Input;
     if (!isVisible) return null;
 
     return (
@@ -37,19 +38,24 @@ const DebiturFieldsSection = ({ isVisible }) => {
                 </Col>
             </Row>
             <Row gutter={16}>
-                <Col xs={24} md={12}>
-                    <Form.Item label={<span className={style.label_field}>Kewarganegaraan <span style={{ color: 'red' }}>*</span></span>} name='debtNationality'>
-                        <Input />
-                    </Form.Item>
-                </Col>
-                <Col xs={24} md={12}>
+
+                <Col xs={24} md={24}>
                     <Form.Item label={<span className={style.label_field}>Alamat KTP <span style={{ color: 'red' }}>*</span></span>} name='debtAddress'>
-                        <Input />
+                        <TextArea
+                            showCount
+                            maxLength={250}
+                            className={style.text_area}
+                        />
                     </Form.Item>
                 </Col>
             </Row>
             <Row gutter={16}>
-                <Col xs={24} md={12}>
+                <Col xs={24} md={8}>
+                    <Form.Item label={<span className={style.label_field}>Kewarganegaraan <span style={{ color: 'red' }}>*</span></span>} name='debtNationality'>
+                        <Input />
+                    </Form.Item>
+                </Col>
+                <Col xs={24} md={8}>
                     <Form.Item label={<span className={style.label_field}>RT/RW KTP <span style={{ color: 'red' }}>*</span></span>} name='debtRTRW'>
                         <Row gutter={8} align="middle">
                             <Col xs={11}><Input placeholder="RT" /></Col>
@@ -58,7 +64,7 @@ const DebiturFieldsSection = ({ isVisible }) => {
                         </Row>
                     </Form.Item>
                 </Col>
-                <Col xs={24} md={12}>
+                <Col xs={24} md={8}>
                     <Form.Item label={<span className={style.label_field}>Kode Pos KTP<span style={{ color: 'red' }}>*</span></span>} name='debtPostalCode'>
                         <Select showSearch placeholder="PILIH KODE POS" />
                     </Form.Item>
@@ -135,6 +141,7 @@ const SpouseFieldsSection = ({ isVisible }) => {
         </>
     )
 }
+
 const InformasiNasabah = () => {
     const [form] = Form.useForm();
     const [fileName, setFileName] = useState(null);
@@ -150,6 +157,15 @@ const InformasiNasabah = () => {
     const handleChangeFileName = ({ file }) => {
         setFileName(file.status !== 'removed' ? file.name : null);
     };
+
+    const handleColumnSize = () => {
+        if (menunjukanIdentitasRil === null && ktpStatusDoc === null) return 12;
+        if (menunjukanIdentitasRil === "1" && isDebiturMismatch) return 6;
+        if (menunjukanIdentitasRil === "0" && !isDebiturMismatch) return 12;
+        return 8;
+    };
+
+    const columnSize = handleColumnSize();
 
     return (
         <Form layout="vertical" form={form}>
@@ -185,71 +201,103 @@ const InformasiNasabah = () => {
             </Row>
 
             <Row gutter={10}>
-                <Col xs={24} md={12}>
+                <Col xs={24} md={columnSize}>
                     <Form.Item label={<span className={style.label_field}>Dapat Menunjukan identitas asli<span style={{ color: 'red' }}>*</span></span>} name='radioShowRealIdentity'>
                         <Radio.Group onChange={(e) => setMenunjukanIdentitasRil(e.target.value)}>
                             <Radio value="0">Bisa</Radio>
                             <Radio value="1">Tidak Bisa</Radio>
                         </Radio.Group>
                     </Form.Item>
-                    {menunjukanIdentitasRil === "1" && (
-                        <Form.Item label={<span className={style.label_field}>Alasan tidak bisa menunjukan identias asli</span>} name='reasonCantShowIdentity'>
-                            <Select showSearch placeholder="Pilih Alasan" />
-                        </Form.Item>
-                    )}
                 </Col>
 
-                <Col xs={24} md={12}>
-                    <Form.Item
-                        label={
-                            <span className={style.label_field}>
-                                Dokumen KTP Nasabah <span style={{ color: 'red' }}>*</span> <EyeOutlined style={{ color: '#1890ff', marginLeft: 8 }} />
-                            </span>
-                        }
-                        name='debtDocKTP'
-                    >
+                {menunjukanIdentitasRil === "1" && (
+                    <Col xs={24} md={columnSize}>
+                        <Form.Item label={<span className={style.label_field}>Alasan tidak bisa menunjukan identitas asli</span>} name='reasonCantShowIdentity'>
+                            <Select showSearch placeholder="Pilih Alasan" />
+                        </Form.Item>
+                    </Col>
+                )}
+
+                <Col xs={24} md={columnSize}>
+                    <Form.Item label={
+                        <span className={style.label_field}>
+                            Dokumen KTP Nasabah <span style={{ color: 'red' }}>*</span> <EyeOutlined style={{ color: '#1890ff', marginLeft: 8 }} />
+                        </span>
+                    } name='debtDocKTP'>
                         <Radio.Group onChange={(e) => setKtpStatusDoc(e.target.value)}>
                             <Radio value="0">Sesuai</Radio>
                             <Radio value="1">Tidak Sesuai</Radio>
                         </Radio.Group>
                     </Form.Item>
+                </Col>
 
-                    {isDebiturMismatch && (
+                {isDebiturMismatch && (
+                    <Col xs={24} md={columnSize}>
                         <Form.Item label={<span className={style.label_field}>Upload KTP yang sesuai</span>} name='uploadMatchingKtp'>
-                            <Upload>
+                            <Upload fileList={[]} onChange={() => setFileName('Selected File')}>
                                 <Button icon={<UploadOutlined />}>Select File</Button>
                                 <span className={style.upload_text}>{fileName ? fileName : 'No file chosen'}</span>
                             </Upload>
                         </Form.Item>
-                    )}
-                </Col>
+                    </Col>
+                )}
             </Row>
 
             <DebiturFieldsSection isVisible={isDebiturMismatch} />
 
             <Row gutter={10}>
-                <Col xs={24} md={12}>
-                    <Form.Item label={<span className={style.label_field}>Kartu Keluarga<span style={{ color: 'red' }}>*</span></span>} name='familyCard'>
+                <Col xs={24} md={suitableMaidenMotherName === "1" ? 8 : 12}>
+                    <Form.Item
+                        label={
+                            <span className={style.label_field}>
+                                Kartu Keluarga<span style={{ color: 'red' }}>*</span>
+                            </span>
+                        }
+                        name="familyCard"
+                    >
                         <Upload onChange={handleChangeFileName} showUploadList={false}>
                             <Button icon={<UploadOutlined />}>Select File</Button>
                             <span className={style.upload_text}>{fileName || 'No file chosen'}</span>
                         </Upload>
                     </Form.Item>
                 </Col>
-                <Col xs={24} md={12}>
-                    <Form.Item label={<span className={style.label_field}>Nama Gadis Ibu Kandung</span>} name='nameOfMother'>
+
+                <Col xs={24} md={suitableMaidenMotherName === "1" ? 8 : 12}>
+                    <Form.Item
+                        label={
+                            <span className={style.label_field}>
+                                Nama Gadis Ibu Kandung
+                            </span>
+                        }
+                        name="nameOfMother"
+                    >
                         <Input disabled />
-                        <Radio.Group style={{ marginTop: '10px' }} onChange={(e) => setSuitableMaidenMotherName(e.target.value)}>
-                            <Radio value="0">Sesuai</Radio>
-                            <Radio value="1">Tidak Sesuai</Radio>
-                        </Radio.Group>
                     </Form.Item>
-                    {suitableMaidenMotherName === "1" && (
-                        <Form.Item label={<span className={style.label_field}>Nama Gadis Ibu Kandung Yang Sesuai<span style={{ color: 'red' }}>*</span></span>} name='matchingMotherName'>
+
+                    <Radio.Group
+                        style={{ padding: '0 0 15px 0' }}
+                        onChange={(e) => setSuitableMaidenMotherName(e.target.value)}
+                    >
+                        <Radio value="0">Sesuai</Radio>
+                        <Radio value="1">Tidak Sesuai</Radio>
+                    </Radio.Group>
+                </Col>
+
+                {suitableMaidenMotherName === "1" && (
+                    <Col xs={24} md={8}>
+                        <Form.Item
+                            label={
+                                <span className={style.label_field}>
+                                    Nama Gadis Ibu Kandung Yang Sesuai
+                                    <span style={{ color: 'red' }}>*</span>
+                                </span>
+                            }
+                            name="matchingMotherName"
+                        >
                             <Input />
                         </Form.Item>
-                    )}
-                </Col>
+                    </Col>
+                )}
             </Row>
             <Row gutter={10}>
                 <Col xs={24} md={12}>
