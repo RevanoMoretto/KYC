@@ -15,12 +15,12 @@ function CollapseForm() {
     },
     {
       key: "2",
-      label: "Identitas Order",
+      label: "Tele Survey",
       children: "Test 2"
     },
     {
       key: "3",
-      label: "Objek Pembiayaan",
+      label: "Silent Survey",
       children: "Test 3"
     }
   ]
@@ -29,7 +29,7 @@ function CollapseForm() {
     let data = []
 
     items.map((e, i) => {
-      if(e.key == "1"){
+      if (e.key == "1") {
         data.push({
           key: e.key,
           label: e.label,
@@ -52,7 +52,7 @@ function CollapseForm() {
         tabBarGutter={6}
       />
       <div>
-        <Title 
+        <Title
           level={5}
           className={classes.title}
         >
@@ -61,7 +61,7 @@ function CollapseForm() {
         <TextArea
           showCount
           maxLength={250}
-          onChange={() => { console.log("eunha")} }
+          onChange={() => { console.log("eunha") }}
           placeholder="You can text anything here :))"
           className={classes.text_area}
           style={{ resize: "none" }}
