@@ -3,6 +3,7 @@ import React from 'react'
 import classes from './style.module.less';
 import EmergencyContact from '../../components/EmergencyContact';
 import InformasiNasabah from '../../components/InformasiNasabah';
+import InformasiPekerjaanNasabah from '../../components/InformasiPekerjaanNasabah';
 
 function KnowYourCustomer() {
   const items = [
@@ -14,7 +15,7 @@ function KnowYourCustomer() {
     {
       key: "2",
       label: "Informasi Pekerjaan Nasabah",
-      children: "Test 2"
+      children: <InformasiPekerjaanNasabah />
     },
     {
       key: "3",
