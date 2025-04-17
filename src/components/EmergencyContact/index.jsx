@@ -28,7 +28,7 @@ function EmergencyContact() {
 
   return (
     <Form layout="vertical" form={form}>
-      <Row gutter={17}>
+      <Row gutter={10}>
         <Col xs={24} md={10}>
           <Form.Item
             label="Nama Emergency Contact"
@@ -125,7 +125,7 @@ function EmergencyContact() {
         </Col>
       </Row>
 
-      <Row gutter={17}>
+      <Row gutter={10}>
         <Col xs={24} md={14}>
           <Form.Item 
             label="Kode Pos Emergency Contact" 
@@ -158,7 +158,7 @@ function EmergencyContact() {
         </Col>
       </Row>
 
-      <Row gutter={13}>
+      <Row gutter={11}>
         <Col xs={24} md={8}>
           <Form.Item 
             label="Kecamatan Emergency Contact" 

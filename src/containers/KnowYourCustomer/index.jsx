@@ -4,6 +4,7 @@ import classes from './style.module.less';
 import EmergencyContact from '../../components/EmergencyContact';
 import InformasiNasabah from '../../components/InformasiNasabah';
 import InformasiPekerjaanNasabah from '../../components/InformasiPekerjaanNasabah';
+import ObjectPembiayaan from '../../components/ObjectPembiayaan';
 
 function KnowYourCustomer() {
   const items = [
@@ -25,7 +26,7 @@ function KnowYourCustomer() {
     {
       key: "4",
       label: "Informasi Objek Pembiayaan",
-      children: "Test 4"
+      children: <ObjectPembiayaan />
     },
     {
       key: "5",
