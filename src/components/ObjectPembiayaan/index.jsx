@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
 import classes from './style.module.less';
-import { Col, Form, Input, Row, Select, Upload, notification, Button } from 'antd';
+import { Col, Form, Input, Row, Select, Upload, notification, Button, Image, Modal, Spin } from 'antd';
 import RenderIf from '../../utils/renderif';
 import { MdOutlineFileUpload } from "react-icons/md";
-import { IoMdDownload } from "react-icons/io";
 import { AiOutlineDelete } from "react-icons/ai";
 import { FaEye } from "react-icons/fa6";
 
@@ -13,6 +12,10 @@ function ObjectPembiayaan() {
 
   const [test, setTest] = useState("")
   const [fileName, setFileName] = useState("")
+  const [fileType, setFileType] = useState("")
+  const [fileObject, setFileObject] = useState("")
+  const [previewUrl, setPreviewUrl] = useState("")
+  const [previewVisible, setPreviewVisible] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
 
   const MAX_FILE_SIZE = 3 * 1024 * 1024 // 3MB
@@ -60,24 +63,25 @@ function ObjectPembiayaan() {
     console.log("result sumber nasabah: ", e)
   }
 
-  const beforeUpload = (file) => {
+  const beforeUpload = async (file) => {
     const isImage = file.type === 'image/jpeg' || file.type === 'image/png';
     const minTime = 2000; // 2 detik
     const maxTime = 10000; // 10 detik
-
     const uploadTime = minTime + ((file.size / MAX_FILE_SIZE) * (maxTime - minTime));
+    const isLt2M = file.size < MAX_FILE_SIZE;
 
     if (!isImage) {
       openNotificationWithIcon("error", "Failed", "You can only upload JPG/PNG file!")
       return Upload.LIST_IGNORE;
     }
 
-    const isLt2M = file.size < MAX_FILE_SIZE;
     if (!isLt2M) {
       openNotificationWithIcon("error", "Failed", "Image must smaller than 3MB!")
       return Upload.LIST_IGNORE;
     }
 
+    setFileType(file.type)
+    setFileObject(file)
     setIsUploading(true)
     setFileName("")
     openNotificationWithIcon("info", "Info", "File is uploading...")
@@ -86,10 +90,35 @@ function ObjectPembiayaan() {
       setFileName(file.name)
       setIsUploading(false)
       openNotificationWithIcon("success", "Success", "File uploaded successfully!")
+
+      // filename, type file, doc code, base64
     }, uploadTime)
 
     return false; // Prevent auto-upload
   };
+
+  const handleViewImage = () => {
+    if (previewUrl) {
+      setPreviewVisible(true)
+    }
+  };
+
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const handleChangeImageUpload = (file) => {
+    setPreviewUrl(URL.createObjectURL(file.file));
+
+    // const base64 = await convertBase64(file.file);
+    // const doc_value = base64.split(",")[1];
+    // setPreviewUrl(`data:${fileType};base64,` + doc_value)
+  }
 
   return (
     <>
@@ -250,9 +279,10 @@ function ObjectPembiayaan() {
                           icon={<FaEye size={16}/>}
                           className={classes.btn_view}
                           block
+                          onClick={handleViewImage}
                         />
                       </Col>
-                      <Col xs={15} md={15}>
+                      <Col xs={18} md={18}>
                         <Input 
                           className={classes.readonly_input_field_upload}
                           value={fileName}
@@ -260,18 +290,15 @@ function ObjectPembiayaan() {
                         />
                       </Col>
                       <Col xs={3} md={3}>
-                        <Button
-                          icon={<IoMdDownload size={16}/>}
-                          className={classes.btn_download}
-                          block
-                        />
-                      </Col>
-                      <Col xs={3} md={3}>
                         <Button 
                           icon={<AiOutlineDelete size={16} />}
                           className={classes.btn_delete}
                           block
-                          onClick={() => { setFileName("") }}
+                          onClick={() => { 
+                            setFileName("") 
+                            setPreviewUrl("")
+                            setPreviewVisible(false)
+                          }}
                         />
                       </Col>
                     </Row>
@@ -282,6 +309,7 @@ function ObjectPembiayaan() {
                       showUploadList={false}
                       name="file"
                       beforeUpload={beforeUpload}
+                      onChange={handleChangeImageUpload}
                     >
                       <div style={{ position: 'relative', width: '100%' }}>
                         <Input
@@ -311,6 +339,29 @@ function ObjectPembiayaan() {
           </Col>
         </Row>
       </Form>
+
+      <Modal
+        open={previewVisible}
+        footer={null}
+        onCancel={() => setPreviewVisible(false)}
+        onOk={() => setPreviewVisible(false)}
+        title="Document Preview"
+      >
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          {previewUrl ? 
+            (
+              <Image 
+                width={200}
+                src={previewUrl}
+                alt="preview"
+              />
+            ) : 
+            (
+              <Spin />
+            )
+          }
+        </div>
+      </Modal>
     </>
   )
 }
