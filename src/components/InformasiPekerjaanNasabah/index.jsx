@@ -17,20 +17,21 @@ const InformasiPekerjaanNasabah = ()=>{
                     <Col md={8} xs={24}>
                         <Form.Item label="Pekerjaan Nasabah">
                             <Select
+                                disabled={true}
                                 suffixIcon={<CaretDownOutlined />}
                             />
                         </Form.Item>
                     </Col>
                     <Col md={8} xs={24}>
-                        <Form.Item label="Pekerjaan Nasabah">
+                        <Form.Item label="Jenis Tempat Bekerja">
                             <Select
                                 suffixIcon={<CaretDownOutlined />}
                             />
                         </Form.Item>
                     </Col>
                     <Col md={8} xs={24}>
-                        <Form.Item label="Pekerjaan Nasabah">
-                            <Input
+                        <Form.Item label="Nama Tempat Bekerja">
+                            <Input readOnly
                             />
                         </Form.Item>
                     </Col>

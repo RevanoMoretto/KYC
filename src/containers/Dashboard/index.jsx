@@ -1,10 +1,18 @@
 import { Button, Col, Form, Input, Row } from 'antd'
 import classes from './style.module.less';
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BiDetail } from "react-icons/bi";
 
 function Dashboard() {
   const [form] = Form.useForm();
+
+  const tokenDummy = 
+  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAxNDgzNyIsImV4cCI6MTc0NDk2MzE1NSwiaWF0IjoxNzQ0ODc2NzU1fQ.g5BgQEYlYLqlWqjckDHR1RmvII7BvR8STZYXtZMDCsv7tLIKVkRPGrue0JhxV192FBEnZhPMu3Nz5FSHLN2gRA";
+  const orderId = "2502102278"
+  const detailApp = "http://detail-aplikasi-reactjs-uat.apps.ocp4dev.muf.co.id/aplikasi/"+orderId+"/"+tokenDummy; 
+
+
+  const [showDetailApp, setShowDetailApp] = useState(false);
 
   useEffect(() => {
     form.setFieldsValue({
@@ -97,10 +105,26 @@ function Dashboard() {
               type="primary" 
               className={classes.btn_detail}
               icon={<BiDetail size={17} />}
-              onClick={() => { console.log("test") }}
+              onClick={() => setShowDetailApp(true)}
             >
               Detail Application
             </Button>
+            {showDetailApp && (
+              <div className={classes.overlay} >
+                <div className={classes.modal} >
+                <button onClick={() => setShowDetailApp(false)} className={classes.closeBtn}>
+                  ✕
+                </button>
+                  <iframe
+                    src={detailApp}
+                    title="description"
+                    width="95%"
+                    height="450vh"
+                    style={{ border: "1px solid #ccc", marginTop: "10px" }}
+                  />
+                </div>
+              </div>
+            )}
           </Form.Item>
         </Col>
 
