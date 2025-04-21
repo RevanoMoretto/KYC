@@ -183,7 +183,21 @@ function ObjectPembiayaan() {
 
           <Col xs={24} md={8}>
             <Form.Item 
-              label="SPK Dealer" 
+              label="SPK Dealer"
+              className={classes.wrap_img_field} 
+            >
+              <UploadImg />
+            </Form.Item>
+
+            <Form.Item 
+              label="SPK Karoseri & Spesifikasi Karoseri"
+              className={classes.wrap_img_field}  
+            >
+              <UploadImg />
+            </Form.Item>
+
+            <Form.Item 
+              label="Foto saat Nasabah tanda tangan aplikasi" 
               className={classes.wrap_form_item}
             >
               <UploadImg />
