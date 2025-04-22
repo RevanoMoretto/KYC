@@ -1,10 +1,12 @@
 import { Collapse, Space } from 'antd'
 import React from 'react'
 import classes from './style.module.less';
+// subtab
 import EmergencyContact from '../../components/EmergencyContact';
 import InformasiNasabah from '../../components/InformasiNasabah';
 import InformasiPekerjaanNasabah from '../../components/InformasiPekerjaanNasabah';
 import ObjectPembiayaan from '../../components/ObjectPembiayaan';
+import InformasiTempatTinggalNasabah from '../../components/InformasiTempatTinggalNasabah';
 
 function KnowYourCustomer() {
   const items = [
@@ -21,7 +23,7 @@ function KnowYourCustomer() {
     {
       key: "3",
       label: "Informasi Tempat Tinggal Nasabah",
-      children: "Test 3"
+      children: <InformasiTempatTinggalNasabah />
     },
     {
       key: "4",
@@ -40,7 +42,7 @@ function KnowYourCustomer() {
       {items.map((e, i) => {
         return (
           <Collapse
-            defaultActiveKey={["1"]}
+            // defaultActiveKey={["1"]}
             items={[e]}
             key={i}
           />
