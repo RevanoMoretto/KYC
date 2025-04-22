@@ -2,9 +2,22 @@ import { Button, Col, Form, Input, Row } from 'antd'
 import classes from './style.module.less';
 import React, { useEffect, useState } from 'react'
 import { BiDetail } from "react-icons/bi";
+import applicationStorage from "../../utils/application_storage";
 
 function Dashboard() {
-  const [form] = Form.useForm();
+  const { 
+    detail,
+    source_order_desc, 
+    applicant_type_desc, 
+    branch_desc, 
+    application_id, 
+    application_date 
+  } = applicationStorage.data || {}
+  const { debitur } = detail || {}
+  const { personal } = debitur || {}
+  const { debitur_nama_sesuai_ktp } = personal || {}
+  
+  const [form] = Form.useForm()
 
   const tokenDummy = 
   "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAxNDgzNyIsImV4cCI6MTc0NDk2MzE1NSwiaWF0IjoxNzQ0ODc2NzU1fQ.g5BgQEYlYLqlWqjckDHR1RmvII7BvR8STZYXtZMDCsv7tLIKVkRPGrue0JhxV192FBEnZhPMu3Nz5FSHLN2gRA";
@@ -16,12 +29,12 @@ function Dashboard() {
 
   useEffect(() => {
     form.setFieldsValue({
-      nomor_aplikasi: "aaaaaaa",
-      nama_ktp: "bbbbbb",
-      tipe_nasabah: "cccccc",
-      tgl_aplikasi: "2022/07/12 03:41:11",
-      source_order: "dddddd",
-      cabang: "eeeeee"
+      nomor_aplikasi: application_id,
+      nama_ktp: debitur_nama_sesuai_ktp,
+      tipe_nasabah: applicant_type_desc,
+      tgl_aplikasi: application_date,
+      source_order: source_order_desc,
+      cabang: branch_desc
     })
   }, [])
 
