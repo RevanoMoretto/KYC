@@ -15,17 +15,15 @@ function UploadImg() {
   const [imageLoaded, setImageLoaded] = useState(false)
 
   // clear image blob
-  useEffect(() => {
-    return () => {
-      if (previewUrl.startsWith("blob:")) {
-        URL.revokeObjectURL(previewUrl)
-      }
-    };
-  }, [previewUrl])
+  // useEffect(() => {
+  //   return () => {
+  //     if (previewUrl.startsWith("blob:")) {
+  //       URL.revokeObjectURL(previewUrl)
+  //     }
+  //   };
+  // }, [previewUrl])
 
-  const beforeUpload = (file) => {
-    // setFileName("")
-
+  const beforeUpload = async (file) => {
     const MAX_FILE_SIZE = 3 * 1024 * 1024 // 3MB
     const isImage = file.type === 'image/jpeg' || file.type === 'image/png'
     const minTime = 2000; // 2 detik
@@ -43,13 +41,13 @@ function UploadImg() {
       return Upload.LIST_IGNORE;
     }
 
+    notify("info", "Info", "File is uploading...")
+
+    await handleImage(file)
     // setIsUploading(true)
 
-    setFileName(file.name)
+    // setFileName(file.name)
     // setIsUploading(false)
-
-    notify("success", "Success", "File uploaded successfully!")
-
     return false; // Prevent auto-upload
   };
 
@@ -59,22 +57,95 @@ function UploadImg() {
     }
   };
 
-  const handleChangeImageUpload = async (file) => {
-    // handle preview image for modern browser
-    if (window.URL && typeof URL.createObjectURL === 'function') {
-      const previewUrl = URL.createObjectURL(file.file)
+  const handleImage = async (data) => {
+    const { type, name } = data || {}
+    const startTime = Date.now()
 
-      setImageLoaded(false)
-      setPreviewUrl(previewUrl)
-    } else { // fallback for old browser
-      const base64 = await convertBase64(file.file);
-      const doc_value = base64.split(",")[1];
-      const fileType = file.file.type
+    setIsUploading(true)
 
-      setImageLoaded(false)
-      setPreviewUrl(`data:${fileType};base64,` + doc_value)
+    try{
+      const base64 = await convertBase64(data)
+      const elapsedTime = Date.now() - startTime
+      console.log("Waktu konversi ke base64:", elapsedTime, "ms")
+
+      const remainingTime = Math.max(100 - elapsedTime, 0)
+
+      setTimeout(() => {
+        const doc_value = base64.split(",")[1];
+
+        console.log("Total waktu image ready:", elapsedTime, "ms")
+
+        setIsUploading(false)
+        setFileName(name)
+        setImageLoaded(false)
+        setPreviewUrl(`data:${type};base64,` + doc_value)
+
+        notify("success", "Success", "File uploaded successfully!")
+      }, remainingTime)
+    }catch(error){
+      console.error("Error pada saat convert image to base64: ", error)
     }
   }
+
+  // const handleChangeImageUpload = async (data) => {
+  //   const file = data.file;
+  //   const startTime = Date.now()
+
+  //   try{
+  //     const base64 = await convertBase64(file)
+  //     const elapsedTime = Date.now() - startTime
+  //     const remainingTime = Math.max(100 - elapsedTime, 0)
+
+  //     setTimeout(() => {
+  //       const doc_value = base64.split(",")[1];
+  //       const fileType = file.type
+
+  //       setFileName(file.name)
+  //       setImageLoaded(false)
+  //       setPreviewUrl(`data:${fileType};base64,` + doc_value)
+  //     }, remainingTime)
+  //   }catch(error){
+  //     console.error("Error pada saat convert image to base64: ", error)
+  //   }
+
+  //   // const base64 = await convertBase64(file);
+  //   // const doc_value = base64.split(",")[1];
+  //   // const fileType = file.type
+    
+  //   // console.log("file result: ", file)
+
+  //   // const payload = {
+  //   //   order_id: "2403000321",
+  //   //   current_form_code: "KYC",
+  //   //   insert_by: "15997383",
+  //   //   doc: [
+  //   //     {
+  //   //       doc_code: "IMG028", // img spk dealer
+  //   //       doc_value: "",
+  //   //       filename: "IMG_20200707_121636.jpg",
+  //   //       extension: ".jpg"
+  //   //     }
+  //   //   ]
+  //   // }
+
+  //   // setImageLoaded(false)
+  //   // setPreviewUrl(`data:${fileType};base64,` + doc_value)
+
+  //   // handle preview image for modern browser
+  //   // if (window.URL && typeof URL.createObjectURL === 'function') {
+  //   //   const previewUrl = URL.createObjectURL(file.file)
+
+  //   //   setImageLoaded(false)
+  //   //   setPreviewUrl(previewUrl)
+  //   // } else { // fallback for old browser
+  //   //   const base64 = await convertBase64(file.file);
+  //   //   const doc_value = base64.split(",")[1];
+  //   //   const fileType = file.file.type
+
+  //   //   setImageLoaded(false)
+  //   //   setPreviewUrl(`data:${fileType};base64,` + doc_value)
+  //   // }
+  // }
 
   return (
     <>
@@ -126,7 +197,7 @@ function UploadImg() {
               showUploadList={false}
               name="file"
               beforeUpload={beforeUpload}
-              onChange={handleChangeImageUpload}
+              // onChange={handleChangeImageUpload}
             >
               <div style={{ position: 'relative', width: '100%' }}>
                 <Input
