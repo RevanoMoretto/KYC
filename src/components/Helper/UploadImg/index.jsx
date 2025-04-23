@@ -79,78 +79,78 @@ function UploadImg() {
   return (
     <>
       {isUploading ? (
-        <Input 
+        <Input
           className={classes.readonly_input_field_upload}
           placeholder="Uploading..."
           readOnly
           onFocus={(e) => e.target.blur()}
         />
-      ) : 
+      ) :
         <>
-          {fileName ? 
-          (
-            <Row align="middle" gutter={5}>
-              <Col xs={3} md={3}>
-                <Button
-                  icon={<FaEye size={16}/>}
-                  className={classes.btn_view}
-                  block
-                  onClick={handleViewImage}
-                />
-              </Col>
-              <Col xs={18} md={18}>
-                <Input 
-                  className={classes.readonly_input_field_upload}
-                  value={fileName}
-                  readOnly
-                />
-              </Col>
-              <Col xs={3} md={3}>
-                <Button 
-                  icon={<AiOutlineDelete size={16} />}
-                  className={classes.btn_delete}
-                  block
-                  onClick={() => { 
-                    setFileName("")
-                    setPreviewUrl("")
-                    setPreviewVisible(false)
-                    setImageLoaded(false)
-                  }}
-                />
-              </Col>
-            </Row>
-          ) : 
-          (
-            <Upload 
-              className={classes.upload}
-              showUploadList={false}
-              name="file"
-              beforeUpload={beforeUpload}
-              onChange={handleChangeImageUpload}
-            >
-              <div style={{ position: 'relative', width: '100%' }}>
-                <Input
-                  readOnly
-                  placeholder="Choose File"
-                  className={classes.readonly_input_field}
-                  onFocus={(e) => e.target.blur()}
-                />
-                <MdOutlineFileUpload
-                  size={20}
-                  style={{
-                    position: 'absolute',
-                    top: '50%',
-                    right: 10,
-                    transform: 'translateY(-50%)',
-                    color: 'rgba(115, 115, 115, 0.62)',
-                    pointerEvents: 'none'
-                  }}
-                />
-              </div>
-            </Upload>
-          )
+          {fileName ?
+            (
+              <Row align="middle" gutter={5}>
+                <Col xs={3} md={3}>
+                  <Button
+                    icon={<FaEye size={16} />}
+                    className={classes.btn_view}
+                    block
+                    onClick={handleViewImage}
+                  />
+                </Col>
+                <Col xs={18} md={18}>
+                  <Input
+                    className={classes.readonly_input_field_upload}
+                    value={fileName}
+                    readOnly
+                  />
+                </Col>
+                <Col xs={3} md={3}>
+                  <Button
+                    icon={<AiOutlineDelete size={16} />}
+                    className={classes.btn_delete}
+                    block
+                    onClick={() => {
+                      setFileName("")
+                      setPreviewUrl("")
+                      setPreviewVisible(false)
+                      setImageLoaded(false)
+                    }}
+                  />
+                </Col>
+              </Row>
+            ) :
+            (
+              <Upload
+                className={classes.upload}
+                showUploadList={false}
+                name="file"
+                beforeUpload={beforeUpload}
+                onChange={handleChangeImageUpload}
+              >
+                <div style={{ position: 'relative', width: '100%' }}>
+                  <Input
+                    readOnly
+                    placeholder="Choose File"
+                    className={classes.readonly_input_field}
+                    onFocus={(e) => e.target.blur()}
+                  />
+                  <MdOutlineFileUpload
+                    size={20}
+                    style={{
+                      position: 'absolute',
+                      top: '50%',
+                      right: 10,
+                      transform: 'translateY(-50%)',
+                      color: 'rgba(115, 115, 115, 0.62)',
+                      pointerEvents: 'none'
+                    }}
+                  />
+                </div>
+              </Upload>
+            )
           }
-      </>
+        </>
       }
 
       <Modal
@@ -168,17 +168,17 @@ function UploadImg() {
               <span>Mohon tunggu...</span>
             </div>
           )}
-            <Image 
-              width={200}
-              style={{ display: imageLoaded ? "block" : "none" }}
-              src={previewUrl}
-              alt="preview"
-              onLoad={() => setImageLoaded(true)}
-            />
+          <Image
+            width={200}
+            style={{ display: imageLoaded ? "block" : "none" }}
+            src={previewUrl}
+            alt="preview"
+            onLoad={() => setImageLoaded(true)}
+          />
         </div>
       </Modal>
     </>
   )
 }
 
-export default UploadImg
+export default UploadImg;
