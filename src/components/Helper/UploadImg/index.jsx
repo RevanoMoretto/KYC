@@ -68,7 +68,7 @@ function UploadImg() {
       const elapsedTime = Date.now() - startTime
       console.log("Waktu konversi ke base64:", elapsedTime, "ms")
 
-      const remainingTime = Math.max(1000 - elapsedTime, 0)
+      const remainingTime = Math.max(1500 - elapsedTime, 0)
 
       setTimeout(() => {
         const doc_value = base64.split(",")[1];
