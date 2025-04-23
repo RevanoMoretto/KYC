@@ -150,13 +150,13 @@ function UploadImg() {
   return (
     <>
       {isUploading ? (
-        <Input 
+        <Input
           className={classes.readonly_input_field_upload}
           placeholder="Uploading..."
           readOnly
           onFocus={(e) => e.target.blur()}
         />
-      ) : 
+      ) :
         <>
           {fileName ? 
           (
@@ -221,7 +221,7 @@ function UploadImg() {
             </Upload>
           )
           }
-      </>
+        </>
       }
 
       <Modal
@@ -239,17 +239,17 @@ function UploadImg() {
               <span>Mohon tunggu...</span>
             </div>
           )}
-            <Image 
-              width={200}
-              style={{ display: imageLoaded ? "block" : "none" }}
-              src={previewUrl}
-              alt="preview"
-              onLoad={() => setImageLoaded(true)}
-            />
+          <Image
+            width={200}
+            style={{ display: imageLoaded ? "block" : "none" }}
+            src={previewUrl}
+            alt="preview"
+            onLoad={() => setImageLoaded(true)}
+          />
         </div>
       </Modal>
     </>
   )
 }
 
-export default UploadImg
+export default UploadImg;

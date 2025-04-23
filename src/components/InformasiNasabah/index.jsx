@@ -4,6 +4,7 @@ import {
     DatePicker, Image, Spin, Modal
 } from 'antd';
 import { UploadOutlined, EyeOutlined } from '@ant-design/icons';
+import { MdOutlineFileUpload } from "react-icons/md";
 import React, { useState } from 'react';
 import style from './style.module.less';
 import UploadImg from '../Helper/UploadImg';
@@ -41,7 +42,14 @@ const InformasiNasabah = () => {
                             </span>
                         }
                         name='processLocationKYC'
-                        rules={[{ required: true, message: 'Lokasi Proses KYC Wajib Diisi', min: 1 }]}
+                        rules={[
+                            {
+                                validator: (_, value) =>
+                                    value && value.length > 0
+                                        ? Promise.resolve()
+                                        : Promise.reject(new Error('Lokasi Proses KYC Wajib Diisi')),
+                            },
+                        ]}
                     >
                         <Checkbox.Group>
                             <Checkbox value='0'>Rumah</Checkbox>
@@ -181,7 +189,7 @@ const InformasiNasabah = () => {
                             <Form.Item label={<span className={style.label_field}>Alamat KTP <span style={{ color: 'red' }}>*</span></span>} name='debtAddressNonWira'>
                                 <TextArea
                                     showCount
-                                    maxLength={250}
+                                    maxLength={50}
                                     className={style.text_area}
                                 />
                             </Form.Item>
@@ -190,8 +198,8 @@ const InformasiNasabah = () => {
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>RT/RW KTP <span style={{ color: 'red' }}>*</span></span>} name='debtRTRWNonWira'>
                                 <Row gutter={8} align="middle">
-                                    <Col xs={11}><Input placeholder="RT" /></Col>
-                                    <Col xs={1} style={{ textAlign: 'center' }}>/</Col>
+                                    <Col xs={12}><Input placeholder="RT" /></Col>
+                                    {/* <Col xs={1} style={{ textAlign: 'center' }}>/</Col> */}
                                     <Col xs={12}><Input placeholder="RW" /></Col>
                                 </Row>
                             </Form.Item>
@@ -230,6 +238,7 @@ const InformasiNasabah = () => {
                         label={
                             <span className={style.label_field}>
                                 Kartu Keluarga<span style={{ color: 'red' }}>*</span>
+                                <EyeOutlined onClick={handleViewImage} style={{ color: '#1890ff', marginLeft: 8 }} />
                             </span>
                         }
                         name="familyCardNonWira"
@@ -311,7 +320,7 @@ const InformasiNasabah = () => {
                         }
                         name="docSeparateAssetsNonWira"
                     >
-                        {isSeparateAsset === "1" ? (
+                        {/* {isSeparateAsset === "1" ? (
                             <>
                                 <Upload disabled={isSeparateAsset === "1"}>
                                     <Button icon={<UploadOutlined />} style={{
@@ -325,6 +334,35 @@ const InformasiNasabah = () => {
                             </>
                         ) : (
                             <UploadImg />
+                        )} */}
+                        {isSeparateAsset === "1" ? (
+                            <Upload
+                                disabled={isSeparateAsset === "1"}
+                                className={style.upload}
+                            >
+                                <div style={{ position: 'relative', width: '100%' }}>
+                                    <Input
+                                        readOnly
+                                        placeholder="Choose File"
+                                        className={style.input_field_readonly}
+                                        onFocus={(e) => e.target.blur()}
+                                    />
+                                    <MdOutlineFileUpload
+                                        size={20}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '50%',
+                                            right: 10,
+                                            transform: 'translateY(-50%)',
+                                            color: 'rgba(115, 115, 115, 0.62)',
+                                            pointerEvents: 'none',
+                                            cursor: isSeparateAsset === "1" ? "not-allowed" : "pointer",
+                                        }}
+                                    />
+                                </div>
+                            </Upload>
+                        ) : (
+                            <UploadImg />
                         )}
                     </Form.Item>
                 </Col>
@@ -335,6 +373,7 @@ const InformasiNasabah = () => {
                             label={
                                 <span className={style.label_field}>
                                     Dokumen Identitas Pasangan <span style={{ color: 'red' }}>*</span>
+                                    <EyeOutlined onClick={handleViewImage} style={{ color: '#1890ff', marginLeft: 8 }} />
                                 </span>
                             }
                             name="partnerIdentityDocNonWira"
@@ -348,44 +387,46 @@ const InformasiNasabah = () => {
                     </Col>
                 )}
                 {isSeparateAsset === "1" && isMatchingIdentityPartner === "1" && (
-                    <Col xs={24} md={8}>
-                        <Form.Item label={<span className={style.label_field}>Upload Dokumen Identitas yang sesuai <span style={{ color: 'red' }}>*</span></span>} name='uploadDocMatchingIdentityNonWira'>
-                            <UploadImg />
-                        </Form.Item>
-                    </Col>
+                    <>
+                        <Col xs={24} md={8}>
+                            <Form.Item label={<span className={style.label_field}>Upload Dokumen Identitas yang sesuai <span style={{ color: 'red' }}>*</span></span>} name='uploadDocMatchingIdentityNonWira'>
+                                <UploadImg />
+                            </Form.Item>
+                        </Col>
+                        <Col xs={24} md={8}>
+                            <Form.Item label={<span className={style.label_field}>Jenis Identitas Pasangan</span>} name='spouseIdentityNonWira'>
+                                <Select showSearch placeholder='PILIH JENIS IDENTITAS PASANGAN'></Select>
+                            </Form.Item>
+                        </Col>
+                        <Col xs={24} md={8}>
+                            <Form.Item label={<span className={style.label_field}>Nomor Identitas Pasangan<span style={{ color: 'red' }}>*</span></span>} name='noKtpSpouseNonWira'>
+                                <Input disabled />
+                            </Form.Item>
+                        </Col>
+
+                        <Col xs={24} md={8}>
+                            <Form.Item label={<span className={style.label_field}>Nama Pasangan<span style={{ color: 'red' }}>*</span></span>} name='nameOfSpouseNonWira'>
+                                <Input />
+                            </Form.Item>
+                        </Col>
+                        <Col xs={24} md={8}>
+                            <Form.Item label={<span className={style.label_field}>Tempat Lahir Pasangan<span style={{ color: 'red' }}>*</span></span>} name='spousePlaceOfBirthNonWira'>
+                                <Input />
+                            </Form.Item>
+                        </Col>
+
+                        <Col xs={24} md={8}>
+                            <Form.Item label={<span className={style.label_field}>Tanggal Lahir Pasangan<span style={{ color: 'red' }}>*</span></span>} name='spouseDateOfBirthNonWira'>
+                                <DatePicker format='DD-MM-YYYY' placeholder='DD-MM-YYYY' style={{ width: '100%' }} />
+                            </Form.Item>
+                        </Col>
+                        <Col xs={24} md={8}>
+                            <Form.Item label={<span className={style.label_field}>Jenis Kelamin<span style={{ color: 'red' }}>*</span></span>} name='genderOfSpouseNonWira'>
+                                <Select showSearch placeholder="PILIH JENIS KELAMIN"></Select>
+                            </Form.Item>
+                        </Col>
+                    </>
                 )}
-                <Col xs={24} md={8}>
-                    <Form.Item label={<span className={style.label_field}>Jenis Identitas Pasangan</span>} name='spouseIdentityNonWira'>
-                        <Select showSearch placeholder='PILIH JENIS IDENTITAS PASANGAN'></Select>
-                    </Form.Item>
-                </Col>
-                <Col xs={24} md={8}>
-                    <Form.Item label={<span className={style.label_field}>Nomor Identitas Pasangan<span style={{ color: 'red' }}>*</span></span>} name='noKtpSpouseNonWira'>
-                        <Input disabled />
-                    </Form.Item>
-                </Col>
-
-                <Col xs={24} md={8}>
-                    <Form.Item label={<span className={style.label_field}>Nama Pasangan<span style={{ color: 'red' }}>*</span></span>} name='nameOfSpouseNonWira'>
-                        <Input />
-                    </Form.Item>
-                </Col>
-                <Col xs={24} md={8}>
-                    <Form.Item label={<span className={style.label_field}>Tempat Lahir Pasangan<span style={{ color: 'red' }}>*</span></span>} name='spousePlaceOfBirthNonWira'>
-                        <Input />
-                    </Form.Item>
-                </Col>
-
-                <Col xs={24} md={8}>
-                    <Form.Item label={<span className={style.label_field}>Tanggal Lahir Pasangan<span style={{ color: 'red' }}>*</span></span>} name='spouseDateOfBirthNonWira'>
-                        <DatePicker format='DD-MM-YYYY' placeholder='DD-MM-YYYY' style={{ width: '100%' }} />
-                    </Form.Item>
-                </Col>
-                <Col xs={24} md={8}>
-                    <Form.Item label={<span className={style.label_field}>Jenis Kelamin<span style={{ color: 'red' }}>*</span></span>} name='genderOfSpouseNonWira'>
-                        <Select showSearch placeholder="PILIH JENIS KELAMIN"></Select>
-                    </Form.Item>
-                </Col>
                 <Col xs={24} md={8}>
                     <Form.Item label={<span className={style.label_field}>Foto Wajah Debitur <span style={{ color: 'red' }}>*</span></span>} name='debiturSelfieNonWira'>
                         <UploadImg />
