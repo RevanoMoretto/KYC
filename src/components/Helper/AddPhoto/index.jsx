@@ -5,46 +5,48 @@ import UploadImg from '../UploadImg';
 
 
 const PhotoUploadSection = ({
-    title1,
-    name1,
-    title2,
-    name2,
+    titles = [],
+    names = [],
     onFileChange,
-    form
+    form,
+    maxPhotos = 2
 }) => {
-    const [visibleSecondPhoto, setVisibleSecondPhoto] = useState(false);
+    const [visibleCount, setVisibleCount] = useState(1);
     const [files, setFiles] = useState({ first: null, second: null });
 
-    const handleAddFile = () => setVisibleSecondPhoto(true);
+    const handleAddFile = () => {
+        if (visibleCount < maxPhotos) {
+            setVisibleCount((prev) => prev + 1);
+        }
+    }
 
-    const handleRemoveFile = () => {
-        // Reset form value if using AntD form
-        form?.setFieldsValue({ [name2]: undefined });
+    const handleRemoveFile = (index) => {
+        const fieldName = names[index];
+        form?.setFieldsValue({ [fieldName]: undefined });
 
         // Reset file state
-        setFiles((prev) => ({ ...prev, second: null }));
-        setVisibleSecondPhoto(false);
+        setFiles((prev) => {
+            const newFiles = { ...prev };
+            delete newFiles[index];
+            return newFiles;
+        });
 
-        // Notify parent
-        onFileChange?.({ file: null }, 'second');
+        onFileChange?.({ file: null }, index);
+
+        setVisibleCount((prev) => prev - 1);
     };
 
-    // const handleUploadChange = (info, type) => {
-    //     const newFiles = { ...files, [type]: info.file };
-    //     setFiles(newFiles);
-    //     onFileChange?.(info, type);
-    // };
-
-    const handleUploadChange = (info, field) => {
-        const newFiles = { ...files, [field]: info.file };
+    const handleUploadChange = (info, index) => {
+        const name = names[index];
+        const newFiles = { ...files, [name]: info.file };
         setFiles(newFiles);
-        onFileChange?.(info, field);
+        onFileChange?.(info, name);
     };
 
 
     return (
         <>
-            <Form.Item label={<span style={{ fontWeight: 'bold' }}>{title1}</span>} name={name1}>
+            {/* <Form.Item label={<span style={{ fontWeight: 'bold' }}>{title1}</span>} name={name1}>
                 <UploadImg onChange={(info) => handleUploadChange(info, 'first')} />
             </Form.Item>
 
@@ -64,7 +66,37 @@ const PhotoUploadSection = ({
                         Delete Photo
                     </Button>
                 )}
-            </div>
+            </div> */}
+            {Array.from({ length: visibleCount }).map((_, index) => (
+                <Form.Item
+                    key={index}
+                    label={<span style={{ fontWeight: 'bold' }}>{titles[index]}</span>}
+                    name={names[index]}
+                // style={{ marginTop: '10px' }}
+                >
+                    <UploadImg onChange={(info) => handleUploadChange(info, index)} />
+                    {index > 0 && (
+                        <Button
+                            danger
+                            icon={<MinusOutlined />}
+                            onClick={() => handleRemoveFile(index)}
+                            style={{ marginTop: 8 }}
+                        >
+                            Delete Photo
+                        </Button>
+                    )}
+                </Form.Item>
+            ))}
+
+            {visibleCount < maxPhotos && (
+                <Button
+                    onClick={handleAddFile}
+                    icon={<PlusOutlined />}
+                    style={{ marginBottom: '8px', border: 'none' }}
+                >
+                    Add Photo
+                </Button>
+            )}
         </>
     );
 };

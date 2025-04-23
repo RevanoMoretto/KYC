@@ -10,12 +10,21 @@ const InformasiTempatTinggalNasabah = () => {
 
     const [form] = Form.useForm();
     const [alamatDomSesuai, setAlamatDomSesuai] = useState(null);
-    const imageHandler = useRef({});
+    // const imageHandler = useRef({});
 
-    const setImage = (name, file) => {
-        imageHandler.current[name] = file;
+    // const setImage = (name, file) => {
+    //     imageHandler.current[name] = file;
+    // };
+
+
+    const [photoFiles, setPhotoFiles] = useState({});
+
+    const handleFileChange = (info, index) => {
+        setPhotoFiles((prev) => ({
+            ...prev,
+            [index]: info?.file || null,
+        }));
     };
-
     return (
         <Form
             form={form}
@@ -25,8 +34,6 @@ const InformasiTempatTinggalNasabah = () => {
                 <Address
                     label="Domisili"
                     form={form}
-                // onChange={setFormAlamat}
-                // onChangeDirect={submitAddressInfo}
                 />
                 <Col md={8} xs={24}>
                     <Form.Item
@@ -61,104 +68,42 @@ const InformasiTempatTinggalNasabah = () => {
                         <UploadImg />
                     </Form.Item>
                 </Col>
-                {/* <Col xs={24} md={8}>
-                        <Form.Item label={<span style={{ fontWeight: 'bold' }}>Foto Rumah</span>} name="photoHome1" >
-                            <UploadImg />
-                        </Form.Item>
 
-                        {visibleFoto2 && (
-                            <Form.Item label="Foto Rumah 2" name="photoHome2">
-                                <UploadImg />
-                            </Form.Item>
-                        )}
-
-                        <div style={{ marginTop: 10 }}>
-                            {!visibleFoto2 && (
-                                <Button onClick={handleAddFile} icon={<PlusOutlined />} style={{ border: 'none' }}>
-                                    Add Photo
-                                </Button>
-                            )}
-                            {visibleFoto2 && (
-                                <Button onClick={handleRemoveFile} danger icon={<MinusOutlined />}>
-                                    Delete Photo
-                                </Button>
-                            )}
-                        </div>
-                    </Col> */}
                 <Col xs={24} md={8}>
                     <PhotoUploadSection
                         form={form}
-                        title1="Foto Rumah"
-                        name1="photoHome"
-                        title2="Foto Rumah 2"
-                        name2="photoHome2"
-                        onFileChange={(info, field) => {
-                            const fieldName = field === 'first' ? 'photoHome' : 'photoHome2';
-                            setImage(fieldName, info?.file || null);
-                        }}
+                        titles={['Foto Rumah', 'Foto Rumah 2']}
+                        names={['photoHome', 'photoHome2']}
+                        maxPhotos={2}
+                        onFileChange={
+                            handleFileChange
+                        }
                     />
                 </Col>
-                {/* <Col xs={24} md={8}>
-                        <Form.Item label={<span style={{ fontWeight: 'bold' }}>Foto Jalan Depan Rumah</span>} name="photoRoadHome" >
-                            <UploadImg />
-                        </Form.Item>
-
-                        {visibleFoto2 && (
-                            <Form.Item label={<span style={{ fontWeight: 'bold' }}>Foto Jalan Depan Rumah</span>} name="photoRoadHome2">
-                                <UploadImg />
-                            </Form.Item>
-                        )}
-
-                        <div style={{ marginTop: 10 }}>
-                            {!visibleFoto2 && (
-                                <Button onClick={handleAddFile} icon={<PlusOutlined />} style={{ border: 'none' }}>
-                                    Add Photo
-                                </Button>
-                            )}
-                            {visibleFoto2 && (
-                                <Button onClick={handleRemoveFile} danger icon={<MinusOutlined />}>
-                                    Delete Photo
-                                </Button>
-                            )}
-                        </div>
-                    </Col> */}
                 <Col xs={24} md={8}>
                     <PhotoUploadSection
-                        form={form}
-                        title1="Foto Jalan Depan Rumah"
-                        name1="photoRoadHome"
-                        title2="Foto Jalan Depan Rumah 2"
-                        name2="photoRoadHome2"
-                        onFileChange={(info, field) => {
-                            const fieldName = field === 'first' ? 'photoRoadHome' : 'photoRoadHome2';
-                            setImage(fieldName, info?.file || null);
-                        }}
+                        titles={['Foto Jalan Depan Rumah', 'Foto Jalan Depan Rumah 2']}
+                        names={['photoRoadHome', 'photoRoadHome2']}
+                        maxPhotos={2}
+                        onFileChange={handleFileChange}
                     />
                 </Col>
                 <Col xs={24} md={8}>
                     <PhotoUploadSection
                         form={form}
-                        title1="Foto Tempat Usaha"
-                        name1="photoBusinessPlace"
-                        title2="Foto Tempat Usaha"
-                        name2="photoBusinessPlace2"
-                        onFileChange={(info, field) => {
-                            const fieldName = field === 'first' ? 'photoBusinessPlace' : 'photoBusinessPlace2';
-                            setImage(fieldName, info?.file || null);
-                        }}
+                        titles={['Foto Tempat Usaha', 'Foto Tempat Usaha 2']}
+                        names={['photoBusinessPlace', 'photoBusinessPlace2']}
+                        maxPhotos={2}
+                        onFileChange={handleFileChange}
                     />
                 </Col>
                 <Col xs={24} md={8}>
                     <PhotoUploadSection
                         form={form}
-                        title1="Foto Jalan Depan Tempat Usaha"
-                        name1="photoRoadBusinessPlace"
-                        title2="Foto Jalan Depan Tempat Usaha 2"
-                        name2="photoRoadBusinessPlace2"
-                        onFileChange={(info, field) => {
-                            const fieldName = field === 'first' ? 'photoRoadBusinessPlace' : 'photoRoadBusinessPlace2';
-                            setImage(fieldName, info?.file || null);
-                        }}
+                        titles={['Foto Jalan Depan Tempat Usaha', 'Foto Jalan Depan Tempat Usaha 2']}
+                        names={['photoRoadBusinessPlace', 'photoRoadBusinessPlace2']}
+                        maxPhotos={2}
+                        onFileChange={handleFileChange}
                     />
                 </Col>
                 <Col xs={24} md={8}>
