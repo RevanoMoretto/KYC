@@ -21,7 +21,8 @@ const PhotoUploadSection = ({
     }
 
     const handleRemoveFile = (index) => {
-        const fieldName = names[index];
+        const lastIndex = visibleCount - 1;
+        const fieldName = names[lastIndex];
         form?.setFieldsValue({ [fieldName]: undefined });
 
         // Reset file state
@@ -46,57 +47,36 @@ const PhotoUploadSection = ({
 
     return (
         <>
-            {/* <Form.Item label={<span style={{ fontWeight: 'bold' }}>{title1}</span>} name={name1}>
-                <UploadImg onChange={(info) => handleUploadChange(info, 'first')} />
-            </Form.Item>
-
-            {visibleSecondPhoto && (
-                <Form.Item label={title2} name={name2}>
-                    <UploadImg onChange={(info) => handleUploadChange(info, 'second')} />
-                </Form.Item>
-            )}
-
-            <div style={{ marginTop: 10 }}>
-                {!visibleSecondPhoto ? (
-                    <Button onClick={handleAddFile} icon={<PlusOutlined />} style={{ border: 'none' }}>
-                        Add Photo
-                    </Button>
-                ) : (
-                    <Button onClick={handleRemoveFile} danger icon={<MinusOutlined />}>
-                        Delete Photo
-                    </Button>
-                )}
-            </div> */}
             {Array.from({ length: visibleCount }).map((_, index) => (
                 <Form.Item
                     key={index}
                     label={<span style={{ fontWeight: 'bold' }}>{titles[index]}</span>}
                     name={names[index]}
-                // style={{ marginTop: '10px' }}
                 >
                     <UploadImg onChange={(info) => handleUploadChange(info, index)} />
-                    {index > 0 && (
-                        <Button
-                            danger
-                            icon={<MinusOutlined />}
-                            onClick={() => handleRemoveFile(index)}
-                            style={{ marginTop: 8 }}
-                        >
-                            Delete Photo
-                        </Button>
-                    )}
                 </Form.Item>
             ))}
 
-            {visibleCount < maxPhotos && (
-                <Button
-                    onClick={handleAddFile}
-                    icon={<PlusOutlined />}
-                    style={{ marginBottom: '8px', border: 'none' }}
-                >
-                    Add Photo
-                </Button>
-            )}
+            <div style={{ display: 'flex', gap: '8px', marginTop: 8 }}>
+                {visibleCount < maxPhotos && (
+                    <Button
+                        onClick={handleAddFile}
+                        icon={<PlusOutlined />}
+                        style={{ border: 'none' }}
+                    >
+                        Add Photo
+                    </Button>
+                )}
+                {visibleCount > 1 && (
+                    <Button
+                        danger
+                        icon={<MinusOutlined />}
+                        onClick={handleRemoveFile}
+                    >
+                        Delete Photo
+                    </Button>
+                )}
+            </div>
         </>
     );
 };
