@@ -70,41 +70,53 @@ const InformasiTempatTinggalNasabah = () => {
                 </Col>
 
                 <Col xs={24} md={8}>
-                    <PhotoUploadSection
-                        form={form}
-                        titles={['Foto Rumah', 'Foto Rumah 2']}
-                        names={['photoHome', 'photoHome2']}
-                        maxPhotos={2}
-                        onFileChange={
-                            handleFileChange
-                        }
-                    />
+                    <Form.Item label="Foto Rumah">
+                        <UploadImg/>
+                        <PhotoUploadSection
+                            form={form}
+                            // titles={['Foto Rumah', 'Foto Rumah 2']}
+                            names={['photoHome', 'photoHome2']}
+                            maxPhotos={2}
+                            onFileChange={
+                                handleFileChange
+                            }
+                        />
+                    </Form.Item>
                 </Col>
                 <Col xs={24} md={8}>
-                    <PhotoUploadSection
-                        titles={['Foto Jalan Depan Rumah', 'Foto Jalan Depan Rumah 2']}
-                        names={['photoRoadHome', 'photoRoadHome2']}
-                        maxPhotos={2}
-                        onFileChange={handleFileChange}
-                    />
+                    <Form.Item label="Foto Jalan Depan Rumah">
+                        <UploadImg/>
+                        <PhotoUploadSection
+                            // titles={['Foto Jalan Depan Rumah', 'Foto Jalan Depan Rumah 2']}
+                            names={['photoRoadHome', 'photoRoadHome2']}
+                            maxPhotos={2}
+                            onFileChange={handleFileChange}
+                        />
+                    </Form.Item>
                 </Col>
                 <Col xs={24} md={8}>
-                    <PhotoUploadSection
-                        form={form}
-                        titles={['Foto Tempat Usaha', 'Foto Tempat Usaha 2']}
-                        names={['photoBusinessPlace', 'photoBusinessPlace2']}
-                        maxPhotos={2}
-                        onFileChange={handleFileChange}
-                    />
+                    <Form.Item label='Foto Tempat Usaha'>
+                        <UploadImg/>
+                        <PhotoUploadSection
+                            form={form}
+                            // titles={['Foto Tempat Usaha', 'Foto Tempat Usaha 2']}
+                            names={['photoBusinessPlace', 'photoBusinessPlace2']}
+                            maxPhotos={2}
+                            onFileChange={handleFileChange}
+                        /> 
+                    </Form.Item>
                 </Col>
                 <Col xs={24} md={8}>
-                    <PhotoUploadSection
-                        form={form}
-                        titles={['Foto Jalan Depan Tempat Usaha', 'Foto Jalan Depan Tempat Usaha 2']}
-                        names={['photoRoadBusinessPlace', 'photoRoadBusinessPlace2']}
-                        maxPhotos={2}
-                        onFileChange={handleFileChange}
-                    />
+                    <Form.Item label='Foto Jalan Depan Tempat Usaha' >
+                        <UploadImg/>
+                        <PhotoUploadSection
+                            form={form}
+                            // titles={['Foto Jalan Depan Tempat Usaha', 'Foto Jalan Depan Tempat Usaha 2']}
+                            names={['photoRoadBusinessPlace', 'photoRoadBusinessPlace2']}
+                            maxPhotos={2}
+                            onFileChange={handleFileChange}
+                        />
+                    </Form.Item>
                 </Col>
                 <Col xs={24} md={8}>
                     <Form.Item label={<span style={{ fontWeight: 'bold' }}>Jarak Domisili Nasabah ke Muf<span style={{ color: 'red' }}>*</span></span>} name='distanctCustDomicile'>

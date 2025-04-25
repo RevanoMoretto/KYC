@@ -110,22 +110,32 @@ const InformasiPekerjaanNasabah = () => {
             </Row>
             <Row gutter={12}>
                 <Col md={8} xs={24}>
-                    <Form.Item label="Dokumen Bukti Bekerja (ID Card, Slip Gaji, Suket Kerja/Pengangkatan, dll)">
-                        <UploadImg />
+                    <Form.Item label='Dokumen Bukti Bekerja (ID Card, Slip Gaji, Suket Kerja/Pengangkatan, dll)'>
+                        <UploadImg/>
+                        <PhotoUploadSection
+                            form={form}
+                            // titles={['Dokumen Bukti Bekerja (ID Card, Slip Gaji, Suket Kerja/Pengangkatan, dll)','Dokumen Bukti Bekerja (ID Card, Slip Gaji, Suket Kerja/Pengangkatan, dll) 2']}
+                            names={['docWork', 'docWork2']}
+                            maxPhotos={2}
+                            onFileChange={
+                                handleFileChange
+                            }
+                        />
                     </Form.Item>
                 </Col>
                 <Col md={8} xs={24}>
-
-                    <PhotoUploadSection
-                        form={form}
-                        titles={['Dokumen Bukti Bekerja (ID Card, Slip Gaji, Suket Kerja/Pengangkatan, dll', 'Dokumen Bukti Bekerja (ID Card, Slip Gaji, Suket Kerja/Pengangkatan, dll 2', 'Dokumen Bukti Bekerja (ID Card, Slip Gaji, Suket Kerja/Pengangkatan, dll 3', 'Dokumen Bukti Bekerja (ID Card, Slip Gaji, Suket Kerja/Pengangkatan, dll 4', 'Dokumen Bukti Bekerja (ID Card, Slip Gaji, Suket Kerja/Pengangkatan, dll 5', 'Dokumen Bukti Bekerja (ID Card, Slip Gaji, Suket Kerja/Pengangkatan, dll 6']}
-                        names={['docWork', 'docWork2', 'docWork3', 'docWork4', 'docWork5', 'docWork6']}
-                        maxPhotos={6}
-                        onFileChange={
-                            handleFileChange
-                        }
-                    />
-
+                    <Form.Item label='Dokumen Bukti Penghasilan/Keuangan (Rek Tab/Koran)'>
+                        <UploadImg />
+                        <PhotoUploadSection
+                            form={form}
+                            // titles={['Dokumen Bukti Penghasilan/Keuangan (Rek Tab/Koran)', '', '', '', '']}
+                            names={['docPacheck', 'docPacheck2', 'docPacheck3', 'docPacheck4', 'docPacheck5']}
+                            maxPhotos={6}
+                            onFileChange={
+                                handleFileChange
+                            }
+                        />
+                    </Form.Item>
                 </Col>
             </Row>
         </Form>

@@ -5,17 +5,18 @@ import UploadImg from '../UploadImg';
 
 
 const PhotoUploadSection = ({
-    titles = [],
+    // titles = [],
     names = [],
     onFileChange,
     form,
     maxPhotos = 2
 }) => {
-    const [visibleCount, setVisibleCount] = useState(1);
+    const [visibleCount, setVisibleCount] = useState(0);
     const [files, setFiles] = useState({ first: null, second: null });
+    const maxPhotosMin1 = maxPhotos-1;
 
     const handleAddFile = () => {
-        if (visibleCount < maxPhotos) {
+        if (visibleCount < maxPhotosMin1) {
             setVisibleCount((prev) => prev + 1);
         }
     }
@@ -48,17 +49,21 @@ const PhotoUploadSection = ({
     return (
         <>
             {Array.from({ length: visibleCount }).map((_, index) => (
-                <Form.Item
-                    key={index}
-                    label={<span style={{ fontWeight: 'bold' }}>{titles[index]}</span>}
-                    name={names[index]}
-                >
-                    <UploadImg onChange={(info) => handleUploadChange(info, index)} />
-                </Form.Item>
+                // <Form.Item
+                //     key={index}
+                //     label={<span style={{ fontWeight: 'bold' }}>{titles[index]}</span>}
+                //     name={names[index]}
+                // >
+                <div style={{ marginTop:8}}>
+                    <UploadImg 
+                        name={names[index]}
+                        onChange={(info) => handleUploadChange(info, index)} />
+                </div>
+                // </Form.Item>
             ))}
 
             <div style={{ display: 'flex', gap: '8px', marginTop: 8 }}>
-                {visibleCount < maxPhotos && (
+                {visibleCount < maxPhotosMin1 && (
                     <Button
                         onClick={handleAddFile}
                         icon={<PlusOutlined />}
@@ -67,7 +72,7 @@ const PhotoUploadSection = ({
                         Add Photo
                     </Button>
                 )}
-                {visibleCount > 1 && (
+                {visibleCount > 0 && (
                     <Button
                         danger
                         icon={<MinusOutlined />}
