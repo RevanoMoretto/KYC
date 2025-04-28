@@ -5,77 +5,46 @@ import { useEffect, useState } from 'react';
 import { Col, Form, Modal, Row, Input, Button } from 'antd';
 import { BiDetail } from "react-icons/bi";
 import applicationStorage from "../../utils/application_storage";
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchDetailKyc } from '../../redux/store/features/kycSlice';
 
 const Home = () => {
 	const [form] = Form.useForm()
-
-	const [loading, setLoading] = useState(false)
+	const dispatch = useDispatch();
 	const [showDetailApp, setShowDetailApp] = useState(false);
+	const { data, loading, error } = useSelector((state) => state.kyc);
+	const no_order = "2410001316";
 
-	const tokenDummy = 
-	"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMDAxNDgzNyIsImV4cCI6MTc0NTU2OTk0MiwiaWF0IjoxNzQ1NDgzNTQyfQ.Yay_IHgU2HNOdOv69ag8Eg9cJpM00MSwN58GNRdRxFLE9jaG93b4kcKqdnM9EmhnxDoFS-xAelgCQf39cufIRg";
-	const orderId = "2212001417"
-	const detailApp = "http://detail-aplikasi-reactjs-uat.apps.ocp4dev.muf.co.id/aplikasi/"+orderId+"/"+tokenDummy; 
 
 	useEffect(() => {
-		const startTime = Date.now()
+		dispatch(fetchDetailKyc(no_order))
+	}, [dispatch])
 
-		const fetchData = async () => {
-			try {
-				setLoading(true)
 
-				const response = await fetch(
-					"http://localhost:3000/api/detail/getDetailKyc",
-					{
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-						},
-						body: JSON.stringify({
-							no_order: "2410001316",
-						}),
-					}
-				)
+	useEffect(() => {
+		if (data && !loading) {
+			const {
+				detail,
+				source_order_desc,
+				applicant_type_desc,
+				branch_desc,
+				application_id,
+				application_date
+			} = data || {}
 
-				const data = await response.json()
-
-				const elapsedTime = Date.now() - startTime
-				const remainingTime = Math.max(500 - elapsedTime, 0)
-
-				setTimeout(() => {
-					const { 
-						detail,
-						source_order_desc, 
-						applicant_type_desc, 
-						branch_desc, 
-						application_id, 
-						application_date 
-					} = data || {}
-					const { debitur } = detail || {}
-					const { personal } = debitur || {}
-					const { debitur_nama_sesuai_ktp } = personal || {}
-
-					setLoading(false)
-
-					applicationStorage.value = data
-
-					form.setFieldsValue({
-						nomor_aplikasi: application_id,
-						nama_ktp: debitur_nama_sesuai_ktp,
-						tipe_nasabah: applicant_type_desc,
-						tgl_aplikasi: application_date,
-						source_order: source_order_desc,
-						cabang: branch_desc
-					})
-				}, remainingTime)
-			} catch (error) {
-				console.error("error ketika hit /getDetailKyc pada saat first render, message: ", error)
-				setLoading(false)
-			}
-		};
-
-		fetchData()
-	}, [])
+			const { debitur, source_code_desc } = detail || {}
+			const { personal } = debitur || {}
+			const { debitur_nama_sesuai_ktp } = personal || {}
+			form.setFieldsValue({
+				nomor_aplikasi: application_id,
+				nama_ktp: debitur_nama_sesuai_ktp,
+				tipe_nasabah: applicant_type_desc,
+				tgl_aplikasi: application_date,
+				source_order: source_order_desc,
+				cabang: branch_desc,
+			});
+		}
+	}, [data, loading])
 
 	return (
 		<>
@@ -88,69 +57,69 @@ const Home = () => {
 							<Col xs={24} md={12}>
 								<Form.Item
 									label="NOMOR APLIKASI"
-									className={classes.wrap_input_field} 
+									className={classes.wrap_input_field}
 									name="nomor_aplikasi"
 								>
-									<Input 
+									<Input
 										readOnly
-										className={classes.input_field} 
+										className={classes.input_field}
 									/>
 								</Form.Item>
 
 								<Form.Item
-									label="NAMA SESUAI KTP" 
-									className={classes.wrap_input_field} 
+									label="NAMA SESUAI KTP"
+									className={classes.wrap_input_field}
 									name="nama_ktp"
 								>
-									<Input 
+									<Input
 										readOnly
-										className={classes.input_field} 
+										className={classes.input_field}
 									/>
 								</Form.Item>
 
 								<Form.Item
-									label="TIPE NASABAH" 
-									className={classes.wrap_input_field} 
+									label="TIPE NASABAH"
+									className={classes.wrap_input_field}
 									name="tipe_nasabah"
 								>
-									<Input 
+									<Input
 										readOnly
-										className={classes.input_field} 
+										className={classes.input_field}
 									/>
 								</Form.Item>
 							</Col>
 
 							<Col xs={24} md={12}>
-								<Form.Item 
-									label="TANGGAL APLIKASI" 
-									className={classes.wrap_input_field} 
+								<Form.Item
+									label="TANGGAL APLIKASI"
+									className={classes.wrap_input_field}
 									name="tgl_aplikasi"
 								>
-									<Input 
+									<Input
 										readOnly
-										className={classes.input_field} 
+										className={classes.input_field}
 									/>
 								</Form.Item>
 
 								<Form.Item
-									label="SOURCE ORDER" 
-									className={classes.wrap_input_field} 
+									label="SOURCE ORDER"
+									className={classes.wrap_input_field}
 									name="source_order"
 								>
-									<Input 
+									<Input
 										readOnly
-										className={classes.input_field} 
+										className={classes.input_field}
 									/>
 								</Form.Item>
 
 								<Form.Item
-									label="CABANG" 
-									className={classes.wrap_input_field} 
+									label="CABANG"
+									className={classes.wrap_input_field}
 									name="cabang"
 								>
-									<Input 
+									<Input
 										readOnly
-										className={classes.input_field} 
+										className={classes.input_field}
 									/>
 								</Form.Item>
 
@@ -158,8 +127,8 @@ const Home = () => {
 									className={classes.wrap_btn_detail}
 									wrapperCol={{ span: 24 }}
 								>
-									<Button 
-										type="primary" 
+									<Button
+										type="primary"
 										className={classes.btn_detail}
 										icon={<BiDetail size={17} />}
 										onClick={() => setShowDetailApp(true)}
@@ -169,9 +138,9 @@ const Home = () => {
 									{showDetailApp && (
 										<div className={classes.overlay} >
 											<div className={classes.modal} >
-											<button onClick={() => setShowDetailApp(false)} className={classes.closeBtn}>
-												✕
-											</button>
+												<button onClick={() => setShowDetailApp(false)} className={classes.closeBtn}>
+													✕
+												</button>
 												<iframe
 													src={detailApp}
 													title="description"
@@ -196,12 +165,12 @@ const Home = () => {
 			</div>
 
 			{/* Modal loading mohon tunggu */}
-			<Modal 
-				open={loading} 
-				footer={false} 
-				closable={false} 
+			<Modal
+				open={loading}
+				footer={false}
+				closable={false}
 				title="Data Sedang Di Proses Mohon Ditunggu"
-      />
+			/>
 		</>
 	);
 };

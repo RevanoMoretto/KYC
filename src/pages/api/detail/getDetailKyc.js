@@ -1,5 +1,10 @@
-export default async function getDetailKyc (req, res) {
+export default async function getDetailKyc(req, res) {
   const { no_order } = req.body
+
+  // Make sure no_order is present
+  if (!no_order) {
+    return res.status(400).json({ error: "no_order is required" });
+  }
 
   const url = "http://detail-kyc-java-uat.apps.ocp4dev.muf.co.id/detailKyc"
 

@@ -61,6 +61,7 @@ function UploadImg() {
     const { type, name } = data || {}
     const startTime = Date.now()
 
+    setImageLoaded(false);
     setIsUploading(true)
 
     try {
@@ -86,66 +87,6 @@ function UploadImg() {
       console.error("Error pada saat convert image to base64: ", error)
     }
   }
-
-  // const handleChangeImageUpload = async (data) => {
-  //   const file = data.file;
-  //   const startTime = Date.now()
-
-  //   try{
-  //     const base64 = await convertBase64(file)
-  //     const elapsedTime = Date.now() - startTime
-  //     const remainingTime = Math.max(100 - elapsedTime, 0)
-
-  //     setTimeout(() => {
-  //       const doc_value = base64.split(",")[1];
-  //       const fileType = file.type
-
-  //       setFileName(file.name)
-  //       setImageLoaded(false)
-  //       setPreviewUrl(`data:${fileType};base64,` + doc_value)
-  //     }, remainingTime)
-  //   }catch(error){
-  //     console.error("Error pada saat convert image to base64: ", error)
-  //   }
-
-  //   // const base64 = await convertBase64(file);
-  //   // const doc_value = base64.split(",")[1];
-  //   // const fileType = file.type
-
-  //   // console.log("file result: ", file)
-
-  //   // const payload = {
-  //   //   order_id: "2403000321",
-  //   //   current_form_code: "KYC",
-  //   //   insert_by: "15997383",
-  //   //   doc: [
-  //   //     {
-  //   //       doc_code: "IMG028", // img spk dealer
-  //   //       doc_value: "",
-  //   //       filename: "IMG_20200707_121636.jpg",
-  //   //       extension: ".jpg"
-  //   //     }
-  //   //   ]
-  //   // }
-
-  //   // setImageLoaded(false)
-  //   // setPreviewUrl(`data:${fileType};base64,` + doc_value)
-
-  //   // handle preview image for modern browser
-  //   // if (window.URL && typeof URL.createObjectURL === 'function') {
-  //   //   const previewUrl = URL.createObjectURL(file.file)
-
-  //   //   setImageLoaded(false)
-  //   //   setPreviewUrl(previewUrl)
-  //   // } else { // fallback for old browser
-  //   //   const base64 = await convertBase64(file.file);
-  //   //   const doc_value = base64.split(",")[1];
-  //   //   const fileType = file.file.type
-
-  //   //   setImageLoaded(false)
-  //   //   setPreviewUrl(`data:${fileType};base64,` + doc_value)
-  //   // }
-  // }
 
   return (
     <>

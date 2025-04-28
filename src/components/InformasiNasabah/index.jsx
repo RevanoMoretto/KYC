@@ -8,6 +8,9 @@ import { MdOutlineFileUpload } from "react-icons/md";
 import React, { useState } from 'react';
 import style from './style.module.less';
 import UploadImg from '../Helper/UploadImg';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchDetailKyc } from '../../redux/store/features/kycSlice';
+import moment from 'moment';
 
 
 
@@ -25,6 +28,44 @@ const InformasiNasabah = () => {
     const [previewUrl, setPreviewUrl] = useState('');
     const isDebiturMismatch = ktpStatusDoc === "1";
     const isSpouseMismatch = isSeparateAsset === "1" && isMatchingIdentityPartner === "1";
+    const dispatch = useDispatch();
+    const { data, loading } = useSelector((state) => state.kyc);
+
+    useEffect(() => {
+        dispatch(fetchDetailKyc());
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (data && !loading) {
+            const {
+                detail,
+                // for example, let's assume you have this structure
+                applicant_type_desc,
+                source_code_desc,
+            } = data || {};
+
+            const personal = data?.detail?.debitur?.personal || {};
+
+            form.setFieldsValue({
+                noKtpDebitur: personal.nik,
+                nameDebtKtp: personal.debitur_nama_sesuai_ktp,
+                debtPlaceOfBirth: personal.tempat_lahir,
+                debtDateOfBirth: personal.tanggal_lahir ? moment(personal.tanggal_lahir) : {},
+                genderOfSpouse: personal.jenis_kelamin,
+                debtNationality: personal.kewarganegaraan,
+                debtAddress: personal.alamat_ktp,
+                debtRTRW: personal.rtrw_ktp,
+                debtPostalCode: personal.kode_pos,
+                debtSubDistrict: personal.kelurahan_ktp,
+                debtDistrict: personal.kecamatan_ktp,
+                debtRegency: personal.kabupaten_kota_ktp,
+                debtProvince: personal.provinsi_ktp,
+                nameOfMother: personal.nama_gadis_ibu_kandung
+            });
+        }
+    }, [data, loading]);
+
+
 
     const handleViewImage = () => {
         setPreviewVisible(true);
@@ -64,7 +105,7 @@ const InformasiNasabah = () => {
                                 Foto Selfie PIC Survey di depan lokasi KYC<span style={{ color: 'red' }}>*</span>
                             </span>
                         }
-                        name='selfiePICKYCNonWira'
+                        name='selfiePICKYC'
                         rules={[{ required: true, message: 'Foto selfie dengan PIC wajib diisi' }]}
                     >
                         <UploadImg />
@@ -72,7 +113,7 @@ const InformasiNasabah = () => {
                 </Col>
 
                 <Col xs={24} md={8}>
-                    <Form.Item label={<span className={style.label_field}>Dapat Menunjukan identitas asli<span style={{ color: 'red' }}>*</span></span>} name='radioShowRealIdentityNonWira' rules={[{ required: true, message: 'Kolom Dapat Menunjukkan Identitas Wajib Diisi', min: 1 }]}>
+                    <Form.Item label={<span className={style.label_field}>Dapat Menunjukan identitas asli<span style={{ color: 'red' }}>*</span></span>} name='radioShowRealIdentity' rules={[{ required: true, message: 'Kolom Dapat Menunjukkan Identitas Wajib Diisi', min: 1 }]}>
                         <Radio.Group onChange={(e) => setMenunjukanIdentitasRil(e.target.value)}>
                             <Radio value="0">Bisa</Radio>
                             <Radio value="1">Tidak Bisa</Radio>
@@ -82,7 +123,7 @@ const InformasiNasabah = () => {
 
                 {menunjukanIdentitasRil === "1" && (
                     <Col xs={24} md={8}>
-                        <Form.Item label={<span className={style.label_field}>Alasan tidak bisa menunjukan identitas asli</span>} name='reasonCantShowIdentityNonWira' rules={[{ required: true, message: 'Kolom Alasan Tidak Dapat Menunjukkan Identitas Wajib Diisi' }]}>
+                        <Form.Item label={<span className={style.label_field}>Alasan tidak bisa menunjukan identitas asli</span>} name='reasonCantShowIdentity' rules={[{ required: true, message: 'Kolom Alasan Tidak Dapat Menunjukkan Identitas Wajib Diisi' }]}>
                             <Select showSearch placeholder="Pilih Alasan" />
                         </Form.Item>
                     </Col>
@@ -93,7 +134,7 @@ const InformasiNasabah = () => {
                         <span className={style.label_field}>
                             Dokumen KTP Nasabah <span style={{ color: 'red' }}>*</span> <EyeOutlined onClick={handleViewImage} style={{ color: '#1890ff', marginLeft: 8 }} />
                         </span>
-                    } name='debtDocKTPNonWira' rules={[{ min: 1 }]}>
+                    } name='debtDocKTP' rules={[{ min: 1 }]}>
                         <Radio.Group onChange={(e) => setKtpStatusDoc(e.target.value)}>
                             <Radio value="0">Sesuai</Radio>
                             <Radio value="1">Tidak Sesuai</Radio>
@@ -143,35 +184,35 @@ const InformasiNasabah = () => {
                 {isDebiturMismatch && (
                     <>
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Upload KTP yang sesuai</span>} name='uploadMatchingKtpNonWira'>
+                            <Form.Item label={<span className={style.label_field}>Upload KTP yang sesuai</span>} name='uploadMatchingKtp'>
                                 <UploadImg />
                             </Form.Item>
                         </Col>
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Nomor KTP</span>} name='noKtpDebiturNonWira'>
+                            <Form.Item label={<span className={style.label_field}>Nomor KTP</span>} name='noKtpDebitur'>
                                 <Input disabled />
                             </Form.Item>
                         </Col>
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Nama Sesuai KTP <span style={{ color: 'red' }}>*</span></span>} name='nameDebtKtpNonWira'>
+                            <Form.Item label={<span className={style.label_field}>Nama Sesuai KTP <span style={{ color: 'red' }}>*</span></span>} name='nameDebtKtp'>
                                 <Input />
                             </Form.Item>
                         </Col>
 
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Tempat Lahir <span style={{ color: 'red' }}>*</span></span>} name='debtPlaceOfBirthNonWira'>
+                            <Form.Item label={<span className={style.label_field}>Tempat Lahir <span style={{ color: 'red' }}>*</span></span>} name='debtPlaceOfBirth'>
                                 <Input />
                             </Form.Item>
                         </Col>
 
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Tanggal Lahir <span style={{ color: 'red' }}>*</span></span>} name='debtDateOfBirthNonWira'>
+                            <Form.Item label={<span className={style.label_field}>Tanggal Lahir <span style={{ color: 'red' }}>*</span></span>} name='debtDateOfBirth'>
                                 <DatePicker format='DD-MM-YYYY' placeholder='DD-MM-YYYY' style={{ width: '100%' }} />
                             </Form.Item>
                         </Col>
 
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Jenis Kelamin<span style={{ color: 'red' }}>*</span></span>} name='genderOfSpouseNonWira' rules={[{ min: 1 }]}>
+                            <Form.Item label={<span className={style.label_field}>Jenis Kelamin<span style={{ color: 'red' }}>*</span></span>} name='genderOfSpouse' rules={[{ min: 1 }]}>
                                 <Radio.Group>
                                     <Radio value="L">Laki-Laki</Radio>
                                     <Radio value="P">Perempuan</Radio>
@@ -180,13 +221,13 @@ const InformasiNasabah = () => {
                         </Col>
 
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Kewarganegaraan <span style={{ color: 'red' }}>*</span></span>} name='debtNationalityNonWira'>
+                            <Form.Item label={<span className={style.label_field}>Kewarganegaraan <span style={{ color: 'red' }}>*</span></span>} name='debtNationality'>
                                 <Input />
                             </Form.Item>
                         </Col>
 
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Alamat KTP <span style={{ color: 'red' }}>*</span></span>} name='debtAddressNonWira'>
+                            <Form.Item label={<span className={style.label_field}>Alamat KTP <span style={{ color: 'red' }}>*</span></span>} name='debtAddress'>
                                 <TextArea
                                     showCount
                                     maxLength={50}
@@ -196,7 +237,7 @@ const InformasiNasabah = () => {
                         </Col>
 
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>RT/RW KTP <span style={{ color: 'red' }}>*</span></span>} name='debtRTRWNonWira'>
+                            <Form.Item label={<span className={style.label_field}>RT/RW KTP <span style={{ color: 'red' }}>*</span></span>} name='debtRTRW'>
                                 <Row gutter={8} align="middle">
                                     <Col xs={12}><Input placeholder="RT" /></Col>
                                     {/* <Col xs={1} style={{ textAlign: 'center' }}>/</Col> */}
@@ -205,29 +246,29 @@ const InformasiNasabah = () => {
                             </Form.Item>
                         </Col>
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Kode Pos KTP<span style={{ color: 'red' }}>*</span></span>} name='debtPostalCodeNonWira'>
+                            <Form.Item label={<span className={style.label_field}>Kode Pos KTP<span style={{ color: 'red' }}>*</span></span>} name='debtPostalCode'>
                                 <Select showSearch placeholder="PILIH KODE POS" />
                             </Form.Item>
                         </Col>
 
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Kelurahan KTP <span style={{ color: 'red' }}>*</span></span>} name='debtSubDistrictNonWira'>
+                            <Form.Item label={<span className={style.label_field}>Kelurahan KTP <span style={{ color: 'red' }}>*</span></span>} name='debtSubDistrict'>
                                 <Input disabled />
                             </Form.Item>
                         </Col>
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Kecamatan KTP<span style={{ color: 'red' }}>*</span></span>} name='debtDistrictNonWira'>
+                            <Form.Item label={<span className={style.label_field}>Kecamatan KTP<span style={{ color: 'red' }}>*</span></span>} name='debtDistrict'>
                                 <Input disabled />
                             </Form.Item>
                         </Col>
 
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Kab/Kota KTP <span style={{ color: 'red' }}>*</span></span>} name='debtRegencyNonWira'>
+                            <Form.Item label={<span className={style.label_field}>Kab/Kota KTP <span style={{ color: 'red' }}>*</span></span>} name='debtRegency'>
                                 <Input disabled />
                             </Form.Item>
                         </Col>
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Provinsi KTP <span style={{ color: 'red' }}>*</span></span>} name='debtProvinceNonWira'>
+                            <Form.Item label={<span className={style.label_field}>Provinsi KTP <span style={{ color: 'red' }}>*</span></span>} name='debtProvince'>
                                 <Input disabled />
                             </Form.Item>
                         </Col>
@@ -241,7 +282,7 @@ const InformasiNasabah = () => {
                                 <EyeOutlined onClick={handleViewImage} style={{ color: '#1890ff', marginLeft: 8 }} />
                             </span>
                         }
-                        name="familyCardNonWira"
+                        name="familyCard"
                     >
                         <UploadImg />
                     </Form.Item>
@@ -254,7 +295,7 @@ const InformasiNasabah = () => {
                                 Nama Gadis Ibu Kandung
                             </span>
                         }
-                        name="nameOfMotherNonWira"
+                        name="nameOfMother"
                         rules={[{ min: 1 }]}
                     >
                         <Input disabled />
@@ -279,19 +320,19 @@ const InformasiNasabah = () => {
                                     <span style={{ color: 'red' }}>*</span>
                                 </span>
                             }
-                            name="matchingMotherNameNonWira"
+                            name="matchingMotherName"
                         >
                             <Input />
                         </Form.Item>
                     </Col>
                 )}
                 <Col xs={24} md={8}>
-                    <Form.Item label={<span className={style.label_field}>Status Perkawinan</span>} name='maritalStatusNonWira'>
+                    <Form.Item label={<span className={style.label_field}>Status Perkawinan</span>} name='maritalStatus'>
                         <Select showSearch disabled />
                     </Form.Item>
                 </Col>
                 <Col xs={24} md={8}>
-                    <Form.Item label={<span className={style.label_field} style={{ fontSize: '11px', fontWeight: 'bold' }}>Dokumen Buku Nikah/Akta Perkawinan/Akta Cerai/Surat Kematian</span>} name='docMaritalNonWira'>
+                    <Form.Item label={<span className={style.label_field} style={{ fontSize: '11px', fontWeight: 'bold' }}>Dokumen Buku Nikah/Akta Perkawinan/Akta Cerai/Surat Kematian</span>} name='docMarital'>
                         <UploadImg />
                     </Form.Item>
                 </Col>
@@ -302,7 +343,7 @@ const InformasiNasabah = () => {
                                 Ada/Tidak Dokumen Akta Perjanjian Pisah Harta <span style={{ color: 'red' }}>*</span>
                             </span>
                         }
-                        name='availOfDocSeparatePropertyNonWira'
+                        name='availOfDocSeparateProperty'
                         rules={[{ min: 1 }]}
                     >
                         <Radio.Group onChange={(e) => setIsSeparateAsset(e.target.value)} value={isSeparateAsset}>
@@ -318,7 +359,7 @@ const InformasiNasabah = () => {
                                 Dokumen Akta Perjanjian Pisah Harta <span style={{ color: 'red' }}>*</span>
                             </span>
                         }
-                        name="docSeparateAssetsNonWira"
+                        name="docSeparateAssets"
                     >
                         {/* {isSeparateAsset === "1" ? (
                             <>
@@ -376,7 +417,7 @@ const InformasiNasabah = () => {
                                     <EyeOutlined onClick={handleViewImage} style={{ color: '#1890ff', marginLeft: 8 }} />
                                 </span>
                             }
-                            name="partnerIdentityDocNonWira"
+                            name="partnerIdentityDoc"
                             rules={[{ min: 1 }]}
                         >
                             <Radio.Group onChange={(e) => setIsMatchingPartnerIdentityPartner(e.target.value)}>
@@ -389,51 +430,51 @@ const InformasiNasabah = () => {
                 {isSeparateAsset === "1" && isMatchingIdentityPartner === "1" && (
                     <>
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Upload Dokumen Identitas yang sesuai <span style={{ color: 'red' }}>*</span></span>} name='uploadDocMatchingIdentityNonWira'>
+                            <Form.Item label={<span className={style.label_field}>Upload Dokumen Identitas yang sesuai <span style={{ color: 'red' }}>*</span></span>} name='uploadDocMatchingIdentity'>
                                 <UploadImg />
                             </Form.Item>
                         </Col>
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Jenis Identitas Pasangan</span>} name='spouseIdentityNonWira'>
+                            <Form.Item label={<span className={style.label_field}>Jenis Identitas Pasangan</span>} name='spouseIdentity'>
                                 <Select showSearch placeholder='PILIH JENIS IDENTITAS PASANGAN'></Select>
                             </Form.Item>
                         </Col>
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Nomor Identitas Pasangan<span style={{ color: 'red' }}>*</span></span>} name='noKtpSpouseNonWira'>
+                            <Form.Item label={<span className={style.label_field}>Nomor Identitas Pasangan<span style={{ color: 'red' }}>*</span></span>} name='noKtpSpouse'>
                                 <Input disabled />
                             </Form.Item>
                         </Col>
 
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Nama Pasangan<span style={{ color: 'red' }}>*</span></span>} name='nameOfSpouseNonWira'>
+                            <Form.Item label={<span className={style.label_field}>Nama Pasangan<span style={{ color: 'red' }}>*</span></span>} name='nameOfSpouse'>
                                 <Input />
                             </Form.Item>
                         </Col>
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Tempat Lahir Pasangan<span style={{ color: 'red' }}>*</span></span>} name='spousePlaceOfBirthNonWira'>
+                            <Form.Item label={<span className={style.label_field}>Tempat Lahir Pasangan<span style={{ color: 'red' }}>*</span></span>} name='spousePlaceOfBirth'>
                                 <Input />
                             </Form.Item>
                         </Col>
 
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Tanggal Lahir Pasangan<span style={{ color: 'red' }}>*</span></span>} name='spouseDateOfBirthNonWira'>
+                            <Form.Item label={<span className={style.label_field}>Tanggal Lahir Pasangan<span style={{ color: 'red' }}>*</span></span>} name='spouseDateOfBirth'>
                                 <DatePicker format='DD-MM-YYYY' placeholder='DD-MM-YYYY' style={{ width: '100%' }} />
                             </Form.Item>
                         </Col>
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Jenis Kelamin<span style={{ color: 'red' }}>*</span></span>} name='genderOfSpouseNonWira'>
+                            <Form.Item label={<span className={style.label_field}>Jenis Kelamin<span style={{ color: 'red' }}>*</span></span>} name='genderOfSpouse'>
                                 <Select showSearch placeholder="PILIH JENIS KELAMIN"></Select>
                             </Form.Item>
                         </Col>
                     </>
                 )}
                 <Col xs={24} md={8}>
-                    <Form.Item label={<span className={style.label_field}>Foto Wajah Debitur <span style={{ color: 'red' }}>*</span></span>} name='debiturSelfieNonWira'>
+                    <Form.Item label={<span className={style.label_field}>Foto Wajah Debitur <span style={{ color: 'red' }}>*</span></span>} name='debiturSelfie'>
                         <UploadImg />
                     </Form.Item>
                 </Col>
                 <Col xs={24} md={8}>
-                    <Form.Item label={<span className={style.label_field}>Dokumen FAPP <span style={{ color: 'red' }}>*</span></span>} name='fappDocNonWira'>
+                    <Form.Item label={<span className={style.label_field}>Dokumen FAPP <span style={{ color: 'red' }}>*</span></span>} name='fappDoc'>
                         <UploadImg />
                     </Form.Item>
                 </Col>
