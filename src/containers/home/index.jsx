@@ -4,7 +4,8 @@ import FooterBtn from '../FooterBtn';
 import { useEffect, useState } from 'react';
 import { Col, Form, Modal, Row, Input, Button } from 'antd';
 import { BiDetail } from "react-icons/bi";
-import applicationStorage from "../../utils/application_storage";
+// import applicationStorage from "../../utils/application_storage";
+import ApplicationStorage from "../../utils/application_storage";
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDetailKyc } from '../../redux/store/features/kycSlice';
 
@@ -43,6 +44,9 @@ const Home = () => {
 				source_order: source_order_desc,
 				cabang: branch_desc,
 			});
+
+			const storage = new ApplicationStorage('kyc_detail');
+			storage.value = data;
 		}
 	}, [data, loading])
 

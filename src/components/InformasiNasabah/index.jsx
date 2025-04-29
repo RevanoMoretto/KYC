@@ -5,19 +5,22 @@ import {
 } from 'antd';
 import { UploadOutlined, EyeOutlined } from '@ant-design/icons';
 import { MdOutlineFileUpload } from "react-icons/md";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import style from './style.module.less';
 import UploadImg from '../Helper/UploadImg';
 import { useDispatch, useSelector } from 'react-redux';
+import { paramJenisIdentitasPasangan, paramReasonCantShowIdentity } from '../../redux/store/features/paramSlice';
 import { fetchDetailKyc } from '../../redux/store/features/kycSlice';
+
 import moment from 'moment';
+import Storage from '../../utils/storage';
 
 
 
 const InformasiNasabah = () => {
     const [form] = Form.useForm();
     const { TextArea } = Input;
-    const [fileName, setFileName] = useState("")
+    const [maritalStatus, setMaritalStatus] = useState(null);
     const [menunjukanIdentitasRil, setMenunjukanIdentitasRil] = useState(null);
     const [ktpStatusDoc, setKtpStatusDoc] = useState(null);
     const [suitableMaidenMotherName, setSuitableMaidenMotherName] = useState(null);
@@ -29,42 +32,71 @@ const InformasiNasabah = () => {
     const isDebiturMismatch = ktpStatusDoc === "1";
     const isSpouseMismatch = isSeparateAsset === "1" && isMatchingIdentityPartner === "1";
     const dispatch = useDispatch();
-    const { data, loading } = useSelector((state) => state.kyc);
+    const kycData = new Storage('kyc_detail').value;
+    // const { data: kycData, loading: kycLoading } = useSelector((state) => state.kyc);
+    const { data: reasonsData, loading: reasonsLoading } = useSelector((state) => state.param);
+    const { data: spouseIdentityData, loading: spouseIdentityLoading } = useSelector((state) => state.param)
+    // const no_order = "2410001316";
+
+    // useEffect(() => {
+    //     dispatch(paramReasonCantShowIdentity());
+    // }, [dispatch]);
+
+    // useEffect(() => {
+    //     dispatch(paramJenisIdentitasPasangan());
+    // }, [dispatch])
 
     useEffect(() => {
-        dispatch(fetchDetailKyc());
-    }, [dispatch]);
+        dispatch(paramReasonCantShowIdentity());
+        dispatch(paramJenisIdentitasPasangan());
+        if (kycData) {
+            const personalInfo = kycData?.detail?.debitur?.personal || {};
+            const alamatDebitur = personalInfo?.alamat_debitur?.alamat_ktp || {};
+            const statusPerkawinan = personalInfo.debitur_status_perkawinan || {};
+            const spouse = personalInfo?.spouse || {};
 
-    useEffect(() => {
-        if (data && !loading) {
-            const {
-                detail,
-                // for example, let's assume you have this structure
-                applicant_type_desc,
-                source_code_desc,
-            } = data || {};
+            if (statusPerkawinan) {
+                setMaritalStatus(statusPerkawinan)
+            }
 
-            const personal = data?.detail?.debitur?.personal || {};
+
 
             form.setFieldsValue({
-                noKtpDebitur: personal.nik,
-                nameDebtKtp: personal.debitur_nama_sesuai_ktp,
-                debtPlaceOfBirth: personal.tempat_lahir,
-                debtDateOfBirth: personal.tanggal_lahir ? moment(personal.tanggal_lahir) : {},
-                genderOfSpouse: personal.jenis_kelamin,
-                debtNationality: personal.kewarganegaraan,
-                debtAddress: personal.alamat_ktp,
-                debtRTRW: personal.rtrw_ktp,
-                debtPostalCode: personal.kode_pos,
-                debtSubDistrict: personal.kelurahan_ktp,
-                debtDistrict: personal.kecamatan_ktp,
-                debtRegency: personal.kabupaten_kota_ktp,
-                debtProvince: personal.provinsi_ktp,
-                nameOfMother: personal.nama_gadis_ibu_kandung
+                noKtpDebitur: personalInfo.debitur_no_ktp,
+                nameDebtKtp: personalInfo.debitur_nama_sesuai_ktp,
+                debtPlaceOfBirth: personalInfo.debitur_tempat_lahir,
+                debtDateOfBirth: personalInfo.debitur_tanggal_lahir ? moment(personalInfo.debitur_tanggal_lahir) : null,
+                genderOfSpouse: personalInfo.debitur_jenis_kelamin,
+                debtNationality: personalInfo.debitur_nationality_desc,
+                debtAddress: alamatDebitur.alamat,
+                debtRT: alamatDebitur.rt,
+                debtRW: alamatDebitur.rw,
+                debtPostalCode: alamatDebitur.kode_pos,
+                debtSubDistrict: alamatDebitur.desc_kelurahan,
+                debtDistrict: alamatDebitur.kode_kecamatan,
+                debtRegency: alamatDebitur.kode_kab_kot,
+                debtProvince: alamatDebitur.desc_provinsi,
+                nameOfMother: personalInfo.debitur_mothers_maiden_name,
+                matchingMotherName: personalInfo.debitur_mothers_maiden_name,
+                maritalStatus: personalInfo.debitur_status_perkawinan_desc,
+                noKtpSpouse: spouse.spouse_ktp_no,
+                nameOfSpouse: spouse.ktp_name,
+                spousePlaceOfBirth: spouse.spouse_date_of_birth_place,
+                spouseDateOfBirth: spouse.spouse_date_of_birth,
+                genderOfSpouse: spouse.jenis_kelamin_pasangan,
+            });
+        } else {
+            console.warn('KYC data not found in localStorage');
+        }
+    }, [dispatch, form, kycData]);
+
+    useEffect(() => {
+        if (!reasonsLoading && reasonsData) {
+            form.setFieldsValue({
+                reasonCantShowIdentity: reasonsData?.[0]?.value || '',
             });
         }
-    }, [data, loading]);
-
+    }, [dispatch, reasonsData, reasonsLoading, form]);
 
 
     const handleViewImage = () => {
@@ -124,7 +156,13 @@ const InformasiNasabah = () => {
                 {menunjukanIdentitasRil === "1" && (
                     <Col xs={24} md={8}>
                         <Form.Item label={<span className={style.label_field}>Alasan tidak bisa menunjukan identitas asli</span>} name='reasonCantShowIdentity' rules={[{ required: true, message: 'Kolom Alasan Tidak Dapat Menunjukkan Identitas Wajib Diisi' }]}>
-                            <Select showSearch placeholder="Pilih Alasan" />
+                            <Select showSearch placeholder="Pilih Alasan">
+                                {(reasonsData?.result || []).map((item) => (
+                                    <Select.Option key={item.alasanId} value={item.alasanId}>
+                                        {item.alasanDesc}
+                                    </Select.Option>
+                                ))}
+                            </Select>
                         </Form.Item>
                     </Col>
                 )}
@@ -190,7 +228,7 @@ const InformasiNasabah = () => {
                         </Col>
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Nomor KTP</span>} name='noKtpDebitur'>
-                                <Input disabled />
+                                <Input style={{ color: 'black' }} disabled />
                             </Form.Item>
                         </Col>
                         <Col xs={24} md={8}>
@@ -237,11 +275,16 @@ const InformasiNasabah = () => {
                         </Col>
 
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>RT/RW KTP <span style={{ color: 'red' }}>*</span></span>} name='debtRTRW'>
+                            <Form.Item label={<span className={style.label_field}>RT/RW KTP <span style={{ color: 'red' }}>*</span></span>}>
                                 <Row gutter={8} align="middle">
-                                    <Col xs={12}><Input placeholder="RT" /></Col>
+                                    <Col xs={12}>
+                                        <Form.Item name="debtRT" noStyle>
+                                            <Input placeholder="RT" />
+                                        </Form.Item></Col>
                                     {/* <Col xs={1} style={{ textAlign: 'center' }}>/</Col> */}
-                                    <Col xs={12}><Input placeholder="RW" /></Col>
+                                    <Col xs={12}><Form.Item name="debtRW" noStyle>
+                                        <Input placeholder="RW" />
+                                    </Form.Item></Col>
                                 </Row>
                             </Form.Item>
                         </Col>
@@ -253,23 +296,23 @@ const InformasiNasabah = () => {
 
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Kelurahan KTP <span style={{ color: 'red' }}>*</span></span>} name='debtSubDistrict'>
-                                <Input disabled />
+                                <Input style={{ color: 'black' }} disabled />
                             </Form.Item>
                         </Col>
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Kecamatan KTP<span style={{ color: 'red' }}>*</span></span>} name='debtDistrict'>
-                                <Input disabled />
+                                <Input style={{ color: 'black' }} disabled />
                             </Form.Item>
                         </Col>
 
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Kab/Kota KTP <span style={{ color: 'red' }}>*</span></span>} name='debtRegency'>
-                                <Input disabled />
+                                <Input style={{ color: 'black' }} disabled />
                             </Form.Item>
                         </Col>
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Provinsi KTP <span style={{ color: 'red' }}>*</span></span>} name='debtProvince'>
-                                <Input disabled />
+                                <Input style={{ color: 'black' }} disabled />
                             </Form.Item>
                         </Col>
                     </>
@@ -287,30 +330,41 @@ const InformasiNasabah = () => {
                         <UploadImg />
                     </Form.Item>
                 </Col>
-
                 <Col xs={24} md={8}>
                     <Form.Item
                         label={
-                            <span className={style.label_field}>
+                            <div className={style.label_field}>
                                 Nama Gadis Ibu Kandung
-                            </span>
+                            </div>
                         }
-                        name="nameOfMother"
-                        rules={[{ min: 1 }]}
+                        required
                     >
-                        <Input disabled />
-                        <Radio.Group
-                            style={{ padding: '0 0 15px 0' }}
-                            onChange={(e) => setSuitableMaidenMotherName(e.target.value)}
-
+                        <Form.Item
+                            name="nameOfMother"
+                            noStyle
                         >
-                            <Radio value="0">Sesuai</Radio>
-                            <Radio value="1">Tidak Sesuai</Radio>
-                        </Radio.Group>
+                            <Input
+                                style={{ color: 'black' }}
+                                disabled
+                                placeholder="Nama Ibu Kandung"
+                            />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="isMatchingMotherName"
+                            noStyle
+                            rules={[{ required: true, message: 'Wajib pilih kesesuaian nama ibu kandung' }]}
+                        >
+                            <Radio.Group
+                                style={{ display: 'block', marginTop: 8 }}
+                                onChange={(e) => setSuitableMaidenMotherName(e.target.value)}
+                            >
+                                <Radio value="0">Sesuai</Radio>
+                                <Radio value="1">Tidak Sesuai</Radio>
+                            </Radio.Group>
+                        </Form.Item>
                     </Form.Item>
-
                 </Col>
-
                 {suitableMaidenMotherName === "1" && (
                     <Col xs={24} md={8}>
                         <Form.Item
@@ -328,7 +382,7 @@ const InformasiNasabah = () => {
                 )}
                 <Col xs={24} md={8}>
                     <Form.Item label={<span className={style.label_field}>Status Perkawinan</span>} name='maritalStatus'>
-                        <Select showSearch disabled />
+                        <Select className={style.customSelect} showSearch disabled />
                     </Form.Item>
                 </Col>
                 <Col xs={24} md={8}>
@@ -336,78 +390,66 @@ const InformasiNasabah = () => {
                         <UploadImg />
                     </Form.Item>
                 </Col>
-                <Col xs={24} md={8}>
-                    <Form.Item
-                        label={
-                            <span className={style.label_field}>
-                                Ada/Tidak Dokumen Akta Perjanjian Pisah Harta <span style={{ color: 'red' }}>*</span>
-                            </span>
-                        }
-                        name='availOfDocSeparateProperty'
-                        rules={[{ min: 1 }]}
-                    >
-                        <Radio.Group onChange={(e) => setIsSeparateAsset(e.target.value)} value={isSeparateAsset}>
-                            <Radio value="0">Ya</Radio>
-                            <Radio value="1">Tidak</Radio>
-                        </Radio.Group>
-                    </Form.Item>
-                </Col>
-                <Col xs={24} md={8}>
-                    <Form.Item
-                        label={
-                            <span className={style.label_field}>
-                                Dokumen Akta Perjanjian Pisah Harta <span style={{ color: 'red' }}>*</span>
-                            </span>
-                        }
-                        name="docSeparateAssets"
-                    >
-                        {/* {isSeparateAsset === "1" ? (
-                            <>
-                                <Upload disabled={isSeparateAsset === "1"}>
-                                    <Button icon={<UploadOutlined />} style={{
-                                        cursor: isSeparateAsset === "1" ? 'not-allowed' : 'pointer',
-                                        backgroundColor: isSeparateAsset === "1" ? '#f5f5f5' : undefined,
-                                        color: isSeparateAsset === "1" ? '#999' : undefined,
-                                        borderColor: isSeparateAsset === "1" ? '#d9d9d9' : undefined,
-                                    }}>Select File</Button>
-                                    <span className={style.upload_text}>{fileName || 'No file chosen'}</span>
-                                </Upload>
-                            </>
-                        ) : (
-                            <UploadImg />
-                        )} */}
-                        {isSeparateAsset === "1" ? (
-                            <Upload
-                                disabled={isSeparateAsset === "1"}
-                                className={style.upload}
+                {maritalStatus === "1" && (
+                    <>
+                        <Col xs={24} md={8}>
+                            <Form.Item
+                                label={
+                                    <span className={style.label_field}>
+                                        Ada/Tidak Dokumen Akta Perjanjian Pisah Harta <span style={{ color: 'red' }}>*</span>
+                                    </span>
+                                }
+                                name='availOfDocSeparateProperty'
+                                rules={[{ min: 1 }]}
                             >
-                                <div style={{ position: 'relative', width: '100%' }}>
-                                    <Input
-                                        readOnly
-                                        placeholder="Choose File"
-                                        className={style.input_field_readonly}
-                                        onFocus={(e) => e.target.blur()}
-                                    />
-                                    <MdOutlineFileUpload
-                                        size={20}
-                                        style={{
-                                            position: 'absolute',
-                                            top: '50%',
-                                            right: 10,
-                                            transform: 'translateY(-50%)',
-                                            color: 'rgba(115, 115, 115, 0.62)',
-                                            pointerEvents: 'none',
-                                            cursor: isSeparateAsset === "1" ? "not-allowed" : "pointer",
-                                        }}
-                                    />
-                                </div>
-                            </Upload>
-                        ) : (
-                            <UploadImg />
-                        )}
-                    </Form.Item>
-                </Col>
-
+                                <Radio.Group onChange={(e) => setIsSeparateAsset(e.target.value)} value={isSeparateAsset}>
+                                    <Radio value="0">Ya</Radio>
+                                    <Radio value="1">Tidak</Radio>
+                                </Radio.Group>
+                            </Form.Item>
+                        </Col>
+                        <Col xs={24} md={8}>
+                            <Form.Item
+                                label={
+                                    <span className={style.label_field}>
+                                        Dokumen Akta Perjanjian Pisah Harta <span style={{ color: 'red' }}>*</span>
+                                    </span>
+                                }
+                                name="docSeparateAssets"
+                            >
+                                {isSeparateAsset === "1" ? (
+                                    <Upload
+                                        disabled={isSeparateAsset === "1"}
+                                        className={style.upload}
+                                    >
+                                        <div style={{ position: 'relative', width: '100%' }}>
+                                            <Input
+                                                readOnly
+                                                placeholder="Choose File"
+                                                className={style.input_field_readonly}
+                                                onFocus={(e) => e.target.blur()}
+                                            />
+                                            <MdOutlineFileUpload
+                                                size={20}
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: '50%',
+                                                    right: 10,
+                                                    transform: 'translateY(-50%)',
+                                                    color: 'rgba(115, 115, 115, 0.62)',
+                                                    pointerEvents: 'none',
+                                                    cursor: isSeparateAsset === "1" ? "not-allowed" : "pointer",
+                                                }}
+                                            />
+                                        </div>
+                                    </Upload>
+                                ) : (
+                                    <UploadImg />
+                                )}
+                            </Form.Item>
+                        </Col>
+                    </>
+                )}
                 {isSeparateAsset === "1" && (
                     <Col xs={24} md={8}>
                         <Form.Item
@@ -436,12 +478,18 @@ const InformasiNasabah = () => {
                         </Col>
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Jenis Identitas Pasangan</span>} name='spouseIdentity'>
-                                <Select showSearch placeholder='PILIH JENIS IDENTITAS PASANGAN'></Select>
+                                <Select showSearch placeholder='PILIH JENIS IDENTITAS PASANGAN'>
+                                    {spouseIdentities.map(item => (
+                                        <Select.Option key={item.id_card} value={item.id_card}>
+                                            {item.id_card_desc}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
                             </Form.Item>
                         </Col>
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Nomor Identitas Pasangan<span style={{ color: 'red' }}>*</span></span>} name='noKtpSpouse'>
-                                <Input disabled />
+                                <Input style={{ color: 'black' }} disabled />
                             </Form.Item>
                         </Col>
 

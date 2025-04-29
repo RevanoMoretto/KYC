@@ -11,24 +11,26 @@ export const fetchDetailKyc = createAsyncThunk(
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    no_order: no_order,
-                }),
+                body: JSON.stringify({ no_order }),
             });
 
             if (!response.ok) {
                 const errorResponse = await response.json();
-                throw new Error(errorResponse.message_error || 'Failed to fetch KYC data');
+                const errorMessage = typeof errorResponse === 'object'
+                    ? errorResponse.message_error || JSON.stringify(errorResponse)
+                    : errorResponse;
+                throw new Error(errorMessage || 'Failed to fetch KYC data');
             }
 
             const data = await response.json();
             return data;
         } catch (error) {
-            console.error("Error occurred while fetching KYC data:", error);
-            return rejectWithValue(error.message);
+            console.error("Error occurred while fetching KYC data:", error.message, error);
+            return rejectWithValue(error.message || 'Unknown error');
         }
     }
 );
+
 
 
 // trigger button save

@@ -13,7 +13,7 @@ const PhotoUploadSection = ({
 }) => {
     const [visibleCount, setVisibleCount] = useState(0);
     const [files, setFiles] = useState({ first: null, second: null });
-    const maxPhotosMin1 = maxPhotos-1;
+    const maxPhotosMin1 = maxPhotos - 1;
 
     const handleAddFile = () => {
         if (visibleCount < maxPhotosMin1) {
@@ -49,17 +49,17 @@ const PhotoUploadSection = ({
     return (
         <>
             {Array.from({ length: visibleCount }).map((_, index) => (
-                // <Form.Item
-                //     key={index}
-                //     label={<span style={{ fontWeight: 'bold' }}>{titles[index]}</span>}
-                //     name={names[index]}
-                // >
-                <div style={{ marginTop:8}}>
-                    <UploadImg 
-                        name={names[index]}
-                        onChange={(info) => handleUploadChange(info, index)} />
-                </div>
-                // </Form.Item>
+                <Form.Item
+                    key={index}
+                    label={<span style={{ fontWeight: 'bold' }}>{titles[index]}</span>}
+                    name={names[index]}
+                >
+                    <div style={{ marginTop: 8 }}>
+                        <UploadImg
+                            name={names[index]}
+                            onChange={(info) => handleUploadChange(info, index)} />
+                    </div>
+                </Form.Item>
             ))}
 
             <div style={{ display: 'flex', gap: '8px', marginTop: 8 }}>
