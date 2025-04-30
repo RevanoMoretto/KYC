@@ -14,8 +14,11 @@ const Home = () => {
 	const dispatch = useDispatch();
 	const [showDetailApp, setShowDetailApp] = useState(false);
 	const { data, loading, error } = useSelector((state) => state.kyc);
+	
+	// data wira
 	const no_order = "2410001316";
-
+	// data non-wira
+	// const no_order = "2504000481";
 
 	useEffect(() => {
 		dispatch(fetchDetailKyc(no_order))
