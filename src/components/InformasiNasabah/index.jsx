@@ -34,21 +34,23 @@ const InformasiNasabah = () => {
     const dispatch = useDispatch();
     const kycData = new Storage('kyc_detail').value;
     // const { data: kycData, loading: kycLoading } = useSelector((state) => state.kyc);
-    const { data: reasonsData, loading: reasonsLoading } = useSelector((state) => state.param);
-    const { data: spouseIdentityData, loading: spouseIdentityLoading } = useSelector((state) => state.param)
+    const { data: reasonsData, loading: reasonsLoading } = useSelector((state) => state.param.reasonCantShowIdentity);
+    const { data: spouseIdentityData = [], loading: spouseIdentityLoading } = useSelector((state) => state.param.spouseIdentity);
+
+    const spouseIdentities = spouseIdentityData?.data || [];
     // const no_order = "2410001316";
-
-    // useEffect(() => {
-    //     dispatch(paramReasonCantShowIdentity());
-    // }, [dispatch]);
-
-    // useEffect(() => {
-    //     dispatch(paramJenisIdentitasPasangan());
-    // }, [dispatch])
 
     useEffect(() => {
         dispatch(paramReasonCantShowIdentity());
+    }, [dispatch]);
+
+    useEffect(() => {
         dispatch(paramJenisIdentitasPasangan());
+    }, [dispatch])
+
+    useEffect(() => {
+        // dispatch(paramReasonCantShowIdentity());
+        // dispatch(paramJenisIdentitasPasangan());
         if (kycData) {
             const personalInfo = kycData?.detail?.debitur?.personal || {};
             const alamatDebitur = personalInfo?.alamat_debitur?.alamat_ktp || {};
@@ -97,6 +99,14 @@ const InformasiNasabah = () => {
             });
         }
     }, [dispatch, reasonsData, reasonsLoading, form]);
+
+    useEffect(() => {
+        if (!spouseIdentityLoading && spouseIdentityData.length > 0) {
+            form.setFieldValue({
+                spouseIdentity: spouseIdentityData[0]?.id_card || '',
+            })
+        }
+    }, [form, spouseIdentityData, spouseIdentityLoading])
 
 
     const handleViewImage = () => {
@@ -382,16 +392,16 @@ const InformasiNasabah = () => {
                 )}
                 <Col xs={24} md={8}>
                     <Form.Item label={<span className={style.label_field}>Status Perkawinan</span>} name='maritalStatus'>
-                        <Select className={style.customSelect} showSearch disabled />
-                    </Form.Item>
-                </Col>
-                <Col xs={24} md={8}>
-                    <Form.Item label={<span className={style.label_field} style={{ fontSize: '11px', fontWeight: 'bold' }}>Dokumen Buku Nikah/Akta Perkawinan/Akta Cerai/Surat Kematian</span>} name='docMarital'>
-                        <UploadImg />
+                        <Select showSearch disabled />
                     </Form.Item>
                 </Col>
                 {maritalStatus === "1" && (
                     <>
+                        <Col xs={24} md={8}>
+                            <Form.Item label={<span className={style.label_field} style={{ fontSize: '11px', fontWeight: 'bold' }}>Dokumen Buku Nikah/Akta Perkawinan/Akta Cerai/Surat Kematian</span>} name='docMarital'>
+                                <UploadImg />
+                            </Form.Item>
+                        </Col>
                         <Col xs={24} md={8}>
                             <Form.Item
                                 label={

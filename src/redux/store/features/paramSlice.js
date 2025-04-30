@@ -1,5 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
+const initialState = {
+    reasonCantShowIdentity: { data: [], loading: false },
+    spouseIdentity: { data: [], loading: false },
+}
+
 // Async Thunk for the GET request
 export const paramReasonCantShowIdentity = createAsyncThunk(
     'param/paramReasonCantShowIdentity',
@@ -53,26 +58,45 @@ export const paramJenisIdentitasPasangan = createAsyncThunk(
 const paramSlice = createSlice({
     name: 'param',
     initialState: {
-        data: null,
-        loading: false,
-        error: null,
+        reasonCantShowIdentity: {
+            data: null,
+            loading: false,
+            error: null,
+        },
+        spouseIdentity: {
+            data: [],
+            loading: false,
+            error: null,
+        }
     },
     reducers: {},
     extraReducers: (builder) => {
         builder
             .addCase(paramReasonCantShowIdentity.pending, (state) => {
-                state.loading = true;
-                state.error = null;  // Reset error on new request
+                state.reasonCantShowIdentity.loading = true;
+                state.reasonCantShowIdentity.error = null;
             })
             .addCase(paramReasonCantShowIdentity.fulfilled, (state, action) => {
-                state.loading = false;
-                state.data = action.payload;
-                state.error = null;  // Reset error on successful fetch
+                state.reasonCantShowIdentity.loading = false;
+                state.reasonCantShowIdentity.data = action.payload;
+                state.reasonCantShowIdentity.error = null;
             })
             .addCase(paramReasonCantShowIdentity.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.error.message || 'Failed to fetch param alasan tidak bisa menunjukan identitas asli';
-            });
+                state.reasonCantShowIdentity.loading = false;
+                state.reasonCantShowIdentity.error = action.error.message || 'Failed to fetch param alasan tidak bisa menunjukan identitas asli';
+            })
+            .addCase(paramJenisIdentitasPasangan.pending, (state) => {
+                state.spouseIdentity.loading = true;
+                state.spouseIdentity.error = null;
+            })
+            .addCase(paramJenisIdentitasPasangan.fulfilled, (state, action) => {
+                state.spouseIdentity.loading = false;
+                state.spouseIdentity.data = action.payload;
+            })
+            .addCase(paramJenisIdentitasPasangan.rejected, (state, action) => {
+                state.spouseIdentity.loading = false;
+                state.spouseIdentity.error = action.error.message;
+            });;
     }
 });
 
