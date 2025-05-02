@@ -14,6 +14,7 @@ import { fetchDetailKyc } from '../../redux/store/features/kycSlice';
 
 import moment from 'moment';
 import Storage from '../../utils/storage';
+import ImagePreview from '../Helper/PreviewImg';
 
 
 
@@ -38,7 +39,13 @@ const InformasiNasabah = () => {
     const { data: spouseIdentityData = [], loading: spouseIdentityLoading } = useSelector((state) => state.param.spouseIdentity);
 
     const spouseIdentities = spouseIdentityData?.data || [];
+    const [reasonIdentityData, setReasonIdentityData] = useState('');
+    const [typeIdentitySpouse, setTypeIdentitySpouse] = useState('');
+    const [jenisKelaminDebitur, setJenisKelaminDebitur] = useState(kycData?.detail?.debitur?.personal?.debitur_jenis_kelamin);
+    const [jenisKelaminSpouse, setJenisKelaminSpouse] = useState(kycData?.detail?.debitur?.personal?.spouse?.jenis_kelamin_pasangan);
+    const orderId = kycData?.order_id || {};
     // const no_order = "2410001316";
+
 
     useEffect(() => {
         dispatch(paramReasonCantShowIdentity());
@@ -53,7 +60,6 @@ const InformasiNasabah = () => {
             const personalInfo = kycData?.detail?.debitur?.personal || {};
             const alamatDebitur = personalInfo?.alamat_debitur?.alamat_ktp || {};
             const statusPerkawinan = personalInfo.debitur_status_perkawinan || {};
-            const spouse = personalInfo?.spouse || {};
 
             if (statusPerkawinan) {
                 setMaritalStatus(statusPerkawinan)
@@ -63,7 +69,7 @@ const InformasiNasabah = () => {
                 nameDebtKtp: personalInfo.debitur_nama_sesuai_ktp,
                 debtPlaceOfBirth: personalInfo.debitur_tempat_lahir,
                 debtDateOfBirth: personalInfo.debitur_tanggal_lahir ? moment(personalInfo.debitur_tanggal_lahir) : {},
-                genderOfSpouse: personalInfo.debitur_jenis_kelamin,
+                genderOfDebitur: jenisKelaminDebitur,
                 debtNationality: personalInfo.debitur_nationality_desc,
                 debtAddress: alamatDebitur.alamat,
                 debtRT: alamatDebitur.rt,
@@ -80,20 +86,18 @@ const InformasiNasabah = () => {
                 nameOfSpouse: spouse.spouse_ktp_name,
                 spousePlaceOfBirth: spouse.spouse_date_of_birth_place,
                 spouseDateOfBirth: spouse.spouse_date_of_birth ? moment(spouse.spouse_date_of_birth) : {},
-                genderOfSpouse: spouse.jenis_kelamin_pasangan,
+                genderOfSpouse: jenisKelaminSpouse,
             });
         } else {
             console.warn('KYC data not found in localStorage');
         }
     }, [dispatch, form, kycData]);
 
+
     useEffect(() => {
-        if (!reasonsLoading && reasonsData) {
-            form.setFieldsValue({
-                reasonCantShowIdentity: reasonsData?.[0]?.value || '',
-            });
-        }
-    }, [dispatch, reasonsData, reasonsLoading, form]);
+        const selectedReason = form.getFieldValue('reasonCantShowIdentity');
+        console.log("Selected reason:", selectedReason);
+    }, []);
 
     useEffect(() => {
         if (!spouseIdentityLoading && spouseIdentityData.length > 0) {
@@ -103,7 +107,26 @@ const InformasiNasabah = () => {
         }
     }, [form, spouseIdentityData, spouseIdentityLoading])
 
+    const handleReasonChange = (value) => {
+        setReasonIdentityData(value);
+        console.log("data", value);
+    };
 
+    const handleTypeIdentitySpouse = (value) => {
+        setTypeIdentitySpouse(value);
+        console.log("data", value);
+    }
+
+    const handleGenderOfDebitur = (e) => {
+        const selectedGender = e.target.value;
+        setJenisKelaminDebitur(selectedGender);
+        console.log("kelamin", selectedGender);
+    };
+
+    const handleGenderOfSpouse = (e) => {
+        const selectedGenderSpouse = e.target.value;
+        setJenisKelaminSpouse(selectedGenderSpouse);
+    }
     const handleViewImage = () => {
         setPreviewVisible(true);
         setImageLoaded(false);
@@ -162,9 +185,9 @@ const InformasiNasabah = () => {
                     <>
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Alasan tidak bisa menunjukan identitas asli</span>} name='reasonCantShowIdentity' rules={[{ required: true, message: 'Kolom Alasan Tidak Dapat Menunjukkan Identitas Wajib Diisi' }]}>
-                                <Select showSearch placeholder="Pilih Alasan">
+                                <Select showSearch placeholder="Pilih Alasan" onChange={handleReasonChange}>
                                     {(reasonsData?.result || []).map((item) => (
-                                        <Select.Option key={item.alasanId} value={item.alasanId}>
+                                        <Select.Option key={item.alasanId} value={String(item.alasanId)}>
                                             {item.alasanDesc}
                                         </Select.Option>
                                     ))}
@@ -174,7 +197,7 @@ const InformasiNasabah = () => {
                         <Col xs={24} md={8}>
                             <Form.Item label={
                                 <span className={style.label_field}>
-                                    Dokumen KTP Nasabah <span style={{ color: 'red' }}>*</span> <EyeOutlined onClick={handleViewImage} style={{ color: '#1890ff', marginLeft: 8 }} />
+                                    Dokumen KTP Nasabah <span style={{ color: 'red' }}>*</span> <ImagePreview order_id={orderId} doc_code="IMG001" />
                                 </span>
                             } name='debtDocKTP' rules={[{ min: 1 }]}>
                                 <Radio.Group onChange={(e) => setKtpStatusDoc(e.target.value)} disabled={true}>
@@ -271,8 +294,8 @@ const InformasiNasabah = () => {
                         </Col>
 
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Jenis Kelamin<span style={{ color: 'red' }}>*</span></span>} name='genderOfSpouse' rules={[{ min: 1 }]}>
-                                <Radio.Group>
+                            <Form.Item label={<span className={style.label_field}>Jenis Kelamin<span style={{ color: 'red' }}>*</span></span>} name='genderOfDebitur' rules={[{ min: 1 }]} >
+                                <Radio.Group onChange={handleGenderOfDebitur}>
                                     <Radio value="L">Laki-Laki</Radio>
                                     <Radio value="P">Perempuan</Radio>
                                 </Radio.Group>
@@ -499,7 +522,7 @@ const InformasiNasabah = () => {
                         </Col>
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Jenis Identitas Pasangan</span>} name='spouseIdentity'>
-                                <Select showSearch placeholder='PILIH JENIS IDENTITAS PASANGAN'>
+                                <Select showSearch placeholder='PILIH JENIS IDENTITAS PASANGAN' onChange={handleTypeIdentitySpouse}>
                                     {spouseIdentities.map(item => (
                                         <Select.Option key={item.id_card} value={item.id_card}>
                                             {item.id_card_desc}
@@ -531,8 +554,11 @@ const InformasiNasabah = () => {
                             </Form.Item>
                         </Col>
                         <Col xs={24} md={8}>
-                            <Form.Item label={<span className={style.label_field}>Jenis Kelamin<span style={{ color: 'red' }}>*</span></span>} name='genderOfSpouse'>
-                                <Select showSearch placeholder="PILIH JENIS KELAMIN"></Select>
+                            <Form.Item label={<span className={style.label_field}>Jenis Kelamin<span style={{ color: 'red' }}>*</span></span>} name='genderOfSpouse' rules={[{ min: 1 }]} >
+                                <Radio.Group onChange={handleGenderOfSpouse}>
+                                    <Radio value="L">Laki-Laki</Radio>
+                                    <Radio value="P">Perempuan</Radio>
+                                </Radio.Group>
                             </Form.Item>
                         </Col>
                     </>
