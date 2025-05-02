@@ -1,0 +1,13 @@
+.ant-input[readOnly]:hover {
+  border-color: #d9d9d9;
+}
+
+.ant-input[readOnly]:focus {
+  border-color: #d9d9d9;
+}
+
+.ant-form-item-label > label {
+  font-weight: 600;
+  font-size: 13px !important;
+  color: #384047 !important;
+}
