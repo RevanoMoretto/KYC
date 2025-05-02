@@ -1,11 +1,22 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Tabs, Typography, Input } from 'antd';
 import KnowYourCustomer from '../KnowYourCustomer';
 import classes from './style.module.less';
+import { useSelector } from 'react-redux';
+import ApplicationStorage from '../../utils/application_storage';
 
 function CollapseForm() {
   const { Title } = Typography;
   const { TextArea } = Input;
+  const [resultScreening, setResultScreening] = useState('');
+
+  useEffect(() => {
+    const storage = new ApplicationStorage('kyc_detail')
+    const kycData = storage.value;
+    if (kycData?.screening_2) {
+      setResultScreening(kycData.screening_2);
+    }
+  }, [])
 
   const items = [
     {
@@ -16,32 +27,44 @@ function CollapseForm() {
     {
       key: "2",
       label: "Tele Survey",
-      children: "Test 2"
+      children: <KnowYourCustomer />
     },
     {
       key: "3",
       label: "Silent Survey",
-      children: "Test 3"
+      children: <KnowYourCustomer />
     }
   ]
 
+  // const showItem = (items) => {
+  //   let data = []
+
+  //   items.map((e, i) => {
+  //     if (e.key == "1") {
+  //       data.push({
+  //         key: e.key,
+  //         label: e.label,
+  //         children: e.children
+  //       })
+  //     }
+  //   })
+
+  //   return items
+  //   // return data
+  // }
+
   const showItem = (items) => {
-    let data = []
-
-    items.map((e, i) => {
-      if (e.key == "1") {
-        data.push({
-          key: e.key,
-          label: e.label,
-          children: e.children
-        })
-      }
-    })
-
-    return items
-    // return data
+    switch (resultScreening) {
+      case "INSTANT APPROVAL":
+        return items.filter(item => item.key === "1");
+      case "TELE SURVEY":
+        return items.filter(item => item.key === "2");
+      case "SILENT SURVEY":
+        return items.filter(item => item.key === "3");
+      default:
+        return [];
+    }
   }
-
   return (
     <>
       <Tabs

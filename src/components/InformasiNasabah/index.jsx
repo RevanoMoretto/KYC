@@ -49,8 +49,6 @@ const InformasiNasabah = () => {
     }, [dispatch])
 
     useEffect(() => {
-        // dispatch(paramReasonCantShowIdentity());
-        // dispatch(paramJenisIdentitasPasangan());
         if (kycData) {
             const personalInfo = kycData?.detail?.debitur?.personal || {};
             const alamatDebitur = personalInfo?.alamat_debitur?.alamat_ktp || {};
@@ -60,14 +58,11 @@ const InformasiNasabah = () => {
             if (statusPerkawinan) {
                 setMaritalStatus(statusPerkawinan)
             }
-
-
-
             form.setFieldsValue({
                 noKtpDebitur: personalInfo.debitur_no_ktp,
                 nameDebtKtp: personalInfo.debitur_nama_sesuai_ktp,
                 debtPlaceOfBirth: personalInfo.debitur_tempat_lahir,
-                debtDateOfBirth: personalInfo.debitur_tanggal_lahir ? moment(personalInfo.debitur_tanggal_lahir) : null,
+                debtDateOfBirth: personalInfo.debitur_tanggal_lahir ? moment(personalInfo.debitur_tanggal_lahir) : {},
                 genderOfSpouse: personalInfo.debitur_jenis_kelamin,
                 debtNationality: personalInfo.debitur_nationality_desc,
                 debtAddress: alamatDebitur.alamat,
@@ -82,9 +77,9 @@ const InformasiNasabah = () => {
                 matchingMotherName: personalInfo.debitur_mothers_maiden_name,
                 maritalStatus: personalInfo.debitur_status_perkawinan_desc,
                 noKtpSpouse: spouse.spouse_ktp_no,
-                nameOfSpouse: spouse.ktp_name,
+                nameOfSpouse: spouse.spouse_ktp_name,
                 spousePlaceOfBirth: spouse.spouse_date_of_birth_place,
-                spouseDateOfBirth: spouse.spouse_date_of_birth,
+                spouseDateOfBirth: spouse.spouse_date_of_birth ? moment(spouse.spouse_date_of_birth) : {},
                 genderOfSpouse: spouse.jenis_kelamin_pasangan,
             });
         } else {
@@ -163,32 +158,48 @@ const InformasiNasabah = () => {
                     </Form.Item>
                 </Col>
 
-                {menunjukanIdentitasRil === "1" && (
+                {menunjukanIdentitasRil === "1" ? (
+                    <>
+                        <Col xs={24} md={8}>
+                            <Form.Item label={<span className={style.label_field}>Alasan tidak bisa menunjukan identitas asli</span>} name='reasonCantShowIdentity' rules={[{ required: true, message: 'Kolom Alasan Tidak Dapat Menunjukkan Identitas Wajib Diisi' }]}>
+                                <Select showSearch placeholder="Pilih Alasan">
+                                    {(reasonsData?.result || []).map((item) => (
+                                        <Select.Option key={item.alasanId} value={item.alasanId}>
+                                            {item.alasanDesc}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                        <Col xs={24} md={8}>
+                            <Form.Item label={
+                                <span className={style.label_field}>
+                                    Dokumen KTP Nasabah <span style={{ color: 'red' }}>*</span> <EyeOutlined onClick={handleViewImage} style={{ color: '#1890ff', marginLeft: 8 }} />
+                                </span>
+                            } name='debtDocKTP' rules={[{ min: 1 }]}>
+                                <Radio.Group onChange={(e) => setKtpStatusDoc(e.target.value)} disabled={true}>
+                                    <Radio value="0">Sesuai</Radio>
+                                    <Radio value="1">Tidak Sesuai</Radio>
+                                </Radio.Group>
+                            </Form.Item>
+                        </Col>
+                    </>
+                ) : (
                     <Col xs={24} md={8}>
-                        <Form.Item label={<span className={style.label_field}>Alasan tidak bisa menunjukan identitas asli</span>} name='reasonCantShowIdentity' rules={[{ required: true, message: 'Kolom Alasan Tidak Dapat Menunjukkan Identitas Wajib Diisi' }]}>
-                            <Select showSearch placeholder="Pilih Alasan">
-                                {(reasonsData?.result || []).map((item) => (
-                                    <Select.Option key={item.alasanId} value={item.alasanId}>
-                                        {item.alasanDesc}
-                                    </Select.Option>
-                                ))}
-                            </Select>
+                        <Form.Item label={
+                            <span className={style.label_field}>
+                                Dokumen KTP Nasabah <span style={{ color: 'red' }}>*</span> <EyeOutlined onClick={handleViewImage} style={{ color: '#1890ff', marginLeft: 8 }} />
+                            </span>
+                        } name='debtDocKTP' rules={[{ min: 1 }]}>
+                            <Radio.Group onChange={(e) => setKtpStatusDoc(e.target.value)}>
+                                <Radio value="0">Sesuai</Radio>
+                                <Radio value="1">Tidak Sesuai</Radio>
+                            </Radio.Group>
                         </Form.Item>
                     </Col>
                 )}
 
-                <Col xs={24} md={8}>
-                    <Form.Item label={
-                        <span className={style.label_field}>
-                            Dokumen KTP Nasabah <span style={{ color: 'red' }}>*</span> <EyeOutlined onClick={handleViewImage} style={{ color: '#1890ff', marginLeft: 8 }} />
-                        </span>
-                    } name='debtDocKTP' rules={[{ min: 1 }]}>
-                        <Radio.Group onChange={(e) => setKtpStatusDoc(e.target.value)}>
-                            <Radio value="0">Sesuai</Radio>
-                            <Radio value="1">Tidak Sesuai</Radio>
-                        </Radio.Group>
-                    </Form.Item>
-                </Col>
+
 
                 <Modal
                     open={previewVisible}
@@ -395,7 +406,7 @@ const InformasiNasabah = () => {
                         <Select showSearch disabled />
                     </Form.Item>
                 </Col>
-                {maritalStatus === "1" && (
+                {maritalStatus === "01" && (
                     <>
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field} style={{ fontSize: '11px', fontWeight: 'bold' }}>Dokumen Buku Nikah/Akta Perkawinan/Akta Cerai/Surat Kematian</span>} name='docMarital'>
