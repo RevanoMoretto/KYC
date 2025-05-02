@@ -1,5 +1,11 @@
+import LINK from '../../../constants/urls'
+
+const {
+    MASTER_IDENTITY_REASON,
+} = LINK;
+
 export default async function getAlasan(req, res) {
-    const url = "http://master-alasan-identitas-java-uat.apps.ocp4dev.muf.co.id/alasan";
+    const url = MASTER_IDENTITY_REASON + "/alasan";
     try {
         const response = await fetch(url, {
             method: "GET",

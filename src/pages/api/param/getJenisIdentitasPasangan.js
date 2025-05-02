@@ -1,5 +1,11 @@
+import LINK from '../../../constants/urls'
+
+const {
+    MASTER_IDENTITY_TYPE,
+} = LINK;
+
 export default async function getJenisIdentitasPasangan(req, res) {
-    const url = "http://master-jenis-identitas-java-uat.apps.ocp4dev.muf.co.id/getIdentityCardTypeSpouse";
+    const url = MASTER_IDENTITY_TYPE + "/getIdentityCardTypeSpouse";
     try {
         const response = await fetch(url, {
             method: "GET",
