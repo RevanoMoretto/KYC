@@ -129,11 +129,6 @@ const InformasiNasabah = () => {
         const selectedGenderSpouse = e.target.value;
         setJenisKelaminSpouse(selectedGenderSpouse);
     }
-    const handleViewImage = () => {
-        setPreviewVisible(true);
-        setImageLoaded(false);
-        setPreviewUrl('');
-    };
 
     console.log("data lokasi : ", locationKyc)
     return (
@@ -226,7 +221,7 @@ const InformasiNasabah = () => {
                     <Col xs={24} md={8}>
                         <Form.Item label={
                             <span className={style.label_field}>
-                                Dokumen KTP Nasabah <span style={{ color: 'red' }}>*</span> <EyeOutlined onClick={handleViewImage} style={{ color: '#1890ff', marginLeft: 8 }} />
+                                Dokumen KTP Nasabah <span style={{ color: 'red' }}>*</span> <ImagePreview order_id={orderId} doc_code="IMG003" />
                             </span>
                         } name='debtDocKTP' rules={[{ min: 1 }]}>
                             <Radio.Group onChange={(e) => setKtpStatusDoc(e.target.value)}>
@@ -381,7 +376,7 @@ const InformasiNasabah = () => {
                         label={
                             <span className={style.label_field}>
                                 Kartu Keluarga<span style={{ color: 'red' }}>*</span>
-                                <EyeOutlined onClick={handleViewImage} style={{ color: '#1890ff', marginLeft: 8 }} />
+                                <ImagePreview order_id={orderId} doc_code="IMG002" />
                             </span>
                         }
                         name="familyCard"
@@ -515,7 +510,7 @@ const InformasiNasabah = () => {
                             label={
                                 <span className={style.label_field}>
                                     Dokumen Identitas Pasangan <span style={{ color: 'red' }}>*</span>
-                                    <EyeOutlined onClick={handleViewImage} style={{ color: '#1890ff', marginLeft: 8 }} />
+                                    <ImagePreview order_id={orderId} doc_code="IMG004" />
                                 </span>
                             }
                             name="partnerIdentityDoc"
