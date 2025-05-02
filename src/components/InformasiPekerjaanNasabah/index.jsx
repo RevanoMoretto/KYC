@@ -63,7 +63,8 @@ const InformasiPekerjaanNasabah = () => {
 		form.setFieldsValue(debitur);
 	}, [debitur, form]);
 
-    console.log(occupation_type_desc )
+    console.log(dataKyc?.flag_order_type )
+    console.log(dataKyc?.flag_data_format )
 
     return (
         <Form
@@ -86,13 +87,12 @@ const InformasiPekerjaanNasabah = () => {
                         />
                     </Form.Item>
                 </Col>
-
-                {/* occupation_type_code 01 == non wira */}
-                {occupation_type_code == "01"? (
                 <Col md={8} xs={24}>
                     <Form.Item 
-                        
-                        label="Jenis Tempat Bekerja"
+                        /* occupation_type_code 01 == non wira */
+                        label={ occupation_type_code == "02"
+									? "Jenis Tempat Usaha"
+									: "Jenis Tempat Bekerja"}
                         name="debitur_company_type_desc"
                     >
                         <Select
@@ -100,23 +100,11 @@ const InformasiPekerjaanNasabah = () => {
                         />
                     </Form.Item>
                 </Col>
-                ) : (
-                <Col md={8} xs={24}>
-                    <Form.Item 
-                        
-                        label="Jenis Tempat Usaha"
-                        name="debitur_company_type_desc"
-                    >
-                        <Select
-                            disabled={true}
-                        />
-                    </Form.Item>
-                </Col>
-                )}
-                {occupation_type_code == "01"? (
                 <Col md={8} xs={24}>
                     <Form.Item
-                        label="Nama Tempat Bekerja"
+                        label={ occupation_type_code == "02"?
+                            "Nama Tempat Usaha"
+                            : "Nama Tempat Bekerja"}
                         name="debitur_name_of_workplace"
                     >
                         <Input
@@ -125,18 +113,6 @@ const InformasiPekerjaanNasabah = () => {
                         />
                     </Form.Item>
                 </Col>
-                ) : (
-                <Col md={8} xs={24}>
-                    <Form.Item
-                    label="Nama Tempat Usaha"
-                    name="debitur_name_of_workplace"
-                >
-                    <Input readOnly />
-                    </Form.Item>
-                </Col>
-                )}
-            </Row>
-            <Row gutter={12}>
                 {occupation_type_code == "01"? (
                 <Col md={8} xs={24}>
                     <Form.Item 
@@ -158,46 +134,42 @@ const InformasiPekerjaanNasabah = () => {
 					</Form.Item>
                 </Col>
                 )}
-                {occupation_type_code == "01"? (
-                <Col md={8} xs={24}>
+               {dataKyc?.flag_order_type === "D" && dataKyc?.flag_data_format === "1" && (
+                <>
+                {occupation_type_code === "01" ? (
+                    <Col md={8} xs={24}>
                     <Form.Item 
                         label="Sektor Tempat Bekerja"
-                        name=""
+                        name="debitur_sector_bekerja"
                     >
-                        <Select
-                        />
+                        <Select />
                     </Form.Item>
-                </Col>
+                    </Col>
                 ) : (
                     <Col md={8} xs={24}>
                     <Form.Item 
                         label="Sektor Tempat Usaha"
-                        name=""
+                        name="debitur_sector_usaha"
                     >
-                        <Select
-                        />
+                        <Select />
                     </Form.Item>
-                </Col>
+                    </Col>
                 )}
                 <Col md={8} xs={24}>
                     <Form.Item 
-                        label="Sektor Ekonomi"
-                        name="debitur_economic_sector_three_desc"
+                    label="Sektor Ekonomi"
+                    name="debitur_economic_sector_three_desc"
                     >
-                        <Select
-                            suffixIcon={<SearchOutlined />}
-                        />
+                    <Select disabled={true} />
                     </Form.Item>
                 </Col>
-            </Row>
-            <Row gutter={12}>
                 <Col md={8} xs={24}>
                     <Form.Item 
                         label="Sektor Ekonomi (Level 2)"
                         name="debitur_economic_sector_two_desc"
                     >
                         <Select
-                        // suffixIcon={<CaretDownOutlined />}
+                            disabled={true}
                         />
                     </Form.Item>
                 </Col>
@@ -207,10 +179,12 @@ const InformasiPekerjaanNasabah = () => {
                         name="debitur_economic_sector_one_desc"
                     >
                         <Select
-                        // suffixIcon={<CaretDownOutlined />}
+                            disabled={true}
                         />
                     </Form.Item>
                 </Col>
+                    </>
+                )}
                 <Col md={8} xs={24}>
                     <Form.Item 
                         label="Jarak Tempat Bekerja Nasabah ke MUF"
@@ -220,8 +194,6 @@ const InformasiPekerjaanNasabah = () => {
                         <Input addonAfter={<span style={{ fontWeight: 'bold' }}>KM</span>} />
                     </Form.Item>
                 </Col>
-            </Row>
-            <Row gutter={12}>
                 <Col md={8} xs={24}>
                     <Form.Item label='Dokumen Bukti Bekerja (ID Card, Slip Gaji, Suket Kerja/Pengangkatan, dll)'>
                         <UploadImg/>
@@ -250,6 +222,13 @@ const InformasiPekerjaanNasabah = () => {
                         />
                     </Form.Item>
                 </Col>
+                {occupation_type_code == "02" &&(
+                <Col md={8} xs={24}>
+                      <Form.Item label='Foto Selfie PIC Survey di Tempat Usaha'>
+                        <UploadImg />
+                      </Form.Item>
+                </Col>
+                )}
             </Row>
         </Form>
     )

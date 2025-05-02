@@ -49,17 +49,17 @@ const PhotoUploadSection = ({
     return (
         <>
             {Array.from({ length: visibleCount }).map((_, index) => (
-                <Form.Item
-                    key={index}
-                    label={<span style={{ fontWeight: 'bold' }}>{titles[index]}</span>}
-                    name={names[index]}
-                >
+                // <Form.Item
+                //     key={index}
+                //     label={<span style={{ fontWeight: 'bold' }}>{titles[index]}</span>}
+                //     name={names[index]}
+                // >
                     <div style={{ marginTop: 8 }}>
                         <UploadImg
                             name={names[index]}
                             onChange={(info) => handleUploadChange(info, index)} />
                     </div>
-                </Form.Item>
+                // </Form.Item>
             ))}
 
             <div style={{ display: 'flex', gap: '8px', marginTop: 8 }}>
