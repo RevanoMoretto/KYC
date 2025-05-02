@@ -43,6 +43,7 @@ const InformasiNasabah = () => {
     const [typeIdentitySpouse, setTypeIdentitySpouse] = useState('');
     const [jenisKelaminDebitur, setJenisKelaminDebitur] = useState(kycData?.detail?.debitur?.personal?.debitur_jenis_kelamin);
     const [jenisKelaminSpouse, setJenisKelaminSpouse] = useState(kycData?.detail?.debitur?.personal?.spouse?.jenis_kelamin_pasangan);
+    const [locationKyc, setLocationKyc] = useState([]);
     const orderId = kycData?.order_id || {};
     // const no_order = "2410001316";
 
@@ -133,6 +134,8 @@ const InformasiNasabah = () => {
         setImageLoaded(false);
         setPreviewUrl('');
     };
+
+    console.log("data lokasi : ", locationKyc)
     return (
         <Form layout="vertical" form={form}>
             <Row gutter={16}>
@@ -153,12 +156,23 @@ const InformasiNasabah = () => {
                             },
                         ]}
                     >
-                        <Checkbox.Group>
+                        <Checkbox.Group
+                            onChange={(checkedValues) => {
+                                setLocationKyc(checkedValues);
+                            }}
+                        >
                             <Checkbox value='0'>Rumah</Checkbox>
                             <Checkbox value='1'>Tempat Usaha</Checkbox>
                         </Checkbox.Group>
                     </Form.Item>
                 </Col>
+                {locationKyc.length > 0 && (
+                    <div style={{ marginTop: 12 }}>
+                        <strong>Lokasi dipilih:</strong>{' '}
+                        {locationKyc.includes('0') && 'Rumah '}
+                        {locationKyc.includes('1') && 'Tempat Usaha'}
+                    </div>
+                )}
                 <Col xs={24} md={8}>
                     <Form.Item
                         label={
