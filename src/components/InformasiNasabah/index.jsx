@@ -60,6 +60,7 @@ const InformasiNasabah = () => {
             const personalInfo = kycData?.detail?.debitur?.personal || {};
             const alamatDebitur = personalInfo?.alamat_debitur?.alamat_ktp || {};
             const statusPerkawinan = personalInfo.debitur_status_perkawinan || {};
+            const spouse = personalInfo?.spouse || {};
 
             if (statusPerkawinan) {
                 setMaritalStatus(statusPerkawinan)
