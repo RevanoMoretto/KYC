@@ -4,7 +4,7 @@ import { Button, Col, Row } from 'antd';
 import { FaShareSquare } from "react-icons/fa";
 import { LuFileX2 } from "react-icons/lu";
 import { useDispatch } from 'react-redux';
-import { saveKyc } from '../../redux/store/features/kycSlice';
+import { saveKyc } from '../../redux/slice/kyc/kycSlice';
 
 
 function FooterBtn() {

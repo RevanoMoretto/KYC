@@ -1,22 +1,14 @@
-import React, { useEffect, useState } from 'react'
 import { Tabs, Typography, Input } from 'antd';
 import KnowYourCustomer from '../KnowYourCustomer';
 import classes from './style.module.less';
 import { useSelector } from 'react-redux';
-import ApplicationStorage from '../../utils/application_storage';
 
 function CollapseForm() {
   const { Title } = Typography;
   const { TextArea } = Input;
-  const [resultScreening, setResultScreening] = useState('');
 
-  useEffect(() => {
-    const storage = new ApplicationStorage('kyc_detail')
-    const kycData = storage.value;
-    if (kycData?.screening_2) {
-      setResultScreening(kycData.screening_2);
-    }
-  }, [])
+  const { data } = useSelector((state) => state.kyc.fetchData)
+  const { screening_2 } = data || {}
 
   const items = [
     {
@@ -36,25 +28,8 @@ function CollapseForm() {
     }
   ]
 
-  // const showItem = (items) => {
-  //   let data = []
-
-  //   items.map((e, i) => {
-  //     if (e.key == "1") {
-  //       data.push({
-  //         key: e.key,
-  //         label: e.label,
-  //         children: e.children
-  //       })
-  //     }
-  //   })
-
-  //   return items
-  //   // return data
-  // }
-
   const showItem = (items) => {
-    switch (resultScreening) {
+    switch (screening_2) {
       case "INSTANT APPROVAL":
         return items.filter(item => item.key === "1");
       case "TELE SURVEY":
@@ -62,18 +37,21 @@ function CollapseForm() {
       case "SILENT SURVEY":
         return items.filter(item => item.key === "3");
       default:
+        console.error(`Screening 2 tidak dikenal!, result screening_2: ${screening_2}`)
         return [];
     }
   }
+
   return (
     <>
-      <Tabs
-        defaultActiveKey="1"
-        type="card"
-        items={showItem(items)}
-        onChange={() => { console.log("abdu") }}
-        tabBarGutter={6}
-      />
+      {screening_2 && (
+        <Tabs
+          defaultActiveKey="1"
+          type="card"
+          items={showItem(items)}
+          tabBarGutter={6}
+        />
+      )}
       <div>
         <Title
           level={5}
@@ -84,8 +62,6 @@ function CollapseForm() {
         <TextArea
           showCount
           maxLength={250}
-          onChange={() => { console.log("eunha") }}
-          placeholder="You can text anything here :))"
           className={classes.text_area}
           style={{ resize: "none" }}
         />

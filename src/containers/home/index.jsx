@@ -4,54 +4,59 @@ import FooterBtn from '../FooterBtn';
 import { useEffect, useState } from 'react';
 import { Col, Form, Modal, Row, Input, Button } from 'antd';
 import { BiDetail } from "react-icons/bi";
-// import applicationStorage from "../../utils/application_storage";
-import ApplicationStorage from "../../utils/application_storage";
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchDetailKyc } from '../../redux/store/features/kycSlice';
+import KycDetailStorage from '../../utils/kyc_detail_storage';
+import { fetchDetailKyc } from '../../redux/slice/kyc/action/fetch_detail_kyc';
+import notify from '../../utils/notification';
 
 const Home = () => {
 	const [form] = Form.useForm()
 	const dispatch = useDispatch();
 	const [showDetailApp, setShowDetailApp] = useState(false);
-	const { data, loading, error } = useSelector((state) => state.kyc);
+	const { data, loading } = useSelector((state) => state.kyc.fetchData);
 
 	// data wira
 	// const no_order = "2410001316";
 	// data non-wira
 	const no_order = "2504000481";
 
-	useEffect(() => {
-		dispatch(fetchDetailKyc(no_order))
+	useEffect(async () => {
+    // clear kyc_detail once refresh browser
+    KycDetailStorage.value = {}
+
+		try {
+      await dispatch(fetchDetailKyc(no_order)).unwrap()
+    } catch (err) {
+      console.error("Error terjadi pada saat fetching detail data kyc, message: ", err);
+      notify("error", "Error", `An error occurred from ${err.url}`)
+    }
 	}, [dispatch])
 
-
 	useEffect(() => {
-		if (data && !loading) {
-			const {
-				detail,
-				source_order_desc,
-				applicant_type_desc,
-				branch_desc,
-				application_id,
-				application_date
-			} = data || {}
+    if (!data) return
 
-			const { debitur, source_code_desc } = detail || {}
-			const { personal } = debitur || {}
-			const { debitur_nama_sesuai_ktp } = personal || {}
-			form.setFieldsValue({
-				nomor_aplikasi: application_id,
-				nama_ktp: debitur_nama_sesuai_ktp,
-				tipe_nasabah: applicant_type_desc,
-				tgl_aplikasi: application_date,
-				source_order: source_order_desc,
-				cabang: branch_desc,
-			});
+    const {
+      detail,
+      source_order_desc,
+      applicant_type_desc,
+      branch_desc,
+      application_id,
+      application_date
+    } = data || {}
 
-			const storage = new ApplicationStorage('kyc_detail');
-			storage.value = data;
-		}
-	}, [data, loading])
+    const { debitur, source_code_desc } = detail || {}
+    const { personal } = debitur || {}
+    const { debitur_nama_sesuai_ktp } = personal || {}
+
+    form.setFieldsValue({
+      nomor_aplikasi: application_id,
+      nama_ktp: debitur_nama_sesuai_ktp,
+      tipe_nasabah: applicant_type_desc,
+      tgl_aplikasi: application_date,
+      source_order: source_order_desc,
+      cabang: branch_desc,
+    });
+	}, [data])
 
 	return (
 		<>

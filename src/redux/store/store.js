@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-import kycReducer from './features/kycSlice';
+import kycReducer from '../slice/kyc/kycSlice';
 import paramReducer from './features/paramSlice';
 import imageReducer from './features/imageSlice';
 
 export const store = configureStore({
-    reducer: {
-        kyc: kycReducer,
-        param: paramReducer,
-        image: imageReducer,
-    }
+  reducer: {
+    kyc: kycReducer,
+    param: paramReducer,
+    image: imageReducer,
+  }
 })

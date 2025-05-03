@@ -10,7 +10,7 @@ import style from './style.module.less';
 import UploadImg from '../Helper/UploadImg';
 import { useDispatch, useSelector } from 'react-redux';
 import { paramJenisIdentitasPasangan, paramReasonCantShowIdentity } from '../../redux/store/features/paramSlice';
-import { fetchDetailKyc } from '../../redux/store/features/kycSlice';
+import { fetchDetailKyc } from '../../redux/slice/kyc/kycSlice';
 
 import moment from 'moment';
 import Storage from '../../utils/storage';

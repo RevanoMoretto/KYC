@@ -30,7 +30,16 @@ export default async function getDetailKyc(req, res) {
       }
     )
 
-    if (!response.ok) throw new Error(response.statusText)
+    if (!response.ok) {
+      const errorBody = await response.json();
+      const errorDetail = {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorBody,
+      };
+
+      throw errorDetail;
+    }
 
     const data = await response.json()
 
@@ -40,10 +49,13 @@ export default async function getDetailKyc(req, res) {
       url: url,
       method: "POST",
       payload: payload,
-      message_error: error
+      message_error: error?.body || error?.message || "Unknown error",
+      status: error?.status || 500,
+      statusText: error?.statusText || "Internal Server Error",
     }
-    console.error(`Error terjadi pada saat fetching data from /api/detail/getDetailKyc, info: `, infoError)
 
-    res.status(500).json(infoError)
+    console.error(`Error from nextjs server, telah terjadi fetching data error dari ${url}, info: `, infoError)
+
+    res.status(error?.status || 500).json(infoError)
   }
 };
