@@ -30,18 +30,17 @@ export default async function getDetailKyc(req, res) {
       }
     )
 
+    const data = await response.json()
+
     if (!response.ok) {
-      const errorBody = await response.json();
       const errorDetail = {
         status: response.status,
         statusText: response.statusText,
-        body: errorBody,
+        body: data,
       };
 
       throw errorDetail;
     }
-
-    const data = await response.json()
 
     res.status(200).json(data)
   } catch (error) {

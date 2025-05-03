@@ -1,11 +1,48 @@
 import { Col, Form, Input, Row, Select } from 'antd'
 import classes from './style.module.less';
-import React from 'react'
+import KycDetailStorage from '../../utils/kyc_detail_storage';
+import { useEffect } from 'react';
+import { updateKycDetailEmergencyContact } from '../../utils/general';
 
 function EmergencyContact() {
   const [form] = Form.useForm();
-
   const { TextArea } = Input;
+
+  const kyc_detail = KycDetailStorage.data || {}
+  const { detail } = kyc_detail || {}
+  const { kyc } = detail || {}
+  const { emergency_contact } = kyc || {}
+  const { 
+    nama_emergency_contact,
+    nohp1_emergency_contact,
+    nohp2_emergency_contact,
+    rt_emergency_contact,
+    rw_emergency_contact,
+    alamat_emergency_contact,
+    hubungan_emergency_contact_desc,
+    kodepos_emergency_contact_code,
+    kelurahan_emergency_contact_desc,
+    kecamatan_emergency_contact_desc,
+    kabkota_emergency_contact_desc,
+    provinsi_emergency_contact_desc
+  } = emergency_contact || {}
+
+  useEffect(() => {
+    form.setFieldsValue({
+      nama_ec: nama_emergency_contact,
+      nomor_hp_1_ec: nohp1_emergency_contact,
+      nomor_hp_2_ec: nohp2_emergency_contact,
+      rt_ec: rt_emergency_contact,
+      rw_ec: rw_emergency_contact,
+      alamat_ec: alamat_emergency_contact,
+      hub_debitur_ec: hubungan_emergency_contact_desc,
+      kode_pos_ec: kodepos_emergency_contact_code,
+      kelurahan_ec: kelurahan_emergency_contact_desc,
+      kecamatan_ec: kecamatan_emergency_contact_desc,
+      kab_kota_ec: kabkota_emergency_contact_desc,
+      provinsi_ec: provinsi_emergency_contact_desc
+    })
+  }, [])
 
   const options = [
     { label: 'Eunha', value: 'Eunha' },
@@ -14,8 +51,57 @@ function EmergencyContact() {
     { label: 'Umji', value: 'Umji' },
   ];
 
+  const handleChangeNamaEc = (e) => {
+    const value = e.target.value
+
+    updateKycDetailEmergencyContact({ nama_emergency_contact: value })
+  }
+
+  const handleChangeNomorHp1 = (e) => {
+    const value = e.target.value
+
+    updateKycDetailEmergencyContact({ nohp1_emergency_contact: value })
+  }
+
+  const handleChangeNomorHp2 = (e) => {
+    const value = e.target.value
+
+    updateKycDetailEmergencyContact({ nohp2_emergency_contact: value })
+  }
+
+  const handleChangeAlamat = (e) => {
+    const value = e.target.value
+
+    updateKycDetailEmergencyContact({ alamat_emergency_contact: value })
+  }
+
+  const handleChangeRt = (e) => {
+    const value = e.target.value
+
+    updateKycDetailEmergencyContact({ rt_emergency_contact: value })
+  }
+
+  const handleChangeRw = (e) => {
+    const value = e.target.value
+
+    updateKycDetailEmergencyContact({ rw_emergency_contact: value })
+  }
+
   const handleChangeHubDeb = (e) => {
-    console.log("result change hub deb: ", e)
+    // if user reset value from clear icon in select field
+    if(e == undefined){
+      updateKycDetailEmergencyContact({ 
+        hubungan_emergency_contact_code: "",
+        hubungan_emergency_contact_desc: "" 
+      })
+
+      return
+    }
+
+    updateKycDetailEmergencyContact({ 
+      hubungan_emergency_contact_code: "200",
+      hubungan_emergency_contact_desc: e 
+    })
   }
 
   const handleChangeKodePos = (e) => {
@@ -37,6 +123,7 @@ function EmergencyContact() {
             >
             <Input 
               className={classes.input_field_ec}
+              onChange={handleChangeNamaEc}
             />
           </Form.Item>
 
@@ -47,6 +134,7 @@ function EmergencyContact() {
           >
             <Input 
               className={classes.input_field_ec}
+              onChange={handleChangeNomorHp1}
             />
           </Form.Item>
 
@@ -57,6 +145,7 @@ function EmergencyContact() {
           >
             <Input 
               className={classes.input_field_ec}
+              onChange={handleChangeNomorHp2}
             />
           </Form.Item>
         </Col>
@@ -72,7 +161,7 @@ function EmergencyContact() {
                 <TextArea
                   showCount
                   maxLength={250}
-                  onChange={() => { console.log("eunha")} }
+                  onChange={handleChangeAlamat}
                   className={classes.text_area}
                   style={{ resize: "none" }}
                 />
@@ -89,6 +178,7 @@ function EmergencyContact() {
               >
                 <Input 
                   className={classes.input_field_ec}
+                  onChange={handleChangeRt}
                 />
               </Form.Item>
             </Col>
@@ -101,6 +191,7 @@ function EmergencyContact() {
               >
                 <Input 
                   className={classes.input_field_ec}
+                  onChange={handleChangeRw}
                 />
               </Form.Item>
             </Col>

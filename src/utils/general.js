@@ -1,3 +1,5 @@
+import KycDetailStorage from "./kyc_detail_storage";
+
 export const convertBase64 = (file) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -6,3 +8,24 @@ export const convertBase64 = (file) => {
     reader.onerror = (error) => reject(error);
   });
 };
+
+export const updateKycDetailEmergencyContact = (values) => {
+  const kyc_detail = KycDetailStorage.data || {}
+  const { detail } = kyc_detail || {}
+  const { kyc } = detail || {}
+  const { emergency_contact } = kyc || {}
+
+  KycDetailStorage.value = {
+    ...kyc_detail,
+    detail: {
+      ...detail,
+      kyc: {
+        ...kyc,
+        emergency_contact: {
+          ...emergency_contact,
+          ...values
+        }
+      }
+    }
+  }
+}
