@@ -1,20 +1,27 @@
 import LINK from '../../../constants/urls'
 
 const {
-  MASTER_RELATION_CUST,
+  MASTER_ZIP_CODE,
 } = LINK;
 
-export default async function getRelationWithNasabah(req, res) {
-  const url = MASTER_RELATION_CUST + "/getRelationWithNasabah"
+export default async function getDataByZipcode(req, res) {
+  const { value } = req.body
+
+  const url = MASTER_ZIP_CODE + "/getDataByZipcode"
+
+  const payload = {
+    value: value
+  }
 
   try {
     const response = await fetch(
       url,
       {
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
-        }
+        },
+        body: JSON.stringify(payload)
       }
     )
 
@@ -34,8 +41,8 @@ export default async function getRelationWithNasabah(req, res) {
   } catch (error) {
     const infoError = {
       url: url,
-      method: "GET",
-      payload: "",
+      method: "POST",
+      payload: payload,
       message_error: error?.body || error?.message || "Unknown error",
       status: error?.status || 500,
       statusText: error?.statusText || "Internal Server Error",
