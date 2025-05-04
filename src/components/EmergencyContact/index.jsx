@@ -2,7 +2,7 @@ import { Col, Form, Input, Row, Select, Spin } from 'antd'
 import classes from './style.module.less';
 import KycDetailStorage from '../../utils/kyc_detail_storage';
 import { useEffect, useState } from 'react';
-import { updateKycDetailEmergencyContact } from '../../utils/general';
+import { onlyInputNumber, updateKycDetailEmergencyContact } from '../../utils/general';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchRelationWithNasabah } from '../../redux/slice/kyc/action/fetch_hubungan_debitur';
 import { fetchKodePos } from '../../redux/slice/kyc/action/fetch_kode_pos';
@@ -349,6 +349,8 @@ function EmergencyContact() {
                     onChange={handleChangeKodePos}
                     onSearch={handleSearchKodePos}
                     className={classes.select_field_ec}
+                    onKeyDown={onlyInputNumber}
+                    type="tel"
                     dropdownRender={menu => (
                       <>
                         {isSearching && !loadingKodePos && (

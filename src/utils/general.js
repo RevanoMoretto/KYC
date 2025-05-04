@@ -29,3 +29,12 @@ export const updateKycDetailEmergencyContact = (values) => {
     }
   }
 }
+
+export const onlyInputNumber = (value) => {
+  if (
+    !/[0-9]/.test(value.key) &&
+    !["Backspace", "ArrowLeft", "ArrowRight", "Delete"].includes(value.key)
+  ) {
+    value.preventDefault()
+  }
+}

@@ -1,13 +1,7 @@
-import LINK from '../../../constants/urls'
-
-const {
-  MASTER_ZIP_CODE,
-} = LINK;
-
 export default async function getDataByZipcode(req, res) {
   const { value } = req.body
 
-  const url = MASTER_ZIP_CODE + "/getDataByZipcode"
+  const url = process.env.MASTER_ZIP_CODE + "/getDataByZipcode"
 
   const payload = {
     value: value
