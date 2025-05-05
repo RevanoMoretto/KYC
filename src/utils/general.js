@@ -38,3 +38,12 @@ export const inputNumberOnly = (value) => {
     value.preventDefault()
   }
 }
+
+export const inputAlphabetAndSpaceOnly = (value) => {
+  if (
+    !/^[A-Za-z\s]+$/.test(value.key) &&
+    !["Backspace", "ArrowLeft", "ArrowRight", "Delete"].includes(value.key)
+  ) {
+    value.preventDefault()
+  }
+}

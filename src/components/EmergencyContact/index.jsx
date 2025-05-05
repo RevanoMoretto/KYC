@@ -2,7 +2,7 @@ import { Col, Form, Input, Row, Select, Spin } from 'antd'
 import classes from './style.module.less';
 import KycDetailStorage from '../../utils/kyc_detail_storage';
 import { useEffect, useState } from 'react';
-import { inputNumberOnly, updateKycDetailEmergencyContact } from '../../utils/general';
+import { inputAlphabetAndSpaceOnly, inputNumberOnly, updateKycDetailEmergencyContact } from '../../utils/general';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchRelationWithNasabah } from '../../redux/slice/kyc/action/fetch_hubungan_debitur';
 import { fetchKodePos } from '../../redux/slice/kyc/action/fetch_kode_pos';
@@ -115,6 +115,11 @@ function EmergencyContact() {
 
     updateKycDetailEmergencyContact({ rw_emergency_contact: value })
   }
+
+  const onPasteClearInput = (e) => {
+    e.preventDefault()
+    form.setFieldsValue({ nama_ec: "" })
+  };
 
   const handleChangeHubDeb = (e) => {
     // if user reset value using clear icon in select field
@@ -236,6 +241,8 @@ function EmergencyContact() {
                   <Input 
                     className={classes.input_field_ec}
                     onChange={handleChangeNamaEc}
+                    onKeyDown={inputAlphabetAndSpaceOnly}
+                    onPaste={onPasteClearInput}
                   />
                 </Form.Item>
 
@@ -247,6 +254,9 @@ function EmergencyContact() {
                   <Input 
                     className={classes.input_field_ec}
                     onChange={handleChangeNomorHp1}
+                    onKeyDown={inputNumberOnly}
+                    type="tel"
+                    maxLength={13}
                   />
                 </Form.Item>
 
@@ -258,6 +268,9 @@ function EmergencyContact() {
                   <Input 
                     className={classes.input_field_ec}
                     onChange={handleChangeNomorHp2}
+                    onKeyDown={inputNumberOnly}
+                    type="tel"
+                    maxLength={13}
                   />
                 </Form.Item>
               </Col>
@@ -272,7 +285,7 @@ function EmergencyContact() {
                     >
                       <TextArea
                         showCount
-                        maxLength={250}
+                        maxLength={50}
                         onChange={handleChangeAlamat}
                         className={classes.text_area}
                         style={{ resize: "none" }}
@@ -291,6 +304,9 @@ function EmergencyContact() {
                       <Input 
                         className={classes.input_field_ec}
                         onChange={handleChangeRt}
+                        onKeyDown={inputNumberOnly}
+                        type="tel"
+                        maxLength={3}
                       />
                     </Form.Item>
                   </Col>
@@ -304,6 +320,9 @@ function EmergencyContact() {
                       <Input 
                         className={classes.input_field_ec}
                         onChange={handleChangeRw}
+                        onKeyDown={inputNumberOnly}
+                        type="tel"
+                        maxLength={3}
                       />
                     </Form.Item>
                   </Col>
