@@ -38,6 +38,9 @@ export const inputNumberOnly = (value) => {
     value.preventDefault()
   }
 }
+export const toInputUppercase = (e) => {
+	return (e.target.value = ("" + e.target.value).toUpperCase());
+};
 
 export const inputAlphabetAndSpaceOnly = (value) => {
   if (

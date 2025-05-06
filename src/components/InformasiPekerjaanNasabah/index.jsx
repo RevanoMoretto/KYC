@@ -21,33 +21,8 @@ const InformasiPekerjaanNasabah = () => {
     // }
     const dataKyc = new Storage("kyc_detail").value;
     const occupation = dataKyc?.detail?.debitur?.personal?.occupation || {};
-    // const occupation = personal|| {};
+
     const {debitur, occupation_type_code, occupation_type_desc} = occupation || {}
-    // const {
-    //     debitur_company_type_code,
-    //     debitur_company_type_desc,
-    //     debitur_economic_sector_one_desc,
-    //     debitur_economic_sector_one_id,
-    //     debitur_economic_sector_three_desc,
-    //     debitur_economic_sector_three_id,
-    //     debitur_economic_sector_two_desc,
-    //     debitur_economic_sector_two_id,
-    //     debitur_employee_status_desc,
-    //     debitur_employee_status_id,
-    //     debitur_join_income_flag,
-    //     debitur_location_desc,
-    //     debitur_location_id,
-    //     debitur_name_of_workplace,
-    //     debitur_occupation_desc,
-    //     debitur_occupation_id,
-    //     debitur_position_desc,
-    //     debitur_position_id,
-    //     debitur_total_pegawai,
-    //     debitur_total_working_time_month,
-    //     debitur_total_working_time_year,
-    //     debitur_work_fields_desc,
-    //     debitur_work_fields_id,
-    // } = debitur || {};
 
     const [form] = Form.useForm();
     const [photoFiles, setPhotoFiles] = useState({});
@@ -62,9 +37,6 @@ const InformasiPekerjaanNasabah = () => {
     useEffect(() => {
 		form.setFieldsValue(debitur);
 	}, [debitur, form]);
-
-    console.log(dataKyc?.flag_order_type )
-    console.log(dataKyc?.flag_data_format )
 
     return (
         <Form
@@ -134,7 +106,7 @@ const InformasiPekerjaanNasabah = () => {
 					</Form.Item>
                 </Col>
                 )}
-               {dataKyc?.flag_order_type === "D" && dataKyc?.flag_data_format === "1" && (
+               {dataKyc?.flag_order_type === "D" && (
                 <>
                 {occupation_type_code === "01" ? (
                     <Col md={8} xs={24}>

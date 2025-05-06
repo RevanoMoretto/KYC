@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import KycDetailStorage from '../../utils/kyc_detail_storage';
 import { fetchDetailKyc } from '../../redux/slice/kyc/action/fetch_detail_kyc';
 import notify from '../../utils/notification';
+import detailApplication from '../../pages/api/detail/detailApplication';
 
 const Home = () => {
 	const [form] = Form.useForm()
@@ -57,6 +58,8 @@ const Home = () => {
 			cabang: branch_desc,
 		});
 	}, [data])
+
+	const detailApp = detailApplication();
 
 	return (
 		<>

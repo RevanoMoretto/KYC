@@ -25,5 +25,6 @@ const URLS = {
     GET_DETAIL_TELES: "http://detail-tele-survey-java-uat.apps.ocp4dev.muf.co.id",
     GET_DETAIL_KYC: "http://detail-kyc-java-uat.apps.ocp4dev.muf.co.id",
     GET_IMAGES: "http://get-image-base64-java-uat.apps.ocp4dev.muf.co.id",
+    DETAIL_APPLICATION: process.env.NEXT_PUBLIC_DETAIL_APPLICATION
 }
 export default URLS;
