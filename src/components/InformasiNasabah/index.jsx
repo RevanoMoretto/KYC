@@ -4,11 +4,11 @@ import {
     DatePicker, Image, Spin, Modal
 } from 'antd';
 import { MdOutlineFileUpload } from "react-icons/md";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import style from './style.module.less';
 import UploadImg from '../Helper/UploadImg';
 import { useDispatch, useSelector } from 'react-redux';
-import { inputNumberOnly, updateKycDetailEmergencyContact, inputAlphabetAndSpaceOnly, regexAddress } from '../../utils/general';
+import { inputNumberOnly, updateKycDetailInformasiNasabah, inputAlphabetAndSpaceOnly, regexAddress } from '../../utils/general';
 import { fetchReasonIdentity } from '../../redux/slice/kyc/action/fetch_reason_identity'
 import moment from 'moment';
 import ImagePreview from '../Helper/PreviewImg';
@@ -36,13 +36,98 @@ const InformasiNasabah = () => {
     const dispatch = useDispatch();
 
     const kycData = KycDetailStorage.data || {}
+    const { detail } = kycData || {}
+    const { kyc } = detail || {}
+    const { informasi_nasabah } = kyc || {}
+    const {
+        lokasi_proses_kyc_code,
+        lokasi_proses_kyc_desc,
+        foto_selfie_pic_kyc,
+        flag_identitas_asli_code,
+        flag_identitas_asli_desc,
+        alasan_identitas_code,
+        alasan_identitas_desc,
+        flag_dokumen_ktp_deb_code,
+        flag_dokumen_ktp_deb_desc,
+        foto_ktp_sesuai,
+        nama_ktp_nasabah,
+        tempat_lahir_ktp_nasabah,
+        tgl_lahir_ktp_nasabah,
+        gender_ktp_nasabah,
+        kewarganegaraan_ktp_nasabah_code,
+        kewarganegaraan_ktp_nasabah_desc,
+        alamat_ktp_nasabah,
+        rt_ktp_nasabah,
+        rw_ktp_nasabah,
+        kode_pos_ktp_nasabah,
+        kelurahan_ktp_nasabah_code,
+        kelurahan_ktp_nasabah_desc,
+        kecamatan_ktp_nasabah_code,
+        kecamatan_ktp_nasabah_desc,
+        kabkota_ktp_nasabah_code,
+        kabkota_ktp_nasabah_desc,
+        provinsi_ktp_nasabah_code,
+        provinsi_ktp_nasabah_desc,
+        nomor_ktp_sesuai,
+        nama_ktp_sesuai,
+        tempat_lahir_ktp_sesuai,
+        tgl_lahir_ktp_sesuai,
+        kewarganegaraan_ktp_code_sesuai,
+        kewarganegaraan_ktp_desc_sesuai,
+        alamat_ktp_sesuai,
+        rt_ktp_sesuai,
+        rw_ktp_sesuai,
+        kode_pos_ktp_sesuai_code,
+        kelurahan_ktp_sesuai_code,
+        kelurahan_ktp_sesuai_desc,
+        kecamatan_ktp_sesuai_code,
+        kecamatan_ktp_sesuai_desc,
+        kabkota_ktp_sesuai_code,
+        kabkota_ktp_sesuai_desc,
+        provinsi_ktp_sesuai_code,
+        provinsi_ktp_sesuai_desc,
+        flag_nama_ibu_code,
+        flag_nama_ibu_desc,
+        nama_ibu_kandung_sesuai,
+        foto_kk_sesuai,
+        status_kawin_code,
+        status_kawin_desc,
+        dokumen_buku_nikah,
+        flag_pisah_harta_code,
+        flag_pisah_harta_desc,
+        dokumen_pisah_harta,
+        flag_spouse_dok_identitas_code,
+        flag_spouse_dok_identitas_desc,
+        dokumen_identitas_spouse,
+        spouse_jenis_identitas_code,
+        spouse_jenis_identitas_desc,
+        spouse_nama_ktp,
+        spouse_tempat_lahir,
+        spouse_tgl_lahir,
+        spouse_jenis_identitas_code_sesuai,
+        spouse_jenis_identitas_desc_sesuai,
+        spouse_nomor_identitas,
+        spouse_nama_sesuai,
+        spouse_tempat_lahir_sesuai,
+        spouse_tgl_lahir_sesuai,
+        spouse_gender,
+        spouse_nohp,
+        foto_wajah,
+        dokumen_npwp,
+        dokumen_hasil_npwp,
+
+    } = informasi_nasabah || {}
+    console.log('Detail KYC Structure:', {
+        detail,
+        kyc,
+        informasi_nasabah
+    });
     const { data: reasonsData, loading: reasonsLoading } = useSelector((state) => state.kyc.fetchReason);
     const { data: spouseIdentityData = [], loading: spouseIdentityLoading } = useSelector((state) => state.kyc.typeIdentitySpouse);
     const { data: postalCodeData, loading: postalCodeLoading } = useSelector((state) => state.kyc.kodePos);
 
     console.log(spouseIdentityData);
     const spouseIdentities = spouseIdentityData?.data || [];
-    console.log("response : ", spouseIdentities)
     const [reasonIdentityData, setReasonIdentityData] = useState('');
     const [typeIdentitySpouse, setTypeIdentitySpouse] = useState('');
     const [jenisKelaminDebitur, setJenisKelaminDebitur] = useState(kycData?.detail?.debitur?.personal?.debitur_jenis_kelamin);
@@ -55,6 +140,7 @@ const InformasiNasabah = () => {
 
     const [kodePosOptions, setKodePosOptions] = useState([]);
     const [isSearching, setIsSearching] = useState(false)
+    const hasAutofilled = useRef(false);
 
     useEffect(() => {
         dispatch(fetchReasonIdentity());
@@ -64,7 +150,9 @@ const InformasiNasabah = () => {
         dispatch(fetchTypeSpouse());
     }, [dispatch])
 
+    // autofill first render
     useEffect(() => {
+        if (!kycData || hasAutofilled.current) return
         if (kycData) {
             const personalInfo = kycData?.detail?.debitur?.personal || {};
             const alamatDebitur = personalInfo?.alamat_debitur?.alamat_ktp || {};
@@ -101,8 +189,10 @@ const InformasiNasabah = () => {
         } else {
             console.warn('KYC data not found in localStorage');
         }
+        hasAutofilled.current = true
     }, [dispatch, form, kycData]);
 
+    // put result api postal code to state
     useEffect(() => {
         if (postalCodeData) {
             const result = postalCodeData.data.map((e) => ({
@@ -115,61 +205,61 @@ const InformasiNasabah = () => {
     }, [postalCodeData])
 
     const handleChangeKodePos = (e) => {
-        // if user reset value using clear icon in select field
+        console.log("changed postal code", e)
         if (e == undefined) {
-            updateKycDetailEmergencyContact({
-                kodepos_emergency_contact_code: "",
-                kelurahan_emergency_contact_code: "",
-                kelurahan_emergency_contact_desc: "",
-                kecamatan_emergency_contact_code: "",
-                kecamatan_emergency_contact_desc: "",
-                kabkota_emergency_contact_code: "",
-                kabkota_emergency_contact_desc: "",
-                provinsi_emergency_contact_code: "",
-                provinsi_emergency_contact_desc: ""
+            const cleared = updateKycDetailInformasiNasabah({
+                kode_pos_ktp_nasabah: "",
+                kelurahan_ktp_nasabah_code: "",
+                kelurahan_ktp_nasabah_desc: "",
+                kecamatan_ktp_nasabah_code: "",
+                kecamatan_ktp_nasabah_desc: "",
+                kabkota_ktp_nasabah_code: "",
+                kabkota_ktp_nasabah_desc: "",
+                provinsi_ktp_nasabah_code: "",
+                provinsi_ktp_nasabah_desc: "",
             })
 
             form.setFieldsValue({
-                kode_pos_ec: undefined,
-                kelurahan_ec: "",
-                kecamatan_ec: "",
-                kab_kota_ec: "",
-                provinsi_ec: ""
+                debtPostalCode: undefined,
+                debtSubDistrict: "",
+                debtDistrict: "",
+                debtRegency: "",
+                debtProvince: ""
             })
-
             return
         }
 
-        // for disabled auto focus when select an option
-        setTimeout(() => {
-            document.activeElement?.blur();
-        }, 0)
+        setTimeout(() => document.activeElement?.blur(), 0)
 
         const [zip, kel] = e.split("-")
         const selected = postalCodeData.data.find(
-            (e) => e.zip_code === zip && e.kelurahan_id === kel
+            (item) => item.zip_code === zip && item.kelurahan_id === kel
         )
 
-        updateKycDetailEmergencyContact({
-            kodepos_emergency_contact_code: selected.zip_code,
-            kelurahan_emergency_contact_code: selected.kelurahan_id,
-            kelurahan_emergency_contact_desc: selected.kelurahan_name,
-            kecamatan_emergency_contact_code: selected.kecamatan_id,
-            kecamatan_emergency_contact_desc: selected.kecamatan_name,
-            kabkota_emergency_contact_code: selected.kab_kot_id,
-            kabkota_emergency_contact_desc: selected.kab_kot_name,
-            provinsi_emergency_contact_code: selected.provinsi_id,
-            provinsi_emergency_contact_desc: selected.provinsi_name
+        const updated = updateKycDetailInformasiNasabah({
+            kode_pos_ktp_nasabah: selected.zip_code,
+            kelurahan_ktp_nasabah_code: selected.kelurahan_id,
+            kelurahan_ktp_nasabah_desc: selected.kelurahan_name,
+            kecamatan_ktp_nasabah_code: selected.kecamatan_id,
+            kecamatan_ktp_nasabah_desc: selected.kecamatan_name,
+            kabkota_ktp_nasabah_code: selected.kab_kot_id,
+            kabkota_ktp_nasabah_desc: selected.kab_kot_name,
+            provinsi_ktp_nasabah_code: selected.provinsi_id,
+            provinsi_ktp_nasabah_desc: selected.provinsi_name
         })
+        console.log("storage : ", updated)
 
         form.setFieldsValue({
-            kode_pos_ec: `${selected.zip_code} | ${selected.kelurahan_name}`,
-            kelurahan_ec: selected.kelurahan_name,
-            kecamatan_ec: selected.kecamatan_name,
-            kab_kota_ec: selected.kab_kot_name,
-            provinsi_ec: selected.provinsi_name
+            debtPostalCode: `${selected.zip_code} | ${selected.kelurahan_name}`,
+            debtSubDistrict: selected.kelurahan_name,
+            debtDistrict: selected.kecamatan_name,
+            debtRegency: selected.kab_kot_name,
+            debtProvince: selected.provinsi_name
         })
+
     }
+
+
 
     const handleSearchKodePos = (e) => {
         if (e.length >= 3 && e.length <= 5) {
@@ -422,14 +512,6 @@ const InformasiNasabah = () => {
                         </Col>
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Kode Pos KTP<span style={{ color: 'red' }}>*</span></span>} name='debtPostalCode'>
-                                {/* <Select showSearch placeholder="PILIH KODE POS">
-                                    {(postalCodeDataData?.result || []).map((item) => (
-                                        <Select.Option key={item.alasanId} value={String(item.alasanId)}>
-                                            {item.alasanDesc}
-                                        </Select.Option>
-                                    ))}
-                                </Select> */}
-
                                 <Select
                                     showSearch
                                     allowClear
@@ -652,7 +734,7 @@ const InformasiNasabah = () => {
                         </Col>
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Jenis Identitas Pasangan</span>} name='spouseIdentity'>
-                                <Select showSearch placeholder='PILIH JENIS IDENTITAS PASANGAN' onChange={handleTypeIdentitySpouse}>
+                                <Select allowClear showSearch placeholder='PILIH JENIS IDENTITAS PASANGAN' onChange={handleTypeIdentitySpouse}>
                                     {spouseIdentities.map(item => (
                                         <Select.Option key={item.id_card} value={item.id_card}>
                                             {item.id_card_desc}

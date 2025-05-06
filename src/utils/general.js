@@ -9,6 +9,54 @@ export const convertBase64 = (file) => {
   });
 };
 
+export const updateKycDetailInformasiNasabah = (values) => {
+  const kycData = JSON.parse(localStorage.getItem('kyc_detail')) || {};
+  const detail = kycData.detail || {};
+  const kyc = detail.kyc || {};
+  const informasi_nasabah = kyc.informasi_nasabah || {};
+
+  const updatedInformasiNasabah = {
+    ...informasi_nasabah,
+    ...values
+  };
+
+  const updatedKycData = {
+    ...kycData,
+    detail: {
+      ...detail,
+      kyc: {
+        ...kyc,
+        informasi_nasabah: updatedInformasiNasabah
+      }
+    }
+  };
+
+  localStorage.setItem('kyc_detail', JSON.stringify(updatedKycData));
+
+  return updatedInformasiNasabah;
+}
+
+// export const updateKycDetailInformasiNasabah = (values) => {
+//   const kycData = KycDetailStorage?.data || {}
+//   const detail = kycData.detail || {}
+//   const kyc = detail.kyc || {}
+//   const informasi_nasabah = kyc.informasi_nasabah || {}
+
+//   KycDetailStorage.value = {
+//     ...kycData,
+//     detail: {
+//       ...detail,
+//       kyc: {
+//         ...kyc,
+//         informasi_nasabah: {
+//           ...informasi_nasabah,
+//           ...values
+//         }
+//       }
+//     }
+//   }
+// }
+
 export const updateKycDetailEmergencyContact = (values) => {
   const kyc_detail = KycDetailStorage.data || {}
   const { detail } = kyc_detail || {}
@@ -39,7 +87,7 @@ export const inputNumberOnly = (value) => {
   }
 }
 export const toInputUppercase = (e) => {
-	return (e.target.value = ("" + e.target.value).toUpperCase());
+  return (e.target.value = ("" + e.target.value).toUpperCase());
 };
 
 export const inputAlphabetAndSpaceOnly = (value) => {
