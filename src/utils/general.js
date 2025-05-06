@@ -39,6 +39,7 @@ export const inputNumberOnly = (value) => {
   }
 }
 
+<<<<<<< Updated upstream
 export const inputAlphabetAndSpaceOnly = (value) => {
   if (
     !/^[A-Za-z\s]+$/.test(value.key) &&
@@ -47,3 +48,30 @@ export const inputAlphabetAndSpaceOnly = (value) => {
     value.preventDefault()
   }
 }
+=======
+export const allowedLetterOnly = (value) => {
+  const key = value.key;
+  const isLetter = /^[a-zA-Z]$/.test(value.key);
+  const isControlKey = ['Backspace', 'ArrowLeft', 'ArrowRight', 'Delete', 'Tab',].includes(key)
+  if (!isLetter && !isControlKey) {
+    value.preventDefault();
+  }
+}
+
+export const regexAddress = (value) => {
+  const key = value.key;
+  const isControlKey = [
+    'Backspace',
+    'ArrowLeft',
+    'ArrowRight',
+    'Delete',
+    'Tab',
+  ].includes(key);
+
+  if (isControlKey) return;
+  const isValid = /^[a-zA-Z0-9\s,.\-\/()#]$/.test(key);
+  if (!isValid) {
+    value.preventDefault();
+  }
+};
+>>>>>>> Stashed changes

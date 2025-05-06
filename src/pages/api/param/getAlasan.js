@@ -1,11 +1,6 @@
-import LINK from '../../../constants/urls'
-
-const {
-    MASTER_IDENTITY_REASON,
-} = LINK;
 
 export default async function getAlasan(req, res) {
-    const url = MASTER_IDENTITY_REASON + "/alasan";
+    const url = process.env.MASTER_IDENTITY_REASON + "/alasan";
     try {
         const response = await fetch(url, {
             method: "GET",

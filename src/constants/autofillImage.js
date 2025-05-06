@@ -1,0 +1,10 @@
+const DOC_CODE = {
+    KTP: 'IMG001',
+    KTP_PASANGAN: 'IMG001',
+    KARTU_KELUARGA: 'IMG003',
+    STNK: 'IMG004',
+    BPKB: 'IMG005',
+    NPWP_NASABAH: 'IMG006'
+}
+
+export default DOC_CODE;

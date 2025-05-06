@@ -1,11 +1,9 @@
 import LINK from '../../../constants/urls'
 
-const {
-    MASTER_IDENTITY_TYPE,
-} = LINK;
 
 export default async function getJenisIdentitasPasangan(req, res) {
-    const url = MASTER_IDENTITY_TYPE + "/getIdentityCardTypeSpouse";
+    res.setHeader('Cache-Control', 'no-store');
+    const url = process.env.MASTER_IDENTITY_TYPE + "/getIdentityCardTypeSpouse";
     try {
         const response = await fetch(url, {
             method: "GET",

@@ -1,6 +1,6 @@
 import Link from '../../../constants/urls';
 
-const { GET_IMAGES } = Link;
+// const { GET_IMAGES } = Link;
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     }
 
     const { order_id, doc_code } = req.body;
-    const url = GET_IMAGES + "/getImageByDocName";
+    const url = process.env.GET_IMAGES + "/getImageByDocName";
 
     console.log("API received request:", { order_id, doc_code });
 

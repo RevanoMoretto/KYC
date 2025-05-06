@@ -3,18 +3,19 @@ import {
     Radio, Select, Input,
     DatePicker, Image, Spin, Modal
 } from 'antd';
-import { UploadOutlined, EyeOutlined } from '@ant-design/icons';
 import { MdOutlineFileUpload } from "react-icons/md";
 import React, { useState, useEffect } from 'react';
 import style from './style.module.less';
 import UploadImg from '../Helper/UploadImg';
 import { useDispatch, useSelector } from 'react-redux';
-import { paramJenisIdentitasPasangan, paramReasonCantShowIdentity } from '../../redux/store/features/paramSlice';
-import { fetchDetailKyc } from '../../redux/slice/kyc/kycSlice';
-
+import { inputNumberOnly, updateKycDetailEmergencyContact, allowedLetterOnly, regexAddress } from '../../utils/general';
+import { fetchReasonIdentity } from '../../redux/slice/kyc/action/fetch_reason_identity'
 import moment from 'moment';
-import Storage from '../../utils/storage';
 import ImagePreview from '../Helper/PreviewImg';
+import KycDetailStorage from '../../utils/kyc_detail_storage';
+import DocCode from '../../constants/autofillImage'
+import { fetchTypeSpouse } from '../../redux/slice/kyc/action/fetch_type_gender_spouse';
+import { fetchKodePos } from '../../redux/slice/kyc/action/fetch_kode_pos';
 
 
 
@@ -33,27 +34,34 @@ const InformasiNasabah = () => {
     const isDebiturMismatch = ktpStatusDoc === "1";
     const isSpouseMismatch = isSeparateAsset === "1" && isMatchingIdentityPartner === "1";
     const dispatch = useDispatch();
-    const kycData = new Storage('kyc_detail').value;
-    // const { data: kycData, loading: kycLoading } = useSelector((state) => state.kyc);
-    const { data: reasonsData, loading: reasonsLoading } = useSelector((state) => state.param.reasonCantShowIdentity);
-    const { data: spouseIdentityData = [], loading: spouseIdentityLoading } = useSelector((state) => state.param.spouseIdentity);
 
+    const kycData = KycDetailStorage.data || {}
+    const { data: reasonsData, loading: reasonsLoading } = useSelector((state) => state.kyc.fetchReason);
+    const { data: spouseIdentityData = [], loading: spouseIdentityLoading } = useSelector((state) => state.kyc.typeIdentitySpouse);
+    const { data: postalCodeData, loading: postalCodeLoading } = useSelector((state) => state.kyc.kodePos);
+
+    console.log(spouseIdentityData);
     const spouseIdentities = spouseIdentityData?.data || [];
+    console.log("response : ", spouseIdentities)
     const [reasonIdentityData, setReasonIdentityData] = useState('');
     const [typeIdentitySpouse, setTypeIdentitySpouse] = useState('');
     const [jenisKelaminDebitur, setJenisKelaminDebitur] = useState(kycData?.detail?.debitur?.personal?.debitur_jenis_kelamin);
     const [jenisKelaminSpouse, setJenisKelaminSpouse] = useState(kycData?.detail?.debitur?.personal?.spouse?.jenis_kelamin_pasangan);
     const [locationKyc, setLocationKyc] = useState([]);
     const orderId = kycData?.order_id || {};
-    // const no_order = "2410001316";
+    const {
+        KTP, KTP_PASANGAN, KARTU_KELUARGA, NPWP_NASABAH
+    } = DocCode || {}
 
+    const [kodePosOptions, setKodePosOptions] = useState([]);
+    const [isSearching, setIsSearching] = useState(false)
 
     useEffect(() => {
-        dispatch(paramReasonCantShowIdentity());
+        dispatch(fetchReasonIdentity());
     }, [dispatch]);
 
     useEffect(() => {
-        dispatch(paramJenisIdentitasPasangan());
+        dispatch(fetchTypeSpouse());
     }, [dispatch])
 
     useEffect(() => {
@@ -95,19 +103,89 @@ const InformasiNasabah = () => {
         }
     }, [dispatch, form, kycData]);
 
+    useEffect(() => {
+        if (postalCodeData) {
+            const result = postalCodeData.data.map((e) => ({
+                label: `${e.zip_code} | ${e.kelurahan_name}`,
+                value: `${e.zip_code}-${e.kelurahan_id}`,
+            }))
+
+            setKodePosOptions(result)
+        }
+    }, [postalCodeData])
+
+    const handleChangeKodePos = (e) => {
+        // if user reset value using clear icon in select field
+        if (e == undefined) {
+            updateKycDetailEmergencyContact({
+                kodepos_emergency_contact_code: "",
+                kelurahan_emergency_contact_code: "",
+                kelurahan_emergency_contact_desc: "",
+                kecamatan_emergency_contact_code: "",
+                kecamatan_emergency_contact_desc: "",
+                kabkota_emergency_contact_code: "",
+                kabkota_emergency_contact_desc: "",
+                provinsi_emergency_contact_code: "",
+                provinsi_emergency_contact_desc: ""
+            })
+
+            form.setFieldsValue({
+                kode_pos_ec: undefined,
+                kelurahan_ec: "",
+                kecamatan_ec: "",
+                kab_kota_ec: "",
+                provinsi_ec: ""
+            })
+
+            return
+        }
+
+        // for disabled auto focus when select an option
+        setTimeout(() => {
+            document.activeElement?.blur();
+        }, 0)
+
+        const [zip, kel] = e.split("-")
+        const selected = postalCodeData.data.find(
+            (e) => e.zip_code === zip && e.kelurahan_id === kel
+        )
+
+        updateKycDetailEmergencyContact({
+            kodepos_emergency_contact_code: selected.zip_code,
+            kelurahan_emergency_contact_code: selected.kelurahan_id,
+            kelurahan_emergency_contact_desc: selected.kelurahan_name,
+            kecamatan_emergency_contact_code: selected.kecamatan_id,
+            kecamatan_emergency_contact_desc: selected.kecamatan_name,
+            kabkota_emergency_contact_code: selected.kab_kot_id,
+            kabkota_emergency_contact_desc: selected.kab_kot_name,
+            provinsi_emergency_contact_code: selected.provinsi_id,
+            provinsi_emergency_contact_desc: selected.provinsi_name
+        })
+
+        form.setFieldsValue({
+            kode_pos_ec: `${selected.zip_code} | ${selected.kelurahan_name}`,
+            kelurahan_ec: selected.kelurahan_name,
+            kecamatan_ec: selected.kecamatan_name,
+            kab_kota_ec: selected.kab_kot_name,
+            provinsi_ec: selected.provinsi_name
+        })
+    }
+
+    const handleSearchKodePos = (e) => {
+        if (e.length >= 3 && e.length <= 5) {
+            dispatch(fetchKodePos(e))
+            setIsSearching(false)
+        } else {
+            setKodePosOptions([])
+        }
+    }
+
 
     useEffect(() => {
         const selectedReason = form.getFieldValue('reasonCantShowIdentity');
         console.log("Selected reason:", selectedReason);
     }, []);
 
-    useEffect(() => {
-        if (!spouseIdentityLoading && spouseIdentityData.length > 0) {
-            form.setFieldValue({
-                spouseIdentity: spouseIdentityData[0]?.id_card || '',
-            })
-        }
-    }, [form, spouseIdentityData, spouseIdentityLoading])
 
     const handleReasonChange = (value) => {
         setReasonIdentityData(value);
@@ -129,8 +207,6 @@ const InformasiNasabah = () => {
         const selectedGenderSpouse = e.target.value;
         setJenisKelaminSpouse(selectedGenderSpouse);
     }
-
-    console.log("data lokasi : ", locationKyc)
     return (
         <Form layout="vertical" form={form}>
             <Row gutter={16}>
@@ -160,14 +236,15 @@ const InformasiNasabah = () => {
                             <Checkbox value='1'>Tempat Usaha</Checkbox>
                         </Checkbox.Group>
                     </Form.Item>
+                    {/* {locationKyc.length > 0 && (
+                        <div style={{ marginTop: 12 }}>
+                            <strong>Lokasi dipilih:</strong>{' '}
+                            {locationKyc.includes('0') && 'Rumah '}
+                            {locationKyc.includes('1') && 'Tempat Usaha'}
+                        </div>
+                    )} */}
                 </Col>
-                {locationKyc.length > 0 && (
-                    <div style={{ marginTop: 12 }}>
-                        <strong>Lokasi dipilih:</strong>{' '}
-                        {locationKyc.includes('0') && 'Rumah '}
-                        {locationKyc.includes('1') && 'Tempat Usaha'}
-                    </div>
-                )}
+
                 <Col xs={24} md={8}>
                     <Form.Item
                         label={
@@ -207,7 +284,7 @@ const InformasiNasabah = () => {
                         <Col xs={24} md={8}>
                             <Form.Item label={
                                 <span className={style.label_field}>
-                                    Dokumen KTP Nasabah <span style={{ color: 'red' }}>*</span> <ImagePreview order_id={orderId} doc_code="IMG001" />
+                                    Dokumen KTP Nasabah <span style={{ color: 'red' }}>*</span> <ImagePreview order_id={orderId} doc_code={KTP} />
                                 </span>
                             } name='debtDocKTP' rules={[{ min: 1 }]}>
                                 <Radio.Group onChange={(e) => setKtpStatusDoc(e.target.value)} disabled={true}>
@@ -221,7 +298,7 @@ const InformasiNasabah = () => {
                     <Col xs={24} md={8}>
                         <Form.Item label={
                             <span className={style.label_field}>
-                                Dokumen KTP Nasabah <span style={{ color: 'red' }}>*</span> <ImagePreview order_id={orderId} doc_code="IMG003" />
+                                Dokumen KTP Nasabah <span style={{ color: 'red' }}>*</span> <ImagePreview order_id={orderId} doc_code={KTP} />
                             </span>
                         } name='debtDocKTP' rules={[{ min: 1 }]}>
                             <Radio.Group onChange={(e) => setKtpStatusDoc(e.target.value)}>
@@ -287,13 +364,13 @@ const InformasiNasabah = () => {
                         </Col>
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Nama Sesuai KTP <span style={{ color: 'red' }}>*</span></span>} name='nameDebtKtp'>
-                                <Input />
+                                <Input onKeyDown={allowedLetterOnly} />
                             </Form.Item>
                         </Col>
 
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Tempat Lahir <span style={{ color: 'red' }}>*</span></span>} name='debtPlaceOfBirth'>
-                                <Input />
+                                <Input onKeyDown={allowedLetterOnly} />
                             </Form.Item>
                         </Col>
 
@@ -314,7 +391,7 @@ const InformasiNasabah = () => {
 
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Kewarganegaraan <span style={{ color: 'red' }}>*</span></span>} name='debtNationality'>
-                                <Input />
+                                <Input onKeyDown={allowedLetterOnly} />
                             </Form.Item>
                         </Col>
 
@@ -324,6 +401,7 @@ const InformasiNasabah = () => {
                                     showCount
                                     maxLength={50}
                                     className={style.text_area}
+                                    onKeyDown={regexAddress}
                                 />
                             </Form.Item>
                         </Col>
@@ -333,18 +411,60 @@ const InformasiNasabah = () => {
                                 <Row gutter={8} align="middle">
                                     <Col xs={12}>
                                         <Form.Item name="debtRT" noStyle>
-                                            <Input placeholder="RT" />
+                                            <Input placeholder="RT" onKeyDown={inputNumberOnly} />
                                         </Form.Item></Col>
                                     {/* <Col xs={1} style={{ textAlign: 'center' }}>/</Col> */}
                                     <Col xs={12}><Form.Item name="debtRW" noStyle>
-                                        <Input placeholder="RW" />
+                                        <Input placeholder="RW" onKeyDown={inputNumberOnly} />
                                     </Form.Item></Col>
                                 </Row>
                             </Form.Item>
                         </Col>
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Kode Pos KTP<span style={{ color: 'red' }}>*</span></span>} name='debtPostalCode'>
-                                <Select showSearch placeholder="PILIH KODE POS" />
+                                {/* <Select showSearch placeholder="PILIH KODE POS">
+                                    {(postalCodeDataData?.result || []).map((item) => (
+                                        <Select.Option key={item.alasanId} value={String(item.alasanId)}>
+                                            {item.alasanDesc}
+                                        </Select.Option>
+                                    ))}
+                                </Select> */}
+
+                                <Select
+                                    showSearch
+                                    allowClear
+                                    placeholder="PILIH KODE POS"
+                                    onFocus={() => setIsSearching(true)}
+                                    onDropdownVisibleChange={(open) => {
+                                        if (!open) {
+                                            setIsSearching(false)
+                                            setKodePosOptions([])
+                                        }
+                                    }}
+                                    onChange={handleChangeKodePos}
+                                    onSearch={handleSearchKodePos}
+                                    className={style.select_field_ec}
+                                    onKeyDown={inputNumberOnly}
+                                    type="tel"
+                                    dropdownRender={menu => (
+                                        <>
+                                            {isSearching && !postalCodeLoading && (
+                                                <div style={{ padding: 5, fontSize: 12, color: '#888' }}>
+                                                    Ketik Minimal 3 Angka Untuk Mencari Kode Pos
+                                                </div>
+                                            )}
+
+                                            {postalCodeLoading ? (
+                                                <div style={{ padding: 20, textAlign: 'center' }}>
+                                                    <Spin size="default" />
+                                                </div>
+                                            ) : (
+                                                menu
+                                            )}
+                                        </>
+                                    )}
+                                    options={kodePosOptions}
+                                />
                             </Form.Item>
                         </Col>
 
@@ -376,7 +496,7 @@ const InformasiNasabah = () => {
                         label={
                             <span className={style.label_field}>
                                 Kartu Keluarga<span style={{ color: 'red' }}>*</span>
-                                <ImagePreview order_id={orderId} doc_code="IMG002" />
+                                <ImagePreview order_id={orderId} doc_code={KARTU_KELUARGA} />
                             </span>
                         }
                         name="familyCard"
@@ -430,7 +550,7 @@ const InformasiNasabah = () => {
                             }
                             name="matchingMotherName"
                         >
-                            <Input />
+                            <Input onKeyDown={allowedLetterOnly} />
                         </Form.Item>
                     </Col>
                 )}
@@ -510,7 +630,7 @@ const InformasiNasabah = () => {
                             label={
                                 <span className={style.label_field}>
                                     Dokumen Identitas Pasangan <span style={{ color: 'red' }}>*</span>
-                                    <ImagePreview order_id={orderId} doc_code="IMG004" />
+                                    <ImagePreview order_id={orderId} doc_code={KTP_PASANGAN} />
                                 </span>
                             }
                             name="partnerIdentityDoc"
@@ -549,12 +669,12 @@ const InformasiNasabah = () => {
 
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Nama Pasangan<span style={{ color: 'red' }}>*</span></span>} name='nameOfSpouse'>
-                                <Input />
+                                <Input onKeyDown={allowedLetterOnly} />
                             </Form.Item>
                         </Col>
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Tempat Lahir Pasangan<span style={{ color: 'red' }}>*</span></span>} name='spousePlaceOfBirth'>
-                                <Input />
+                                <Input onKeyDown={allowedLetterOnly} />
                             </Form.Item>
                         </Col>
 

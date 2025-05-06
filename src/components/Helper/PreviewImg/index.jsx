@@ -2,7 +2,7 @@ import { Modal, Image } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { getDocImage } from '../../../redux/store/features/imageSlice';
+import { fetchDocImage } from '../../../redux/slice/kyc/action/fetch_doc_image';
 
 const ImagePreview = ({ order_id, doc_code }) => {
     const [previewVisible, setPreviewVisible] = useState(false);
@@ -12,10 +12,10 @@ const ImagePreview = ({ order_id, doc_code }) => {
     const handlePreview = async () => {
         console.log("Clicked preview icon with:", { order_id, doc_code });
 
-        const resultAction = await dispatch(getDocImage({ order_id, doc_code }));
+        const resultAction = await dispatch(fetchDocImage({ order_id, doc_code }));
         console.log("Dispatch result:", resultAction);
 
-        if (getDocImage.fulfilled.match(resultAction)) {
+        if (fetchDocImage.fulfilled.match(resultAction)) {
             setPreviewImage(resultAction.payload);
             setPreviewVisible(true);
         } else {

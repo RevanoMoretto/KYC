@@ -16,46 +16,46 @@ const Home = () => {
 	const { data, loading } = useSelector((state) => state.kyc.fetchData);
 
 	// data wira
-	// const no_order = "2410001316";
+	const no_order = "2311000214";
 	// data non-wira
-	const no_order = "2504000481";
+	// const no_order = "2504000481";
 
 	useEffect(async () => {
-    // clear kyc_detail once refresh browser
-    KycDetailStorage.value = {}
+		// clear kyc_detail once refresh browser
+		KycDetailStorage.value = {}
 
 		try {
-      await dispatch(fetchDetailKyc(no_order)).unwrap()
-    } catch (err) {
-      console.error("Error terjadi pada saat fetching detail data kyc, message: ", err);
-      notify("error", "Error", `An error occurred from ${err.url}`)
-    }
+			await dispatch(fetchDetailKyc(no_order)).unwrap()
+		} catch (err) {
+			console.error("Error terjadi pada saat fetching detail data kyc, message: ", err);
+			notify("error", "Error", `An error occurred from ${err.url}`)
+		}
 	}, [dispatch])
 
 	useEffect(() => {
-    if (!data) return
+		if (!data) return
 
-    const {
-      detail,
-      source_order_desc,
-      applicant_type_desc,
-      branch_desc,
-      application_id,
-      application_date
-    } = data || {}
+		const {
+			detail,
+			source_order_desc,
+			applicant_type_desc,
+			branch_desc,
+			application_id,
+			application_date
+		} = data || {}
 
-    const { debitur, source_code_desc } = detail || {}
-    const { personal } = debitur || {}
-    const { debitur_nama_sesuai_ktp } = personal || {}
+		const { debitur, source_code_desc } = detail || {}
+		const { personal } = debitur || {}
+		const { debitur_nama_sesuai_ktp } = personal || {}
 
-    form.setFieldsValue({
-      nomor_aplikasi: application_id,
-      nama_ktp: debitur_nama_sesuai_ktp,
-      tipe_nasabah: applicant_type_desc,
-      tgl_aplikasi: application_date,
-      source_order: source_order_desc,
-      cabang: branch_desc,
-    });
+		form.setFieldsValue({
+			nomor_aplikasi: application_id,
+			nama_ktp: debitur_nama_sesuai_ktp,
+			tipe_nasabah: applicant_type_desc,
+			tgl_aplikasi: application_date,
+			source_order: source_order_desc,
+			cabang: branch_desc,
+		});
 	}, [data])
 
 	return (
