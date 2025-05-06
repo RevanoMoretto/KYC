@@ -270,13 +270,6 @@ const InformasiNasabah = () => {
         }
     }
 
-
-    useEffect(() => {
-        const selectedReason = form.getFieldValue('reasonCantShowIdentity');
-        console.log("Selected reason:", selectedReason);
-    }, []);
-
-
     const handleReasonChange = (value) => {
         setReasonIdentityData(value);
         console.log("data", value);
@@ -326,13 +319,7 @@ const InformasiNasabah = () => {
                             <Checkbox value='1'>Tempat Usaha</Checkbox>
                         </Checkbox.Group>
                     </Form.Item>
-                    {/* {locationKyc.length > 0 && (
-                        <div style={{ marginTop: 12 }}>
-                            <strong>Lokasi dipilih:</strong>{' '}
-                            {locationKyc.includes('0') && 'Rumah '}
-                            {locationKyc.includes('1') && 'Tempat Usaha'}
-                        </div>
-                    )} */}
+
                 </Col>
 
                 <Col xs={24} md={8}>
@@ -398,8 +385,6 @@ const InformasiNasabah = () => {
                         </Form.Item>
                     </Col>
                 )}
-
-
 
                 <Modal
                     open={previewVisible}
@@ -503,7 +488,6 @@ const InformasiNasabah = () => {
                                         <Form.Item name="debtRT" noStyle>
                                             <Input placeholder="RT" onKeyDown={inputNumberOnly} />
                                         </Form.Item></Col>
-                                    {/* <Col xs={1} style={{ textAlign: 'center' }}>/</Col> */}
                                     <Col xs={12}><Form.Item name="debtRW" noStyle>
                                         <Input placeholder="RW" onKeyDown={inputNumberOnly} />
                                     </Form.Item></Col>

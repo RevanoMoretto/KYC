@@ -36,26 +36,6 @@ export const updateKycDetailInformasiNasabah = (values) => {
   return updatedInformasiNasabah;
 }
 
-// export const updateKycDetailInformasiNasabah = (values) => {
-//   const kycData = KycDetailStorage?.data || {}
-//   const detail = kycData.detail || {}
-//   const kyc = detail.kyc || {}
-//   const informasi_nasabah = kyc.informasi_nasabah || {}
-
-//   KycDetailStorage.value = {
-//     ...kycData,
-//     detail: {
-//       ...detail,
-//       kyc: {
-//         ...kyc,
-//         informasi_nasabah: {
-//           ...informasi_nasabah,
-//           ...values
-//         }
-//       }
-//     }
-//   }
-// }
 
 export const updateKycDetailEmergencyContact = (values) => {
   const kyc_detail = KycDetailStorage.data || {}
