@@ -39,22 +39,12 @@ export const inputNumberOnly = (value) => {
   }
 }
 
-<<<<<<< Updated upstream
 export const inputAlphabetAndSpaceOnly = (value) => {
   if (
     !/^[A-Za-z\s]+$/.test(value.key) &&
     !["Backspace", "ArrowLeft", "ArrowRight", "Delete"].includes(value.key)
   ) {
     value.preventDefault()
-  }
-}
-=======
-export const allowedLetterOnly = (value) => {
-  const key = value.key;
-  const isLetter = /^[a-zA-Z]$/.test(value.key);
-  const isControlKey = ['Backspace', 'ArrowLeft', 'ArrowRight', 'Delete', 'Tab',].includes(key)
-  if (!isLetter && !isControlKey) {
-    value.preventDefault();
   }
 }
 
@@ -74,4 +64,3 @@ export const regexAddress = (value) => {
     value.preventDefault();
   }
 };
->>>>>>> Stashed changes

@@ -8,7 +8,7 @@ import React, { useState, useEffect } from 'react';
 import style from './style.module.less';
 import UploadImg from '../Helper/UploadImg';
 import { useDispatch, useSelector } from 'react-redux';
-import { inputNumberOnly, updateKycDetailEmergencyContact, allowedLetterOnly, regexAddress } from '../../utils/general';
+import { inputNumberOnly, updateKycDetailEmergencyContact, inputAlphabetAndSpaceOnly, regexAddress } from '../../utils/general';
 import { fetchReasonIdentity } from '../../redux/slice/kyc/action/fetch_reason_identity'
 import moment from 'moment';
 import ImagePreview from '../Helper/PreviewImg';
@@ -364,13 +364,13 @@ const InformasiNasabah = () => {
                         </Col>
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Nama Sesuai KTP <span style={{ color: 'red' }}>*</span></span>} name='nameDebtKtp'>
-                                <Input onKeyDown={allowedLetterOnly} />
+                                <Input onKeyDown={inputAlphabetAndSpaceOnly} />
                             </Form.Item>
                         </Col>
 
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Tempat Lahir <span style={{ color: 'red' }}>*</span></span>} name='debtPlaceOfBirth'>
-                                <Input onKeyDown={allowedLetterOnly} />
+                                <Input onKeyDown={inputAlphabetAndSpaceOnly} />
                             </Form.Item>
                         </Col>
 
@@ -391,7 +391,7 @@ const InformasiNasabah = () => {
 
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Kewarganegaraan <span style={{ color: 'red' }}>*</span></span>} name='debtNationality'>
-                                <Input onKeyDown={allowedLetterOnly} />
+                                <Input onKeyDown={inputAlphabetAndSpaceOnly} />
                             </Form.Item>
                         </Col>
 
@@ -550,7 +550,7 @@ const InformasiNasabah = () => {
                             }
                             name="matchingMotherName"
                         >
-                            <Input onKeyDown={allowedLetterOnly} />
+                            <Input onKeyDown={inputAlphabetAndSpaceOnly} />
                         </Form.Item>
                     </Col>
                 )}
@@ -669,12 +669,12 @@ const InformasiNasabah = () => {
 
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Nama Pasangan<span style={{ color: 'red' }}>*</span></span>} name='nameOfSpouse'>
-                                <Input onKeyDown={allowedLetterOnly} />
+                                <Input onKeyDown={inputAlphabetAndSpaceOnly} />
                             </Form.Item>
                         </Col>
                         <Col xs={24} md={8}>
                             <Form.Item label={<span className={style.label_field}>Tempat Lahir Pasangan<span style={{ color: 'red' }}>*</span></span>} name='spousePlaceOfBirth'>
-                                <Input onKeyDown={allowedLetterOnly} />
+                                <Input onKeyDown={inputAlphabetAndSpaceOnly} />
                             </Form.Item>
                         </Col>
 
