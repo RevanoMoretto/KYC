@@ -3,7 +3,7 @@ import LINK from '../../../constants/urls'
 
 export default async function getJenisIdentitasPasangan(req, res) {
     res.setHeader('Cache-Control', 'no-store');
-    const url = process.env.MASTER_IDENTITY_TYPE + "/getIdentityCardTypeSpouse";
+    const url = LINK.MASTER_IDENTITY_TYPE + "/getIdentityCardTypeSpouse";
     try {
         const response = await fetch(url, {
             method: "GET",

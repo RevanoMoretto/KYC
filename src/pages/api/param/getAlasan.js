@@ -1,6 +1,7 @@
+import LINK from '../../../constants/urls'
 
 export default async function getAlasan(req, res) {
-    const url = process.env.MASTER_IDENTITY_REASON + "/alasan";
+    const url = LINK.MASTER_IDENTITY_REASON + "/alasan";
     try {
         const response = await fetch(url, {
             method: "GET",

@@ -1,5 +1,7 @@
+import LINK from '../../../constants/urls'
+
 export default async function getRelationWithNasabah(req, res) {
-  const url = process.env.MASTER_RELATION_CUST + "/getRelationWithNasabah"
+  const url = LINK.MASTER_RELATION_CUST + "/getRelationWithNasabah"
 
   try {
     const response = await fetch(
