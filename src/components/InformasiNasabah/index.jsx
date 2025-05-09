@@ -126,7 +126,7 @@ const InformasiNasabah = () => {
     const { data: spouseIdentityData = [], loading: spouseIdentityLoading } = useSelector((state) => state.kyc.typeIdentitySpouse);
     const { data: postalCodeData, loading: postalCodeLoading } = useSelector((state) => state.kyc.kodePos);
 
-    console.log(spouseIdentityData);
+    // console.log(spouseIdentityData);
     const spouseIdentities = spouseIdentityData?.data || [];
     const [reasonIdentityData, setReasonIdentityData] = useState('');
     const [typeIdentitySpouse, setTypeIdentitySpouse] = useState('');

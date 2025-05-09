@@ -5,6 +5,9 @@ import { fetchRelationWithNasabahReducers } from "./reducer/fetch_hubungan_debit
 import { fetchKodePosReducers } from "./reducer/fetch_kode_pos";
 import { fetchReasonIdentityReducers } from "./reducer/fetch_reason_identity";
 import { fetchTypeSpouseReducers } from "./reducer/fetch_type_gender_spouse";
+import { fetchPekerjaanReducer } from "./reducer/fetch_pekerjaan";
+import { fetchJabatanBidangUsahaReducer } from "./reducer/fetch_jabatan_bidang_usaha";
+import { fetchJenisTempatKerjaReducer } from "./reducer/fetch_jenis_tempat_kerja";
 
 const initialState = {
   fetchData: {
@@ -36,7 +39,22 @@ const initialState = {
     data: [],
     loading: false,
     error: null,
-  }
+  },
+  pekerjaanNasabah: {
+    data: null,
+    loading: false,
+    error: null,
+  },
+  jabatanBidangUsaha: {
+    data: null,
+    loading: false,
+    error: null,
+  },
+  jenisTempatKerja: {
+    data: null,
+    loading: false,
+    error: null,
+  },
 }
 
 const kycSlice = createSlice({
@@ -50,6 +68,9 @@ const kycSlice = createSlice({
     fetchKodePosReducers(builder)
     fetchReasonIdentityReducers(builder)
     fetchTypeSpouseReducers(builder)
+    fetchPekerjaanReducer(builder)
+    fetchJabatanBidangUsahaReducer(builder)
+    fetchJenisTempatKerjaReducer(builder)
   },
 });
 
