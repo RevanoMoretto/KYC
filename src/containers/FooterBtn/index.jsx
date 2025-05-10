@@ -3,12 +3,14 @@ import classes from './style.module.less';
 import { Button, Col, Row } from 'antd';
 import { FaShareSquare } from "react-icons/fa";
 import { LuFileX2 } from "react-icons/lu";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { saveKyc } from '../../redux/slice/kyc/kycSlice';
 
 
 function FooterBtn() {
   const dispatch = useDispatch();
+
+  const result_ec = useSelector((state) => state.save.formData.emergency_contact)
 
   const handleSaveKyc = () => {
     const kycData = {
@@ -20,6 +22,11 @@ function FooterBtn() {
     // Dispatch saveKyc action with payload
     dispatch(saveKyc(kycData))
   };
+
+  const handleSubmitData = () => {
+    console.log("okkk ", result_ec)
+  }
+
   return (
     <>
       <Row justify="end">
@@ -48,6 +55,7 @@ function FooterBtn() {
             type="primary"
             className={classes.btn_submit}
             icon={<FaShareSquare size={17} />}
+            onClick={handleSubmitData}
           >
             Submit
           </Button>
