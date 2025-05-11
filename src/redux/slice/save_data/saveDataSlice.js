@@ -52,23 +52,25 @@ const saveDataSlice = createSlice({
           provinsi_ec_desc
         } = fields || {}
 
-        state.formData.emergency_contact.nama_emergency_contact = nama_ec
-        state.formData.emergency_contact.nohp1_emergency_contact = nomor_hp_1_ec
-        state.formData.emergency_contact.nohp2_emergency_contact = nomor_hp_2_ec
-        state.formData.emergency_contact.alamat_emergency_contact = alamat_ec
-        state.formData.emergency_contact.rt_emergency_contact = rt_ec
-        state.formData.emergency_contact.rw_emergency_contact = rw_ec
-        state.formData.emergency_contact.hubungan_emergency_contact_code = hubungan_ec_code
-        state.formData.emergency_contact.hubungan_emergency_contact_desc = hubungan_ec_desc
-        state.formData.emergency_contact.kodepos_emergency_contact_code = kodepos_ec_code
-        state.formData.emergency_contact.kelurahan_emergency_contact_code = kelurahan_ec_code
-        state.formData.emergency_contact.kelurahan_emergency_contact_desc = kelurahan_ec_desc
-        state.formData.emergency_contact.kecamatan_emergency_contact_code = kecamatan_ec_code
-        state.formData.emergency_contact.kecamatan_emergency_contact_desc = kecamatan_ec_desc
-        state.formData.emergency_contact.kabkota_emergency_contact_code = kabkota_ec_code
-        state.formData.emergency_contact.kabkota_emergency_contact_desc = kabkota_ec_desc
-        state.formData.emergency_contact.provinsi_emergency_contact_code = provinsi_ec_code
-        state.formData.emergency_contact.provinsi_emergency_contact_desc = provinsi_ec_desc
+        const prev = state.formData.emergency_contact
+
+        state.formData.emergency_contact.nama_emergency_contact = nama_ec ?? prev.nama_emergency_contact
+        state.formData.emergency_contact.nohp1_emergency_contact = nomor_hp_1_ec ?? prev.nohp1_emergency_contact
+        state.formData.emergency_contact.nohp2_emergency_contact = nomor_hp_2_ec ?? prev.nohp2_emergency_contact
+        state.formData.emergency_contact.alamat_emergency_contact = alamat_ec ?? prev.alamat_emergency_contact
+        state.formData.emergency_contact.rt_emergency_contact = rt_ec ?? prev.rt_emergency_contact
+        state.formData.emergency_contact.rw_emergency_contact = rw_ec ?? prev.rw_emergency_contact
+        state.formData.emergency_contact.hubungan_emergency_contact_code = hubungan_ec_code ?? prev.hubungan_emergency_contact_code
+        state.formData.emergency_contact.hubungan_emergency_contact_desc = hubungan_ec_desc ?? prev.hubungan_emergency_contact_desc
+        state.formData.emergency_contact.kodepos_emergency_contact_code = kodepos_ec_code ?? prev.kodepos_emergency_contact_code
+        state.formData.emergency_contact.kelurahan_emergency_contact_code = kelurahan_ec_code ?? prev.kelurahan_emergency_contact_code
+        state.formData.emergency_contact.kelurahan_emergency_contact_desc = kelurahan_ec_desc ?? prev.kelurahan_emergency_contact_desc
+        state.formData.emergency_contact.kecamatan_emergency_contact_code = kecamatan_ec_code ?? prev.kecamatan_emergency_contact_code
+        state.formData.emergency_contact.kecamatan_emergency_contact_desc = kecamatan_ec_desc ?? prev.kecamatan_emergency_contact_desc
+        state.formData.emergency_contact.kabkota_emergency_contact_code = kabkota_ec_code ?? prev.kabkota_emergency_contact_code
+        state.formData.emergency_contact.kabkota_emergency_contact_desc = kabkota_ec_desc ?? prev.kabkota_emergency_contact_desc
+        state.formData.emergency_contact.provinsi_emergency_contact_code = provinsi_ec_code ?? prev.provinsi_emergency_contact_code
+        state.formData.emergency_contact.provinsi_emergency_contact_desc = provinsi_ec_desc ?? prev.provinsi_emergency_contact_desc
       }
     }
   }

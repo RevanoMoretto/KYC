@@ -1,7 +1,7 @@
 import { Col, Form, Input, Row, Select, Spin } from 'antd'
 import classes from './style.module.less';
 import { useEffect, useState } from 'react';
-import { inputAlphabetAndSpaceOnly, inputNumberOnly } from '../../utils/general';
+import { inputAlphabetAndSpaceOnly, inputNumberOnly, onPasteClearInput } from '../../utils/general';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchRelationWithNasabah } from '../../redux/slice/kyc/action/fetch_hubungan_debitur';
 import { fetchKodePos } from '../../redux/slice/kyc/action/fetch_kode_pos';
@@ -14,7 +14,7 @@ function EmergencyContact() {
   const { TextArea } = Input;
 
   const [filteredRelationWithNasabahOptions, setFilteredRelationWithNasabahOptions] = useState([])
-  const [kodePosOptions, setKodePosOptions] = useState([]);
+  const [kodePosOptions, setKodePosOptions] = useState([])
   const [isSearching, setIsSearching] = useState(false)
 
   const { data: dataHubunganWithNasabah, loading: loadingHubDeb } = useSelector((state) => state.kyc.relationWithNasabah);
@@ -46,70 +46,6 @@ function EmergencyContact() {
     }
   }, [])
 
-  const handleFormChange = (changedValues, values) => {
-    let selectedHubunganDebitur = {}
-    let selectedDataKodePos = {}
-
-    if(changedValues.hub_debitur_ec){
-      setFilteredRelationWithNasabahOptions(dataHubunganWithNasabah)
-
-      // for disabled auto focus when select an option
-      setTimeout(() => {
-        document.activeElement?.blur();
-      }, 0)
-
-      selectedHubunganDebitur = dataHubunganWithNasabah.find((item) => item.value == changedValues.hub_debitur_ec)
-    }
-
-    if(changedValues.kode_pos_ec){
-      // for disabled auto focus when select an option
-      setTimeout(() => {
-        document.activeElement?.blur();
-      }, 0)
-
-      const [zip, kel_code] = changedValues.kode_pos_ec.split("-")
-      selectedDataKodePos = dataKodePos.data.find(
-        (e) => e.zip_code === zip && e.kelurahan_id === kel_code
-      )
-
-      form.setFieldsValue({
-        kode_pos_ec: `${selectedDataKodePos.zip_code} | ${selectedDataKodePos.kelurahan_name}`,
-        kelurahan_ec: selectedDataKodePos.kelurahan_name,
-        kecamatan_ec: selectedDataKodePos.kecamatan_name,
-        kab_kota_ec: selectedDataKodePos.kab_kot_name,
-        provinsi_ec: selectedDataKodePos.provinsi_name
-      })
-    }
-
-    dispatch(saveData({
-      subtab: "emergency_contact",
-      fields: {
-        nama_ec: values.nama_ec || "",
-        nomor_hp_1_ec: values.nomor_hp_1_ec || "",
-        nomor_hp_2_ec: values.nomor_hp_2_ec || "",
-        alamat_ec: values.alamat_ec || "",
-        rt_ec: values.rt_ec || "",
-        rw_ec: values.rw_ec || "",
-        hubungan_ec_code: selectedHubunganDebitur?.value || "",
-        hubungan_ec_desc: selectedHubunganDebitur?.label || "",
-        kodepos_ec_code: selectedDataKodePos?.zip_code || "",
-        kelurahan_ec_code: selectedDataKodePos?.kelurahan_id || "",
-        kelurahan_ec_desc: selectedDataKodePos?.kelurahan_name || "",
-        kecamatan_ec_code: selectedDataKodePos?.kecamatan_id || "",
-        kecamatan_ec_desc: selectedDataKodePos?.kecamatan_name || "",
-        kabkota_ec_code: selectedDataKodePos?.kab_kot_id || "",
-        kabkota_ec_desc: selectedDataKodePos?.kab_kot_name || "",
-        provinsi_ec_code: selectedDataKodePos?.provinsi_id || "",
-        provinsi_ec_desc: selectedDataKodePos?.provinsi_name || ""
-      }
-    }))
-  }
-
-  const onPasteClearInput = (e) => {
-    e.preventDefault()
-    form.setFieldsValue({ nama_ec: "" })
-  };
-
   const handleSearchHubDeb = (value) => {
     const filtered = dataHubunganWithNasabah.filter((item) =>
       item.label.toLowerCase().includes(value.toLowerCase())
@@ -127,6 +63,169 @@ function EmergencyContact() {
     }
   }
 
+  // HANDLE CHANGE FUNCTION SECTION
+  const handleChangeNamaEc = (e) => {
+    const value = e.target.value
+
+    dispatch(saveData({
+      subtab: "emergency_contact",
+      fields: {
+        nama_ec: value
+      }
+    }))
+  }
+
+  const handleChangeNomorHp1 = (e) => {
+    const value = e.target.value
+
+    dispatch(saveData({
+      subtab: "emergency_contact",
+      fields: {
+        nomor_hp_1_ec: value
+      }
+    }))
+  }
+
+  const handleChangeNomorHp2 = (e) => {
+    const value = e.target.value
+
+    dispatch(saveData({
+      subtab: "emergency_contact",
+      fields: {
+        nomor_hp_2_ec: value
+      }
+    }))
+  }
+
+  const handleChangeAlamatEc = (e) => {
+    const value = e.target.value
+
+    dispatch(saveData({
+      subtab: "emergency_contact",
+      fields: {
+        alamat_ec: value
+      }
+    }))
+  }
+
+  const handleChangeRtEc = (e) => {
+    const value = e.target.value
+
+    dispatch(saveData({
+      subtab: "emergency_contact",
+      fields: {
+        rt_ec: value
+      }
+    }))
+  }
+
+  const handleChangeRwEc = (e) => {
+    const value = e.target.value
+
+    dispatch(saveData({
+      subtab: "emergency_contact",
+      fields: {
+        rw_ec: value
+      }
+    }))
+  }
+
+  const handleChangeHubDeb = (e) => {
+    // for disabled auto focus when select an option and clear value
+    setTimeout(() => {
+      document.activeElement?.blur();
+    }, 0)
+
+    // if user reset value using clear icon in select field
+    if(e == undefined){
+      setFilteredRelationWithNasabahOptions(dataHubunganWithNasabah)
+      dispatch(saveData({
+        subtab: "emergency_contact",
+        fields: {
+          hubungan_ec_code: "",
+          hubungan_ec_desc: ""
+        }
+      }))
+
+      return
+    }
+
+    const selectedData = dataHubunganWithNasabah.find((item) => item.value == e)
+    setFilteredRelationWithNasabahOptions(dataHubunganWithNasabah)
+
+    dispatch(saveData({
+      subtab: "emergency_contact",
+      fields: {
+        hubungan_ec_code: selectedData.value,
+        hubungan_ec_desc: selectedData.label
+      }
+    }))
+  }
+
+  const handleChangeKodePos = (e) => {
+    // for disabled auto focus when select an option and clear value
+    setTimeout(() => {
+      document.activeElement?.blur();
+    }, 0)
+
+    // if user reset value using clear icon in select field
+    if(e == undefined){
+      dispatch(saveData({
+        subtab: "emergency_contact",
+        fields: {
+          kodepos_ec_code: "",
+          kelurahan_ec_code: "",
+          kelurahan_ec_desc: "",
+          kecamatan_ec_code: "",
+          kecamatan_ec_desc: "",
+          kabkota_ec_code: "",
+          kabkota_ec_desc: "",
+          provinsi_ec_code: "",
+          provinsi_ec_desc: ""
+        }
+      }))
+
+      form.setFieldsValue({
+        kode_pos_ec: undefined,
+        kelurahan_ec: "",
+        kecamatan_ec: "",
+        kab_kota_ec: "",
+        provinsi_ec: ""
+      })
+
+      return
+    }
+
+    const [zip, kel] = e.split("-")
+    const selected = dataKodePos.data.find(
+      (e) => e.zip_code === zip && e.kelurahan_id === kel
+    )
+
+    dispatch(saveData({
+      subtab: "emergency_contact",
+      fields: {
+        kodepos_ec_code: selected.zip_code,
+        kelurahan_ec_code: selected.kelurahan_id,
+        kelurahan_ec_desc: selected.kelurahan_name,
+        kecamatan_ec_code: selected.kecamatan_id,
+        kecamatan_ec_desc: selected.kecamatan_name,
+        kabkota_ec_code: selected.kab_kot_id,
+        kabkota_ec_desc: selected.kab_kot_name,
+        provinsi_ec_code: selected.provinsi_id,
+        provinsi_ec_desc: selected.provinsi_name
+      }
+    }))
+
+    form.setFieldsValue({
+      kode_pos_ec: `${selected.zip_code} | ${selected.kelurahan_name}`,
+      kelurahan_ec: selected.kelurahan_name,
+      kecamatan_ec: selected.kecamatan_name,
+      kab_kota_ec: selected.kab_kot_name,
+      provinsi_ec: selected.provinsi_name
+    })
+  }
+  // END HANDLE CHANGE FUNCTION SECTION
+
   return (
     <>
       {
@@ -136,7 +235,7 @@ function EmergencyContact() {
             <p style={{ margin: "15px 0 10px 0", fontSize: "15px", fontWeight: "bold" }}>Mohon tunggu...</p>
           </div>
         ) : (
-          <Form layout="vertical" form={form} onValuesChange={handleFormChange}>
+          <Form layout="vertical" form={form}>
             <Row gutter={10}>
               <Col xs={24} md={10}>
                 <Form.Item
@@ -147,7 +246,9 @@ function EmergencyContact() {
                   <Input 
                     className={classes.input_field_ec}
                     onKeyDown={inputAlphabetAndSpaceOnly}
-                    onPaste={onPasteClearInput}
+                    onPaste={onPasteClearInput(form, "nama_ec")}
+                    autoComplete="off"
+                    onChange={handleChangeNamaEc}
                   />
                 </Form.Item>
 
@@ -161,6 +262,8 @@ function EmergencyContact() {
                     onKeyDown={inputNumberOnly}
                     type="tel"
                     maxLength={13}
+                    autoComplete="off"
+                    onChange={handleChangeNomorHp1}
                   />
                 </Form.Item>
 
@@ -174,6 +277,8 @@ function EmergencyContact() {
                     onKeyDown={inputNumberOnly}
                     type="tel"
                     maxLength={13}
+                    autoComplete="off"
+                    onChange={handleChangeNomorHp2}
                   />
                 </Form.Item>
               </Col>
@@ -191,6 +296,9 @@ function EmergencyContact() {
                         maxLength={50}
                         className={classes.text_area}
                         style={{ resize: "none" }}
+                        autoComplete="off"
+                        onChange={handleChangeAlamatEc}
+                        onPaste={onPasteClearInput(form, "alamat_ec")}
                       />
                     </Form.Item>
                   </Col>
@@ -208,7 +316,8 @@ function EmergencyContact() {
                         onKeyDown={inputNumberOnly}
                         type="tel"
                         maxLength={3}
-                        autoComplete={false}
+                        autoComplete="off"
+                        onChange={handleChangeRtEc}
                       />
                     </Form.Item>
                   </Col>
@@ -224,7 +333,8 @@ function EmergencyContact() {
                         onKeyDown={inputNumberOnly}
                         type="tel"
                         maxLength={3}
-                        autoComplete={false}
+                        autoComplete="off"
+                        onChange={handleChangeRwEc}
                       />
                     </Form.Item>
                   </Col>
@@ -243,14 +353,7 @@ function EmergencyContact() {
                         options={filteredRelationWithNasabahOptions}
                         onSearch={handleSearchHubDeb}
                         filterOption={false}
-                        onClear={() => {
-                          setFilteredRelationWithNasabahOptions(dataHubunganWithNasabah)
-
-                          // for disabled auto focus when clear value
-                          setTimeout(() => {
-                            document.activeElement?.blur();
-                          }, 0)
-                        }}
+                        onChange={handleChangeHubDeb}
                       />
                     </Form.Item>
                   </Col>
@@ -277,21 +380,7 @@ function EmergencyContact() {
                       }
                     }}
                     onSearch={handleSearchKodePos}
-                    onClear={() => {
-                      setKodePosOptions([])
-
-                      // for disabled auto focus when clear value
-                      setTimeout(() => {
-                        document.activeElement?.blur();
-                      }, 0)
-
-                      form.setFieldsValue({
-                        kelurahan_ec: "",
-                        kecamatan_ec: "",
-                        kab_kota_ec: "",
-                        provinsi_ec: ""
-                      })
-                    }}
+                    onChange={handleChangeKodePos}
                     className={classes.select_field_ec}
                     onKeyDown={inputNumberOnly}
                     type="tel"
@@ -326,6 +415,7 @@ function EmergencyContact() {
                   <Input 
                     readOnly
                     className={classes.readonly_input_field} 
+                    autoComplete="off"
                   />
                 </Form.Item>
               </Col>
@@ -341,6 +431,7 @@ function EmergencyContact() {
                   <Input 
                     readOnly
                     className={classes.readonly_input_field} 
+                    autoComplete="off"
                   />
                 </Form.Item>
               </Col>
@@ -354,6 +445,7 @@ function EmergencyContact() {
                   <Input 
                     readOnly
                     className={classes.readonly_input_field} 
+                    autoComplete="off"
                   />
                 </Form.Item>
               </Col>
@@ -367,6 +459,7 @@ function EmergencyContact() {
                   <Input 
                     readOnly
                     className={classes.readonly_input_field} 
+                    autoComplete="off"
                   />
                 </Form.Item>
               </Col>

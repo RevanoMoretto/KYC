@@ -36,7 +36,6 @@ export const updateKycDetailInformasiNasabah = (values) => {
   return updatedInformasiNasabah;
 }
 
-
 export const updateKycDetailEmergencyContact = (values) => {
   const kyc_detail = KycDetailStorage.data || {}
   const { detail } = kyc_detail || {}
@@ -66,6 +65,7 @@ export const inputNumberOnly = (value) => {
     value.preventDefault()
   }
 }
+
 export const toInputUppercase = (e) => {
   return (e.target.value = ("" + e.target.value).toUpperCase());
 };
@@ -95,3 +95,8 @@ export const regexAddress = (value) => {
     value.preventDefault();
   }
 };
+
+export const onPasteClearInput = (form, field_name) => (e) => {
+  e.preventDefault()
+  form.setFieldsValue({ [field_name]: "" })
+}
