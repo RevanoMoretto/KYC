@@ -10,7 +10,7 @@ import { saveKyc } from '../../redux/slice/kyc/kycSlice';
 function FooterBtn() {
   const dispatch = useDispatch();
 
-  const result_ec = useSelector((state) => state.save.formData.emergency_contact)
+  const result_submit = useSelector((state) => state.save.formData)
 
   const handleSaveKyc = () => {
     const kycData = {
@@ -24,7 +24,7 @@ function FooterBtn() {
   };
 
   const handleSubmitData = () => {
-    console.log("okkk ", result_ec)
+    console.log("result submit data: ", result_submit)
   }
 
   return (

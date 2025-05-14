@@ -1,26 +1,18 @@
 import { Tabs, Typography, Input } from 'antd';
 import KnowYourCustomer from '../KnowYourCustomer';
 import classes from './style.module.less';
-import { useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { saveData } from '../../redux/slice/save_data/saveDataSlice';
 
 function CollapseForm() {
   const { Title } = Typography;
   const { TextArea } = Input;
 
+  const dispatch = useDispatch()
+
   const { data } = useSelector((state) => state.kyc.fetchData)
   
-  const { screening_2, detail } = data || {}
-  const { kyc } = detail || {}
-  const { hasil_kyc } = kyc || {}
-
-  const [valHasilKyc, setValHasilKyc] = useState("")
-
-  useEffect(() => {
-    if (hasil_kyc !== undefined) {
-      setValHasilKyc(hasil_kyc)
-    }
-  }, [hasil_kyc])
+  const { screening_2 } = data || {}
 
   const items = [
     {
@@ -56,7 +48,13 @@ function CollapseForm() {
 
   const handleChangeHasilKyc = (e) => {
     const value = e.target.value
-    setValHasilKyc(value)
+
+    dispatch(saveData({
+      payload: null,
+      fields: {
+        hasil_kyc_input: value
+      }
+    }))
   }
 
   return (
@@ -78,10 +76,9 @@ function CollapseForm() {
         </Title>
         <TextArea
           showCount
-          maxLength={250}
+          maxLength={200}
           className={classes.text_area}
           style={{ resize: "none" }}
-          value={valHasilKyc}
           onChange={handleChangeHasilKyc}
         />
       </div>

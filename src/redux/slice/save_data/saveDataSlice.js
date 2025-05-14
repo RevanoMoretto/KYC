@@ -20,7 +20,8 @@ const initialState = {
       kabkota_emergency_contact_desc: "",
       provinsi_emergency_contact_code: "",
       provinsi_emergency_contact_desc: ""
-    }
+    },
+    hasil_kyc: ""
   },
 }
 
@@ -72,6 +73,8 @@ const saveDataSlice = createSlice({
         state.formData.emergency_contact.provinsi_emergency_contact_code = provinsi_ec_code ?? prev.provinsi_emergency_contact_code
         state.formData.emergency_contact.provinsi_emergency_contact_desc = provinsi_ec_desc ?? prev.provinsi_emergency_contact_desc
       }
+
+      state.formData.hasil_kyc = fields.hasil_kyc_input
     }
   }
 });
