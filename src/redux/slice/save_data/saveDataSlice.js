@@ -30,7 +30,7 @@ const saveDataSlice = createSlice({
   initialState: initialState,
   reducers: {
     saveData: (state, action) => {
-      const { subtab, fields } = action.payload
+      const { subtab = "", fields } = action.payload
 
       const prev = state.formData
 

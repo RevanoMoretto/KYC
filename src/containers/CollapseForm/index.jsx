@@ -50,7 +50,7 @@ function CollapseForm() {
     const value = e.target.value
 
     dispatch(saveData({
-      payload: null,
+      payload: "",
       fields: {
         hasil_kyc_input: value
       }
