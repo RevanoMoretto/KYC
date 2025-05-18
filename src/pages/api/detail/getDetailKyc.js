@@ -1,3 +1,5 @@
+import LINK from "../../../constants/urls"
+
 export default async function getDetailKyc(req, res) {
   const { no_order } = req.body
 
@@ -6,7 +8,7 @@ export default async function getDetailKyc(req, res) {
     return res.status(400).json({ error: "no_order is required" });
   }
 
-  const url = process.env.GET_DETAIL_KYC + "/detailKyc"
+  const url = LINK.GET_DETAIL_KYC + "/detailKyc"
 
   const payload = {
     no_order: no_order

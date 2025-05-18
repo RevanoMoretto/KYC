@@ -352,7 +352,7 @@ function EmergencyContact() {
                   dropdownRender={menu => (
                     <>
                       {loadingHubDeb ? (
-                        <div style={{ padding: 20, textAlign: 'center' }}>
+                        <div className={classes.loading_spin}>
                           <Spin size="default" />
                         </div>
                       ) : (
@@ -393,13 +393,13 @@ function EmergencyContact() {
               dropdownRender={menu => (
                 <>
                   {isSearching && !loadingKodePos && (
-                    <div style={{ padding: 5, fontSize: 12, color: '#888' }}>
+                    <div className={classes.dropdown_text_kode_pos}>
                       Ketik Minimal 3 Angka Untuk Mencari Kode Pos
                     </div>
                   )}
 
                   {loadingKodePos ? (
-                    <div style={{ padding: 20, textAlign: 'center' }}>
+                    <div className={classes.loading_spin}>
                       <Spin size="default" />
                     </div>
                   ) : (
