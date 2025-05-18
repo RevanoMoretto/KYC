@@ -11,17 +11,12 @@ function EmergencyContact() {
   const dispatch = useDispatch();
   const { TextArea } = Input;
 
-  const [filteredRelationWithNasabahOptions, setFilteredRelationWithNasabahOptions] = useState([])
-  const [kodePosOptions, setKodePosOptions] = useState([])
-  const [isSearching, setIsSearching] = useState(false)
-
   const { data: dataHubunganWithNasabah, loading: loadingHubDeb } = useSelector((state) => state.kyc.relationWithNasabah);
   const { data: dataKodePos, loading: loadingKodePos } = useSelector((state) => state.kyc.kodePos);
 
-  // for handle options hubungan dengan nasabah
-  useEffect(() => {
-    setFilteredRelationWithNasabahOptions(dataHubunganWithNasabah)
-  }, [dataHubunganWithNasabah])
+  const [filteredRelationWithNasabahOptions, setFilteredRelationWithNasabahOptions] = useState(dataHubunganWithNasabah)
+  const [kodePosOptions, setKodePosOptions] = useState([])
+  const [isSearching, setIsSearching] = useState(false)
 
   // for handle options kode pos field
   useEffect(() => {

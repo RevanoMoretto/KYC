@@ -1,13 +1,18 @@
 import { useState } from 'react'
 import classes from './style.module.less';
-import { Col, Form, Input, Row, Select } from 'antd';
+import { Col, Form, Input, Row, Select, Spin } from 'antd';
 import RenderIf from '../../utils/renderif';
 import UploadImg from '../Helper/UploadImg';
+import { useSelector } from 'react-redux';
 
 function ObjectPembiayaan() {
   const [form] = Form.useForm()
 
   const [test, setTest] = useState("")
+
+  const { data: dataPaymentMethode, loading: loadingPaymentMethode } = useSelector((state) => state.kyc.paymentMethode);
+
+  const [filteredPaymentMethode, setFilteredPaymentMethode] = useState(dataPaymentMethode)
 
   const options = [
     { label: 'Eunha', value: 'Eunha' },
@@ -16,9 +21,29 @@ function ObjectPembiayaan() {
     { label: 'Umji', value: 'Umji' },
   ];
 
+  const handleSearchCaraBayar = (value) => {
+    const filtered = dataPaymentMethode.filter((item) =>
+      item.label.toLowerCase().includes(value.toLowerCase())
+    )
+
+    setFilteredPaymentMethode(filtered)
+  }
+
+  // HANDLE CHANGE FUNCTION SECTION
   const handleChangeCaraBayar = (e) => {
-    console.log("result cara bayar: ", e)
-    setTest(e)
+    // for disabled auto focus when select an option and clear value
+    setTimeout(() => {
+      document.activeElement?.blur();
+    }, 0)
+
+    // if user reset value using clear icon in select field
+    if(e == undefined){
+      setFilteredPaymentMethode(dataPaymentMethode)
+      return
+    }
+
+    const selectedData = dataPaymentMethode.find((item) => item.value == e)
+    setFilteredPaymentMethode(dataPaymentMethode)
   }
 
   const handleChangeBank = (e) => {
@@ -44,6 +69,7 @@ function ObjectPembiayaan() {
   const handleChangeSumberNasabah = (e) => {
     console.log("result sumber nasabah: ", e)
   }
+  // END HANDLE CHANGE FUNCTION SECTION
 
   return (
     <Form layout="vertical" form={form}>
@@ -60,7 +86,20 @@ function ObjectPembiayaan() {
               placeholder="PILIH CARA BAYAR"
               onChange={handleChangeCaraBayar}
               className={classes.select_field_ec}
-              options={options}
+              onSearch={handleSearchCaraBayar}
+              options={filteredPaymentMethode}
+              filterOption={false}
+              dropdownRender={menu => (
+                <>
+                  {loadingPaymentMethode ? (
+                    <div className={classes.loading_spin}>
+                      <Spin size="default" />
+                    </div>
+                  ) : (
+                    menu
+                  )}
+                </>
+              )}
             />
           </Form.Item>
 

@@ -14,16 +14,17 @@ import { fetchPaymentMethode } from '../../redux/slice/kyc/action/fetch_payment_
 
 const Home = () => {
 	const [form] = Form.useForm()
-	const dispatch = useDispatch();
+	const dispatch = useDispatch()
+  const detailApp = detailApplication()
+
 	const [showDetailApp, setShowDetailApp] = useState(false);
-	const { data, loading, error } = useSelector((state) => state.kyc.fetchData);
+
+  const { data, loading, error } = useSelector((state) => state.kyc.fetchData);
 
 	// data wira
 	const no_order = "2311000214";
 	// data non-wira
 	// const no_order = "2504000481";
-
-  const detailApp = detailApplication()
 
 	useEffect(() => {
 		// clear kyc_detail once refresh browser
@@ -235,7 +236,7 @@ const Home = () => {
         <Result
           status="500"
           title="Terjadi Kesalahan"
-          subTitle="Gagal mengambil detail data KYC. Silakan refresh halaman atau hubungi tim IT."
+          subTitle="Gagal memproses detail data KYC. Silakan refresh halaman atau hubungi tim IT."
         />
       </Modal>
 		</>

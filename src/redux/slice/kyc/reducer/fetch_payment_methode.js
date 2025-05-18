@@ -8,7 +8,12 @@ export const fetchPaymentMethodeReducers = (builder) => {
     })
     .addCase(fetchPaymentMethode.fulfilled, (state, action) => {
       state.paymentMethode.loading = false;
-      state.paymentMethode.data = action.payload;
+      state.paymentMethode.data = action.payload.result.map((e) => {
+        return {
+          value: e.payment_code,
+          label: e.payment_desc
+        }
+      });
     })
     .addCase(fetchPaymentMethode.rejected, (state, action) => {
       state.paymentMethode.loading = false;

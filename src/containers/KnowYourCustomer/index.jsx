@@ -48,13 +48,13 @@ function KnowYourCustomer() {
     // : [...items]
 
     // nambah subtab baru
-    // if (isCancelData) {
-    //   modifiedItems.push({
-    //     key: "6",
-    //     label: "Cancel Application",
-    //     children: <EmergencyContact />
-    //   })
-    // }
+    if (isCancelData) {
+      modifiedItems.push({
+        key: "6",
+        label: "Cancel Application",
+        children: "Test 6"
+      })
+    }
 
     return modifiedItems.map((e, i) => (
       <Collapse defaultActiveKey={isCancelData ? ["6"] : []} items={[e]} key={i} />
