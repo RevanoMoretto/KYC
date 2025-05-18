@@ -2,7 +2,7 @@ import { Tabs, Typography, Input } from 'antd';
 import KnowYourCustomer from '../KnowYourCustomer';
 import classes from './style.module.less';
 import { useDispatch, useSelector } from 'react-redux';
-import { saveData } from '../../redux/slice/save_data/saveDataSlice';
+import { saveData } from '../../redux/slice/saveData/saveDataSlice';
 
 function CollapseForm() {
   const { Title } = Typography;

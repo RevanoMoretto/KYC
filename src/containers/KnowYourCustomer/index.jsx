@@ -1,5 +1,4 @@
 import { Collapse, Space } from 'antd'
-import React from 'react'
 import classes from './style.module.less';
 // subtab
 import EmergencyContact from '../../components/EmergencyContact';
@@ -7,8 +6,11 @@ import InformasiNasabah from '../../components/InformasiNasabah';
 import InformasiPekerjaanNasabah from '../../components/InformasiPekerjaanNasabah';
 import ObjectPembiayaan from '../../components/ObjectPembiayaan';
 import InformasiTempatTinggalNasabah from '../../components/InformasiTempatTinggalNasabah';
+import { useSelector } from 'react-redux';
 
 function KnowYourCustomer() {
+  const isCancelData = useSelector((state) => state.cancel.isCancelApp)
+
   const items = [
     {
       key: "1",
@@ -37,17 +39,31 @@ function KnowYourCustomer() {
     }
   ]
 
+  const showItem = (items, isCancelData) => {
+    let modifiedItems = [...items] 
+
+    // edit subtab lama
+    // modifiedItems = isCancelData 
+    // ? items.filter((e) => e.key !== "2")
+    // : [...items]
+
+    // nambah subtab baru
+    // if (isCancelData) {
+    //   modifiedItems.push({
+    //     key: "6",
+    //     label: "Cancel Application",
+    //     children: <EmergencyContact />
+    //   })
+    // }
+
+    return modifiedItems.map((e, i) => (
+      <Collapse defaultActiveKey={isCancelData ? ["6"] : []} items={[e]} key={i} />
+    ))
+  }
+
   return (
     <Space direction="vertical" size="middle" className={classes.space}>
-      {items.map((e, i) => {
-        return (
-          <Collapse
-            // defaultActiveKey={["1"]}
-            items={[e]}
-            key={i}
-          />
-        )
-      })}
+      {showItem(items, isCancelData)}
     </Space>
   )
 }

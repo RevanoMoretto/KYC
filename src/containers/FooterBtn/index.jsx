@@ -2,13 +2,19 @@ import classes from './style.module.less';
 import { Button, Col, Row } from 'antd';
 import { FaShareSquare } from "react-icons/fa";
 import { LuFileX2 } from "react-icons/lu";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { cancelData } from '../../redux/slice/cancelData/cancelDataSlice';
 
 function FooterBtn() {
+  const dispatch = useDispatch()
   const result_submit = useSelector((state) => state.save.formData)
 
   const handleSubmitData = () => {
     console.log("result submit data: ", result_submit)
+  }
+
+  const handleCancelData = () => {
+    dispatch(cancelData(true))
   }
 
   return (
@@ -30,6 +36,7 @@ function FooterBtn() {
             type="primary"
             className={classes.btn_cancel}
             icon={<LuFileX2 size={17} />}
+            onClick={handleCancelData}
           >
             Cancel Application
           </Button>

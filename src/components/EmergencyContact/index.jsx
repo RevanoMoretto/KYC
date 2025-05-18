@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { inputAlphabetAndSpaceOnly, inputNumberOnly, onPasteClearInput } from '../../utils/general';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchKodePos } from '../../redux/slice/kyc/action/fetch_kode_pos';
-import { saveData } from '../../redux/slice/save_data/saveDataSlice';
+import { saveData } from '../../redux/slice/saveData/saveDataSlice';
 
 function EmergencyContact() {
   const [form] = Form.useForm();
