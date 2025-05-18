@@ -8,6 +8,7 @@ import { fetchTypeSpouseReducers } from "./reducer/fetch_type_gender_spouse";
 import { fetchPekerjaanReducer } from "./reducer/fetch_pekerjaan";
 import { fetchJabatanBidangUsahaReducer } from "./reducer/fetch_jabatan_bidang_usaha";
 import { fetchJenisTempatKerjaReducer } from "./reducer/fetch_jenis_tempat_kerja";
+import { fetchPaymentMethodeReducers } from "./reducer/fetch_payment_methode";
 
 const initialState = {
   fetchData: {
@@ -55,6 +56,11 @@ const initialState = {
     loading: false,
     error: null,
   },
+  paymentMethode: {
+    data: null,
+    loading: false,
+    error: null,
+  },
 }
 
 const kycSlice = createSlice({
@@ -71,6 +77,7 @@ const kycSlice = createSlice({
     fetchPekerjaanReducer(builder)
     fetchJabatanBidangUsahaReducer(builder)
     fetchJenisTempatKerjaReducer(builder)
+    fetchPaymentMethodeReducers(builder)
   },
 });
 

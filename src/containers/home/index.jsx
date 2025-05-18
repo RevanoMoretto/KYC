@@ -2,7 +2,7 @@ import CollapseForm from '../CollapseForm';
 import classes from './style.module.less';
 import FooterBtn from '../FooterBtn';
 import { useEffect, useState } from 'react';
-import { Col, Form, Modal, Row, Input, Button } from 'antd';
+import { Col, Form, Modal, Row, Input, Button, Result } from 'antd';
 import { BiDetail } from "react-icons/bi";
 import { useDispatch, useSelector } from 'react-redux';
 import KycDetailStorage from '../../utils/kyc_detail_storage';
@@ -10,17 +10,20 @@ import { fetchDetailKyc } from '../../redux/slice/kyc/action/fetch_detail_kyc';
 import notify from '../../utils/notification';
 import detailApplication from '../../pages/api/detail/detailApplication';
 import { fetchRelationWithNasabah } from '../../redux/slice/kyc/action/fetch_hubungan_debitur';
+import { fetchPaymentMethode } from '../../redux/slice/kyc/action/fetch_payment_methode';
 
 const Home = () => {
 	const [form] = Form.useForm()
 	const dispatch = useDispatch();
 	const [showDetailApp, setShowDetailApp] = useState(false);
-	const { data, loading } = useSelector((state) => state.kyc.fetchData);
+	const { data, loading, error } = useSelector((state) => state.kyc.fetchData);
 
 	// data wira
 	const no_order = "2311000214";
 	// data non-wira
 	// const no_order = "2504000481";
+
+  const detailApp = detailApplication()
 
 	useEffect(() => {
 		// clear kyc_detail once refresh browser
@@ -28,23 +31,9 @@ const Home = () => {
 
     const fetchData = async () => {
       try {
-        const [detailKycRes, hubDebRes] = await Promise.allSettled([
-          dispatch(fetchDetailKyc(no_order)).unwrap(),
-          dispatch(fetchRelationWithNasabah()).unwrap()
-        ])
-
-        if (detailKycRes.status === 'rejected') {
-          const { status, statusText } = detailKycRes.reason || {}
-          notify("error", "Gagal fetch detail data KYC", `Status Code ${status} - ${statusText}`)
-        }
-
-        if (detailKycRes.status === 'fulfilled' && hubDebRes.status === 'rejected') {
-          const { status, statusText } = hubDebRes.reason || {}
-          notify("error", "Gagal fetch data Relation with Nasabah", `Status Code ${status} - ${statusText}`)
-        }
+        await dispatch(fetchDetailKyc(no_order)).unwrap()
       } catch (err) {
-        const { message_error } = err.reason || {}
-        notify("error", "Unexpected Error", message_error.status);
+        notify("error", "Gagal fetch detail data KYC", `Status Code ${err.status} - ${err.statusText}`)
       }
     }
 
@@ -60,12 +49,44 @@ const Home = () => {
 			applicant_type_desc,
 			branch_desc,
 			application_id,
-			application_date
+			application_date,
+      channel_code,
+      flag_data_format
 		} = data || {}
 
-		const { debitur } = detail || {}
+		const { debitur, identitas_order, object_pembiayaan } = detail || {}
 		const { personal } = debitur || {}
+		const { sumber_nasabah_code } = identitas_order || {}
 		const { debitur_nama_sesuai_ktp } = personal || {}
+
+    const payloadPaymentMethode = {
+      channel_code: channel_code,
+      fin_type_code: flag_data_format == "1" ? object_pembiayaan.financing_type_code : identitas_order.financing_type_code,
+      sumber_nasabah_code: sumber_nasabah_code
+    }
+
+    const fetchData = async () => {
+      try {
+        const [hubDebRes, paymentMenthodeRes] = await Promise.allSettled([
+          dispatch(fetchRelationWithNasabah()).unwrap(),
+          dispatch(fetchPaymentMethode(payloadPaymentMethode)).unwrap()
+        ])
+
+        if (error === null && hubDebRes.status === "rejected") {
+          const { status, statusText } = hubDebRes.reason || {}
+          notify("error", "Gagal fetch data hubungan dengan nasabah", `Status Code ${status} - ${statusText}`)
+        }
+        if (error === null && paymentMenthodeRes.status === "rejected") {
+          const { status, statusText } = paymentMenthodeRes.reason || {}
+          notify("error", "Gagal fetch data cara bayar angsuran", `Status Code ${status} - ${statusText}`)
+        }
+      } catch (err) {
+        const { message_error } = err.reason || {}
+        notify("error", "Unexpected Error", message_error.status);
+      }
+    }
+
+    fetchData()
 
 		form.setFieldsValue({
 			nomor_aplikasi: application_id,
@@ -76,8 +97,6 @@ const Home = () => {
 			cabang: branch_desc,
 		});
 	}, [data])
-
-	const detailApp = detailApplication();
 
 	return (
 		<>
@@ -204,6 +223,21 @@ const Home = () => {
 				closable={false}
 				title="Data Sedang Di Proses Mohon Ditunggu"
 			/>
+
+      {/* Modal stopper error get detail data kyc */}
+			<Modal
+        open={error}
+        footer={false}
+        closable={false}
+        maskClosable={false}
+        keyboard={false}
+      >
+        <Result
+          status="500"
+          title="Terjadi Kesalahan"
+          subTitle="Gagal mengambil data detail KYC. Silakan refresh halaman atau hubungi tim IT."
+        />
+      </Modal>
 		</>
 	);
 };
