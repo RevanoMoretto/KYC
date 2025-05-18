@@ -1,27 +1,11 @@
-import React from 'react'
 import classes from './style.module.less';
 import { Button, Col, Row } from 'antd';
 import { FaShareSquare } from "react-icons/fa";
 import { LuFileX2 } from "react-icons/lu";
-import { useDispatch, useSelector } from 'react-redux';
-import { saveKyc } from '../../redux/slice/kyc/kycSlice';
-
+import { useSelector } from 'react-redux';
 
 function FooterBtn() {
-  const dispatch = useDispatch();
-
   const result_submit = useSelector((state) => state.save.formData)
-
-  const handleSaveKyc = () => {
-    const kycData = {
-      // Collect data from your form or state
-      name: 'John Doe',
-      address: '123 Main St',
-    };
-
-    // Dispatch saveKyc action with payload
-    dispatch(saveKyc(kycData))
-  };
 
   const handleSubmitData = () => {
     console.log("result submit data: ", result_submit)

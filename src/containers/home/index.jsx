@@ -235,7 +235,7 @@ const Home = () => {
         <Result
           status="500"
           title="Terjadi Kesalahan"
-          subTitle="Gagal mengambil data detail KYC. Silakan refresh halaman atau hubungi tim IT."
+          subTitle="Gagal mengambil detail data KYC. Silakan refresh halaman atau hubungi tim IT."
         />
       </Modal>
 		</>

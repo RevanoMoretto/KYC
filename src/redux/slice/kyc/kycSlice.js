@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchKycReducers } from "./reducer/fetch_detail_kyc";
-import { saveKycReducers } from "./reducer/save_data_kyc";
 import { fetchRelationWithNasabahReducers } from "./reducer/fetch_hubungan_debitur";
 import { fetchKodePosReducers } from "./reducer/fetch_kode_pos";
 import { fetchReasonIdentityReducers } from "./reducer/fetch_reason_identity";
@@ -9,28 +8,17 @@ import { fetchPekerjaanReducer } from "./reducer/fetch_pekerjaan";
 import { fetchJabatanBidangUsahaReducer } from "./reducer/fetch_jabatan_bidang_usaha";
 import { fetchJenisTempatKerjaReducer } from "./reducer/fetch_jenis_tempat_kerja";
 import { fetchPaymentMethodeReducers } from "./reducer/fetch_payment_methode";
+import { 
+  caraBayarAngsuran, 
+  detailKyc, 
+  hubunganDenganNasabah, 
+  kodePos
+} from "../../../constants/initialStateRedux";
 
-const initialState = {
-  fetchData: {
-    data: null,
-    loading: false,
-    error: null
-  },
-  saveData: {
-    saveSuccess: null,
-    loading: false,
-    error: null
-  },
-  relationWithNasabah: {
-    data: null,
-    loading: false,
-    error: null
-  },
-  kodePos: {
-    data: null,
-    loading: false,
-    error: null
-  },
+const initialStateData = {
+  ...detailKyc,
+  ...hubunganDenganNasabah,
+  ...kodePos,
   fetchReason: {
     data: null,
     loading: false,
@@ -56,20 +44,15 @@ const initialState = {
     loading: false,
     error: null,
   },
-  paymentMethode: {
-    data: null,
-    loading: false,
-    error: null,
-  },
+  ...caraBayarAngsuran
 }
 
 const kycSlice = createSlice({
   name: 'kyc',
-  initialState: initialState,
+  initialState: initialStateData,
   reducers: {},
   extraReducers: (builder) => {
     fetchKycReducers(builder)
-    saveKycReducers(builder)
     fetchRelationWithNasabahReducers(builder)
     fetchKodePosReducers(builder)
     fetchReasonIdentityReducers(builder)
