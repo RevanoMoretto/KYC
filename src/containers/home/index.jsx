@@ -9,6 +9,7 @@ import KycDetailStorage from '../../utils/kyc_detail_storage';
 import { fetchDetailKyc } from '../../redux/slice/kyc/action/fetch_detail_kyc';
 import notify from '../../utils/notification';
 import detailApplication from '../../pages/api/detail/detailApplication';
+import { fetchRelationWithNasabah } from '../../redux/slice/kyc/action/fetch_hubungan_debitur';
 
 const Home = () => {
 	const [form] = Form.useForm()
@@ -21,16 +22,33 @@ const Home = () => {
 	// data non-wira
 	// const no_order = "2504000481";
 
-	useEffect(async () => {
+	useEffect(() => {
 		// clear kyc_detail once refresh browser
 		KycDetailStorage.value = {}
 
-		try {
-			await dispatch(fetchDetailKyc(no_order)).unwrap()
-		} catch (err) {
-			console.error("Error terjadi pada saat fetching detail data kyc, message: ", err);
-			notify("error", "Error", `An error occurred from ${err.url}`)
-		}
+    const fetchData = async () => {
+      try {
+        const [detailKycRes, hubDebRes] = await Promise.allSettled([
+          dispatch(fetchDetailKyc(no_order)).unwrap(),
+          dispatch(fetchRelationWithNasabah()).unwrap()
+        ])
+
+        if (detailKycRes.status === 'rejected') {
+          const { status, statusText } = detailKycRes.reason || {}
+          notify("error", "Gagal fetch detail data KYC", `Status Code ${status} - ${statusText}`)
+        }
+
+        if (detailKycRes.status === 'fulfilled' && hubDebRes.status === 'rejected') {
+          const { status, statusText } = hubDebRes.reason || {}
+          notify("error", "Gagal fetch data Relation with Nasabah", `Status Code ${status} - ${statusText}`)
+        }
+      } catch (err) {
+        const { message_error } = err.reason || {}
+        notify("error", "Unexpected Error", message_error.status);
+      }
+    }
+
+    fetchData()
 	}, [dispatch])
 
 	useEffect(() => {
@@ -45,7 +63,7 @@ const Home = () => {
 			application_date
 		} = data || {}
 
-		const { debitur, source_code_desc } = detail || {}
+		const { debitur } = detail || {}
 		const { personal } = debitur || {}
 		const { debitur_nama_sesuai_ktp } = personal || {}
 

@@ -3,9 +3,7 @@ import classes from './style.module.less';
 import { useEffect, useState } from 'react';
 import { inputAlphabetAndSpaceOnly, inputNumberOnly, onPasteClearInput } from '../../utils/general';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchRelationWithNasabah } from '../../redux/slice/kyc/action/fetch_hubungan_debitur';
 import { fetchKodePos } from '../../redux/slice/kyc/action/fetch_kode_pos';
-import notify from '../../utils/notification';
 import { saveData } from '../../redux/slice/save_data/saveDataSlice';
 
 function EmergencyContact() {
@@ -37,15 +35,6 @@ function EmergencyContact() {
     }
   }, [dataKodePos])
 
-  useEffect(async () => {
-    try {
-      await dispatch(fetchRelationWithNasabah()).unwrap()
-    } catch (err) {
-      console.error("Error terjadi pada saat fetching data hubungan dengan nasabah kyc, message: ", err);
-      notify("error", "Error", `An error occurred from ${err.url}`)
-    }
-  }, [])
-
   const handleSearchHubDeb = (value) => {
     const filtered = dataHubunganWithNasabah.filter((item) =>
       item.label.toLowerCase().includes(value.toLowerCase())
@@ -61,6 +50,16 @@ function EmergencyContact() {
     }else{
       setKodePosOptions([])
     }
+  }
+
+  const handlePaste = (key, value) => (e) => {
+    onPasteClearInput(form, key, value)(e)
+    dispatch(saveData({
+      subtab: "emergency_contact",
+      fields: {
+        [key]: value
+      }
+    }))
   }
 
   // HANDLE CHANGE FUNCTION SECTION
@@ -227,247 +226,251 @@ function EmergencyContact() {
   // END HANDLE CHANGE FUNCTION SECTION
 
   return (
-    <>
-      {
-        loadingHubDeb ? (
-          <div style={{ textAlign: "center", padding: 50 }}>
-            <Spin size="default" />
-            <p style={{ margin: "15px 0 10px 0", fontSize: "15px", fontWeight: "bold" }}>Mohon tunggu...</p>
-          </div>
-        ) : (
-          <Form layout="vertical" form={form}>
-            <Row gutter={10}>
-              <Col xs={24} md={10}>
-                <Form.Item
-                  label="Nama Emergency Contact"
-                  name="nama_ec"
-                  className={classes.wrap_form_item}
-                  >
-                  <Input 
-                    className={classes.input_field_ec}
-                    onKeyDown={inputAlphabetAndSpaceOnly}
-                    onPaste={onPasteClearInput(form, "nama_ec")}
-                    autoComplete="off"
-                    onChange={handleChangeNamaEc}
-                  />
-                </Form.Item>
+    <Form layout="vertical" form={form}>
+      <Row gutter={10}>
+        <Col xs={24} md={10}>
+          <Form.Item
+            label="Nama Emergency Contact"
+            name="nama_ec"
+            className={classes.wrap_form_item}
+            >
+            <Input 
+              className={classes.input_field_ec}
+              onKeyDown={inputAlphabetAndSpaceOnly}
+              onPaste={handlePaste("nama_ec", "")}
+              autoComplete="off"
+              onChange={handleChangeNamaEc}
+            />
+          </Form.Item>
 
-                <Form.Item
-                  label="No. HP 1/No. Telephone 1 Emergency Contact" 
-                  name="nomor_hp_1_ec"
-                  className={classes.wrap_form_item}
-                >
-                  <Input 
-                    className={classes.input_field_ec}
-                    onKeyDown={inputNumberOnly}
-                    type="tel"
-                    maxLength={13}
-                    autoComplete="off"
-                    onChange={handleChangeNomorHp1}
-                  />
-                </Form.Item>
+          <Form.Item
+            label="No. HP 1/No. Telephone 1 Emergency Contact" 
+            name="nomor_hp_1_ec"
+            className={classes.wrap_form_item}
+          >
+            <Input 
+              className={classes.input_field_ec}
+              onKeyDown={inputNumberOnly}
+              type="tel"
+              maxLength={13}
+              autoComplete="off"
+              onChange={handleChangeNomorHp1}
+              onPaste={handlePaste("nomor_hp_1_ec", "")}
+            />
+          </Form.Item>
 
-                <Form.Item
-                  label="No. HP 2/No. Telephone 2 Emergency Contact" 
-                  name="nomor_hp_2_ec"
-                  className={classes.wrap_form_item}
-                >
-                  <Input 
-                    className={classes.input_field_ec}
-                    onKeyDown={inputNumberOnly}
-                    type="tel"
-                    maxLength={13}
-                    autoComplete="off"
-                    onChange={handleChangeNomorHp2}
-                  />
-                </Form.Item>
-              </Col>
+          <Form.Item
+            label="No. HP 2/No. Telephone 2 Emergency Contact" 
+            name="nomor_hp_2_ec"
+            className={classes.wrap_form_item}
+          >
+            <Input 
+              className={classes.input_field_ec}
+              onKeyDown={inputNumberOnly}
+              type="tel"
+              maxLength={13}
+              autoComplete="off"
+              onChange={handleChangeNomorHp2}
+              onPaste={handlePaste("nomor_hp_2_ec", "")}
+            />
+          </Form.Item>
+        </Col>
 
-              <Col xs={24} md={14}>
-                <Row>
-                  <Col xs={24} md={24}>
-                    <Form.Item 
-                      label="Alamat Emergency Contact" 
-                      name="alamat_ec"
-                      className={classes.wrap_form_item}
-                    >
-                      <TextArea
-                        showCount
-                        maxLength={50}
-                        className={classes.text_area}
-                        style={{ resize: "none" }}
-                        autoComplete="off"
-                        onChange={handleChangeAlamatEc}
-                        onPaste={onPasteClearInput(form, "alamat_ec")}
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
+        <Col xs={24} md={14}>
+          <Row>
+            <Col xs={24} md={24}>
+              <Form.Item 
+                label="Alamat Emergency Contact" 
+                name="alamat_ec"
+                className={classes.wrap_form_item}
+              >
+                <TextArea
+                  showCount
+                  maxLength={50}
+                  className={classes.text_area}
+                  style={{ resize: "none" }}
+                  autoComplete="off"
+                  onChange={handleChangeAlamatEc}
+                  onPaste={handlePaste("alamat_ec", "")}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
 
-                <Row gutter={10}>
-                  <Col xs={24} md={4}>
-                    <Form.Item
-                      label="RT" 
-                      name="rt_ec"
-                      className={classes.wrap_form_item}
-                    >
-                      <Input 
-                        className={classes.input_field_ec}
-                        onKeyDown={inputNumberOnly}
-                        type="tel"
-                        maxLength={3}
-                        autoComplete="off"
-                        onChange={handleChangeRtEc}
-                      />
-                    </Form.Item>
-                  </Col>
+          <Row gutter={10}>
+            <Col xs={24} md={4}>
+              <Form.Item
+                label="RT" 
+                name="rt_ec"
+                className={classes.wrap_form_item}
+              >
+                <Input 
+                  className={classes.input_field_ec}
+                  onKeyDown={inputNumberOnly}
+                  type="tel"
+                  maxLength={3}
+                  autoComplete="off"
+                  onChange={handleChangeRtEc}
+                  onPaste={handlePaste("rt_ec", "")}
+                />
+              </Form.Item>
+            </Col>
 
-                  <Col xs={24} md={4}>
-                    <Form.Item
-                      label="RW" 
-                      name="rw_ec"
-                      className={classes.wrap_form_item}
-                    >
-                      <Input 
-                        className={classes.input_field_ec}
-                        onKeyDown={inputNumberOnly}
-                        type="tel"
-                        maxLength={3}
-                        autoComplete="off"
-                        onChange={handleChangeRwEc}
-                      />
-                    </Form.Item>
-                  </Col>
+            <Col xs={24} md={4}>
+              <Form.Item
+                label="RW" 
+                name="rw_ec"
+                className={classes.wrap_form_item}
+              >
+                <Input 
+                  className={classes.input_field_ec}
+                  onKeyDown={inputNumberOnly}
+                  type="tel"
+                  maxLength={3}
+                  autoComplete="off"
+                  onChange={handleChangeRwEc}
+                  onPaste={handlePaste("rw_ec", "")}
+                />
+              </Form.Item>
+            </Col>
 
-                  <Col xs={24} md={16}>
-                    <Form.Item 
-                      label="Hubungan dengan Debitur" 
-                      name="hub_debitur_ec"
-                      className={classes.wrap_form_item}
-                    >
-                      <Select
-                        showSearch
-                        allowClear
-                        placeholder="PILIH HUBUNGAN DEBITUR"
-                        className={classes.select_field_ec}
-                        options={filteredRelationWithNasabahOptions}
-                        onSearch={handleSearchHubDeb}
-                        filterOption={false}
-                        onChange={handleChangeHubDeb}
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
+            <Col xs={24} md={16}>
+              <Form.Item 
+                label="Hubungan dengan Debitur" 
+                name="hub_debitur_ec"
+                className={classes.wrap_form_item}
+              >
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="PILIH HUBUNGAN DEBITUR"
+                  className={classes.select_field_ec}
+                  options={filteredRelationWithNasabahOptions}
+                  onSearch={handleSearchHubDeb}
+                  filterOption={false}
+                  onChange={handleChangeHubDeb}
+                  dropdownRender={menu => (
+                    <>
+                      {loadingHubDeb ? (
+                        <div style={{ padding: 20, textAlign: 'center' }}>
+                          <Spin size="default" />
+                        </div>
+                      ) : (
+                        menu
+                      )}
+                    </>
+                  )}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
 
-            <Row gutter={10}>
-              <Col xs={24} md={14}>
-                <Form.Item 
-                  label="Kode Pos Emergency Contact" 
-                  name="kode_pos_ec"
-                  className={classes.wrap_form_item}
-                >
-                  <Select
-                    showSearch
-                    allowClear
-                    placeholder="PILIH KODE POS"
-                    onFocus={() => setIsSearching(true)}
-                    onDropdownVisibleChange={(open) => {
-                      if(!open){
-                        setIsSearching(false)
-                        setKodePosOptions([])
-                      }
-                    }}
-                    onSearch={handleSearchKodePos}
-                    onChange={handleChangeKodePos}
-                    className={classes.select_field_ec}
-                    onKeyDown={inputNumberOnly}
-                    type="tel"
-                    dropdownRender={menu => (
-                      <>
-                        {isSearching && !loadingKodePos && (
-                          <div style={{ padding: 5, fontSize: 12, color: '#888' }}>
-                            Ketik Minimal 3 Angka Untuk Mencari Kode Pos
-                          </div>
-                        )}
+      <Row gutter={10}>
+        <Col xs={24} md={14}>
+          <Form.Item 
+            label="Kode Pos Emergency Contact" 
+            name="kode_pos_ec"
+            className={classes.wrap_form_item}
+          >
+            <Select
+              showSearch
+              allowClear
+              placeholder="PILIH KODE POS"
+              onFocus={() => setIsSearching(true)}
+              onDropdownVisibleChange={(open) => {
+                if(!open){
+                  setIsSearching(false)
+                  setKodePosOptions([])
+                }
+              }}
+              onSearch={handleSearchKodePos}
+              onChange={handleChangeKodePos}
+              className={classes.select_field_ec}
+              onKeyDown={inputNumberOnly}
+              type="tel"
+              dropdownRender={menu => (
+                <>
+                  {isSearching && !loadingKodePos && (
+                    <div style={{ padding: 5, fontSize: 12, color: '#888' }}>
+                      Ketik Minimal 3 Angka Untuk Mencari Kode Pos
+                    </div>
+                  )}
 
-                        {loadingKodePos ? (
-                          <div style={{ padding: 20, textAlign: 'center' }}>
-                            <Spin size="default" />
-                          </div>
-                        ) : (
-                          menu
-                        )}
-                      </>
-                    )}
-                    options={kodePosOptions}
-                  />
-                </Form.Item>
-              </Col>
+                  {loadingKodePos ? (
+                    <div style={{ padding: 20, textAlign: 'center' }}>
+                      <Spin size="default" />
+                    </div>
+                  ) : (
+                    menu
+                  )}
+                </>
+              )}
+              options={kodePosOptions}
+            />
+          </Form.Item>
+        </Col>
 
-              <Col xs={24} md={10}>
-                <Form.Item 
-                  label="Kelurahan Emergency Contact" 
-                  name="kelurahan_ec"
-                  className={classes.wrap_form_item}
-                >
-                  <Input 
-                    readOnly
-                    className={classes.readonly_input_field} 
-                    autoComplete="off"
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
+        <Col xs={24} md={10}>
+          <Form.Item 
+            label="Kelurahan Emergency Contact" 
+            name="kelurahan_ec"
+            className={classes.wrap_form_item}
+          >
+            <Input 
+              readOnly
+              className={classes.readonly_input_field} 
+              autoComplete="off"
+            />
+          </Form.Item>
+        </Col>
+      </Row>
 
-            <Row gutter={11}>
-              <Col xs={24} md={8}>
-                <Form.Item 
-                  label="Kecamatan Emergency Contact" 
-                  name="kecamatan_ec"
-                  className={classes.wrap_form_item}
-                >
-                  <Input 
-                    readOnly
-                    className={classes.readonly_input_field} 
-                    autoComplete="off"
-                  />
-                </Form.Item>
-              </Col>
-    
-              <Col xs={24} md={8}>
-                <Form.Item 
-                  label="Kab/Kota Emergency Contact" 
-                  name="kab_kota_ec"
-                  className={classes.wrap_form_item}
-                >
-                  <Input 
-                    readOnly
-                    className={classes.readonly_input_field} 
-                    autoComplete="off"
-                  />
-                </Form.Item>
-              </Col>
+      <Row gutter={11}>
+        <Col xs={24} md={8}>
+          <Form.Item 
+            label="Kecamatan Emergency Contact" 
+            name="kecamatan_ec"
+            className={classes.wrap_form_item}
+          >
+            <Input 
+              readOnly
+              className={classes.readonly_input_field} 
+              autoComplete="off"
+            />
+          </Form.Item>
+        </Col>
 
-              <Col xs={24} md={8}>
-                <Form.Item 
-                  label="Provinsi Emergency Contact" 
-                  name="provinsi_ec"
-                  className={classes.wrap_form_item}
-                >
-                  <Input 
-                    readOnly
-                    className={classes.readonly_input_field} 
-                    autoComplete="off"
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-          </Form>
-        )
-      }
-    </>
+        <Col xs={24} md={8}>
+          <Form.Item 
+            label="Kab/Kota Emergency Contact" 
+            name="kab_kota_ec"
+            className={classes.wrap_form_item}
+          >
+            <Input 
+              readOnly
+              className={classes.readonly_input_field} 
+              autoComplete="off"
+            />
+          </Form.Item>
+        </Col>
+
+        <Col xs={24} md={8}>
+          <Form.Item 
+            label="Provinsi Emergency Contact" 
+            name="provinsi_ec"
+            className={classes.wrap_form_item}
+          >
+            <Input 
+              readOnly
+              className={classes.readonly_input_field} 
+              autoComplete="off"
+            />
+          </Form.Item>
+        </Col>
+      </Row>
+    </Form>
   )
 }
 

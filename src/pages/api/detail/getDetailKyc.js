@@ -7,7 +7,6 @@ export default async function getDetailKyc(req, res) {
   }
 
   const url = process.env.GET_DETAIL_KYC + "/detailKyc"
-  console.log(url)
 
   const payload = {
     no_order: no_order

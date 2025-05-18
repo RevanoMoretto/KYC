@@ -96,7 +96,7 @@ export const regexAddress = (value) => {
   }
 };
 
-export const onPasteClearInput = (form, field_name) => (e) => {
+export const onPasteClearInput = (form, field_name, value) => (e) => {
   e.preventDefault()
-  form.setFieldsValue({ [field_name]: "" })
+  form.setFieldsValue({ [field_name]: value })
 }
