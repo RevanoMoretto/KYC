@@ -4,11 +4,11 @@ import {
     DatePicker, Image, Spin, Modal
 } from 'antd';
 import { MdOutlineFileUpload } from "react-icons/md";
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import style from './style.module.less';
 import UploadImg from '../Helper/UploadImg';
 import { useDispatch, useSelector } from 'react-redux';
-import { inputNumberOnly, updateKycDetailInformasiNasabah, inputAlphabetAndSpaceOnly, regexAddress } from '../../utils/general';
+import { inputNumberOnly, onPasteClearInput, inputAlphabetAndSpaceOnly, regexAddress } from '../../utils/general';
 import { fetchReasonIdentity } from '../../redux/slice/kyc/action/fetch_reason_identity'
 import moment from 'moment';
 import ImagePreview from '../Helper/PreviewImg';
@@ -16,6 +16,7 @@ import KycDetailStorage from '../../utils/kyc_detail_storage';
 import DocCode from '../../constants/autofillImage'
 import { fetchTypeSpouse } from '../../redux/slice/kyc/action/fetch_type_gender_spouse';
 import { fetchKodePos } from '../../redux/slice/kyc/action/fetch_kode_pos';
+import { saveData } from '../../redux/slice/saveData/saveDataSlice';
 
 
 
@@ -38,101 +39,17 @@ const InformasiNasabah = () => {
     const kycData = KycDetailStorage.data || {}
     const { detail } = kycData || {}
     const { kyc } = detail || {}
-    const { informasi_nasabah } = kyc || {}
-    const {
-        lokasi_proses_kyc_code,
-        lokasi_proses_kyc_desc,
-        foto_selfie_pic_kyc,
-        flag_identitas_asli_code,
-        flag_identitas_asli_desc,
-        alasan_identitas_code,
-        alasan_identitas_desc,
-        flag_dokumen_ktp_deb_code,
-        flag_dokumen_ktp_deb_desc,
-        foto_ktp_sesuai,
-        nama_ktp_nasabah,
-        tempat_lahir_ktp_nasabah,
-        tgl_lahir_ktp_nasabah,
-        gender_ktp_nasabah,
-        kewarganegaraan_ktp_nasabah_code,
-        kewarganegaraan_ktp_nasabah_desc,
-        alamat_ktp_nasabah,
-        rt_ktp_nasabah,
-        rw_ktp_nasabah,
-        kode_pos_ktp_nasabah,
-        kelurahan_ktp_nasabah_code,
-        kelurahan_ktp_nasabah_desc,
-        kecamatan_ktp_nasabah_code,
-        kecamatan_ktp_nasabah_desc,
-        kabkota_ktp_nasabah_code,
-        kabkota_ktp_nasabah_desc,
-        provinsi_ktp_nasabah_code,
-        provinsi_ktp_nasabah_desc,
-        nomor_ktp_sesuai,
-        nama_ktp_sesuai,
-        tempat_lahir_ktp_sesuai,
-        tgl_lahir_ktp_sesuai,
-        kewarganegaraan_ktp_code_sesuai,
-        kewarganegaraan_ktp_desc_sesuai,
-        alamat_ktp_sesuai,
-        rt_ktp_sesuai,
-        rw_ktp_sesuai,
-        kode_pos_ktp_sesuai_code,
-        kelurahan_ktp_sesuai_code,
-        kelurahan_ktp_sesuai_desc,
-        kecamatan_ktp_sesuai_code,
-        kecamatan_ktp_sesuai_desc,
-        kabkota_ktp_sesuai_code,
-        kabkota_ktp_sesuai_desc,
-        provinsi_ktp_sesuai_code,
-        provinsi_ktp_sesuai_desc,
-        flag_nama_ibu_code,
-        flag_nama_ibu_desc,
-        nama_ibu_kandung_sesuai,
-        foto_kk_sesuai,
-        status_kawin_code,
-        status_kawin_desc,
-        dokumen_buku_nikah,
-        flag_pisah_harta_code,
-        flag_pisah_harta_desc,
-        dokumen_pisah_harta,
-        flag_spouse_dok_identitas_code,
-        flag_spouse_dok_identitas_desc,
-        dokumen_identitas_spouse,
-        spouse_jenis_identitas_code,
-        spouse_jenis_identitas_desc,
-        spouse_nama_ktp,
-        spouse_tempat_lahir,
-        spouse_tgl_lahir,
-        spouse_jenis_identitas_code_sesuai,
-        spouse_jenis_identitas_desc_sesuai,
-        spouse_nomor_identitas,
-        spouse_nama_sesuai,
-        spouse_tempat_lahir_sesuai,
-        spouse_tgl_lahir_sesuai,
-        spouse_gender,
-        spouse_nohp,
-        foto_wajah,
-        dokumen_npwp,
-        dokumen_hasil_npwp,
 
-    } = informasi_nasabah || {}
-    console.log('Detail KYC Structure:', {
-        detail,
-        kyc,
-        informasi_nasabah
-    });
     const { data: reasonsData, loading: reasonsLoading } = useSelector((state) => state.kyc.fetchReason);
     const { data: spouseIdentityData = [], loading: spouseIdentityLoading } = useSelector((state) => state.kyc.typeIdentitySpouse);
     const { data: postalCodeData, loading: postalCodeLoading } = useSelector((state) => state.kyc.kodePos);
 
     // console.log(spouseIdentityData);
     const spouseIdentities = spouseIdentityData?.data || [];
-    const [reasonIdentityData, setReasonIdentityData] = useState('');
-    const [typeIdentitySpouse, setTypeIdentitySpouse] = useState('');
+
     const [jenisKelaminDebitur, setJenisKelaminDebitur] = useState(kycData?.detail?.debitur?.personal?.debitur_jenis_kelamin);
     const [jenisKelaminSpouse, setJenisKelaminSpouse] = useState(kycData?.detail?.debitur?.personal?.spouse?.jenis_kelamin_pasangan);
-    const [locationKyc, setLocationKyc] = useState([]);
+    const [locationKyc, setLocationKyc] = useState("");
     const orderId = kycData?.order_id || {};
     const {
         KTP, KTP_PASANGAN, KARTU_KELUARGA, NPWP_NASABAH
@@ -204,20 +121,34 @@ const InformasiNasabah = () => {
         }
     }, [postalCodeData])
 
+    const handleSearchKodePos = (e) => {
+        if (e.length >= 3 && e.length <= 5) {
+            dispatch(fetchKodePos(e))
+            setIsSearching(false)
+        } else {
+            setKodePosOptions([])
+        }
+    }
+
     const handleChangeKodePos = (e) => {
         console.log("changed postal code", e)
+
+        setTimeout(() => document.activeElement?.blur(), 0)
         if (e == undefined) {
-            const cleared = updateKycDetailInformasiNasabah({
-                kode_pos_ktp_nasabah: "",
-                kelurahan_ktp_nasabah_code: "",
-                kelurahan_ktp_nasabah_desc: "",
-                kecamatan_ktp_nasabah_code: "",
-                kecamatan_ktp_nasabah_desc: "",
-                kabkota_ktp_nasabah_code: "",
-                kabkota_ktp_nasabah_desc: "",
-                provinsi_ktp_nasabah_code: "",
-                provinsi_ktp_nasabah_desc: "",
-            })
+            dispatch(saveData({
+                subtab: "informasi_nasabah",
+                fields: {
+                    kode_pos_ktp_nasabah: "",
+                    kelurahan_ktp_nasabah_code: "",
+                    kelurahan_ktp_nasabah_desc: "",
+                    kecamatan_ktp_nasabah_code: "",
+                    kecamatan_ktp_nasabah_desc: "",
+                    kabkota_ktp_nasabah_code: "",
+                    kabkota_ktp_nasabah_desc: "",
+                    provinsi_ktp_nasabah_code: "",
+                    provinsi_ktp_nasabah_desc: ""
+                }
+            }))
 
             form.setFieldsValue({
                 debtPostalCode: undefined,
@@ -229,25 +160,25 @@ const InformasiNasabah = () => {
             return
         }
 
-        setTimeout(() => document.activeElement?.blur(), 0)
-
         const [zip, kel] = e.split("-")
         const selected = postalCodeData.data.find(
             (item) => item.zip_code === zip && item.kelurahan_id === kel
         )
 
-        const updated = updateKycDetailInformasiNasabah({
-            kode_pos_ktp_nasabah: selected.zip_code,
-            kelurahan_ktp_nasabah_code: selected.kelurahan_id,
-            kelurahan_ktp_nasabah_desc: selected.kelurahan_name,
-            kecamatan_ktp_nasabah_code: selected.kecamatan_id,
-            kecamatan_ktp_nasabah_desc: selected.kecamatan_name,
-            kabkota_ktp_nasabah_code: selected.kab_kot_id,
-            kabkota_ktp_nasabah_desc: selected.kab_kot_name,
-            provinsi_ktp_nasabah_code: selected.provinsi_id,
-            provinsi_ktp_nasabah_desc: selected.provinsi_name
-        })
-        console.log("storage : ", updated)
+        dispatch(saveData({
+            subtab: "informasi_nasabah",
+            fields: {
+                kode_pos_ktp_nasabah: selected.zip_code,
+                kelurahan_ktp_nasabah_code: selected.kelurahan_id,
+                kelurahan_ktp_nasabah_desc: selected.kelurahan_name,
+                kecamatan_ktp_nasabah_code: selected.kecamatan_id,
+                kecamatan_ktp_nasabah_desc: selected.kecamatan_name,
+                kabkota_ktp_nasabah_code: selected.kab_kot_id,
+                kabkota_ktp_nasabah_desc: selected.kab_kot_name,
+                provinsi_ktp_nasabah_code: selected.provinsi_id,
+                provinsi_ktp_nasabah_desc: selected.provinsi_name
+            }
+        }))
 
         form.setFieldsValue({
             debtPostalCode: `${selected.zip_code} | ${selected.kelurahan_name}`,
@@ -259,30 +190,57 @@ const InformasiNasabah = () => {
 
     }
 
-
-
-    const handleSearchKodePos = (e) => {
-        if (e.length >= 3 && e.length <= 5) {
-            dispatch(fetchKodePos(e))
-            setIsSearching(false)
-        } else {
-            setKodePosOptions([])
-        }
-    }
-
     const handleReasonChange = (value) => {
-        setReasonIdentityData(value);
+
+        const selectedReason = reasonsData?.result.find(item => String(item.alasanId) === value);
+        dispatch(saveData({
+            subtab: "informasi_nasabah",
+            fields: {
+                alasan_tidak_dapat_menunjukkan_identitas_code: value,
+                alasan_tidak_dapat_menunjukkan_identitas_desc: selectedReason?.alasanDesc || '',
+            }
+        }));
+
+        form.setFieldsValue({
+            reasonCantShowIdentity: value
+        })
         console.log("data", value);
     };
 
     const handleTypeIdentitySpouse = (value) => {
-        setTypeIdentitySpouse(value);
         console.log("data", value);
+        const selectedIdentitySpouse = spouseIdentities.find(item => item.id_card === value);
+
+        dispatch(saveData({
+            subtab: "informasi_nasabah",
+            fields: {
+                spouse_jenis_identitas_code: value,
+                spouse_jenis_identitas_desc: selectedIdentitySpouse?.id_card_desc || '',
+            }
+        }));
+
+        form.setFieldsValue({
+            spouseIdentity: value,
+        });
+
+
     }
 
     const handleGenderOfDebitur = (e) => {
         const selectedGender = e.target.value;
         setJenisKelaminDebitur(selectedGender);
+
+        dispatch(saveData({
+            subtab: "informasi_nasabah",
+            fields: {
+                jenis_kelamin_debitur: selectedGender,
+            }
+        }));
+
+        form.setFieldsValue({
+            genderOfDebitur: selectedGender,
+        });
+
         console.log("kelamin", selectedGender);
     };
 
@@ -290,6 +248,61 @@ const InformasiNasabah = () => {
         const selectedGenderSpouse = e.target.value;
         setJenisKelaminSpouse(selectedGenderSpouse);
     }
+
+    const locationKycOptions = {
+        "0": "RUMAH",
+        "1": "TEMPAT USAHA",
+    };
+
+    const handleLocationKycChange = (checkedValues) => {
+        const stringValues = checkedValues.map(String);
+
+        setLocationKyc(stringValues);
+
+        let lokasiCode = "";
+        if (stringValues.length === 2) {
+            lokasiCode = "2";
+        } else if (stringValues[0] === '0') {
+            lokasiCode = "0";
+        } else if (stringValues[0] === '1') {
+            lokasiCode = "1";
+        }
+
+        const locationDescriptions = stringValues.map(val => locationKycOptions[val]);
+        const lokasiDesc = locationDescriptions.join(" DAN ");
+
+        dispatch(saveData({
+            subtab: "informasi_nasabah",
+            fields: {
+                lokasi_proses_kyc_code: lokasiCode,
+                lokasi_proses_kyc_desc: lokasiDesc,
+            },
+        }));
+    };
+
+
+    const showIdentityOptions = {
+        "0": "Bisa",
+        "1": "Tidak Bisa",
+    };
+
+    const handleShowRealIdentityChange = (e) => {
+        const selectedValue = e.target.value;
+        const selectedLabel = showIdentityOptions[selectedValue];
+
+
+        setMenunjukanIdentitasRil(selectedValue);
+
+        dispatch(saveData({
+            subtab: "informasi_nasabah",
+            fields: {
+                real_identity_code: selectedValue,
+                real_identity_desc: selectedLabel
+            }
+        }));
+    };
+
+
     return (
         <Form layout="vertical" form={form}>
             <Row gutter={16}>
@@ -311,12 +324,10 @@ const InformasiNasabah = () => {
                         ]}
                     >
                         <Checkbox.Group
-                            onChange={(checkedValues) => {
-                                setLocationKyc(checkedValues);
-                            }}
+                            onChange={handleLocationKycChange} value={locationKyc}
                         >
-                            <Checkbox value='0'>Rumah</Checkbox>
-                            <Checkbox value='1'>Tempat Usaha</Checkbox>
+                            <Checkbox value="0">Rumah</Checkbox>
+                            <Checkbox value="1">Tempat Usaha</Checkbox>
                         </Checkbox.Group>
                     </Form.Item>
 
@@ -338,7 +349,7 @@ const InformasiNasabah = () => {
 
                 <Col xs={24} md={8}>
                     <Form.Item label={<span className={style.label_field}>Dapat Menunjukan identitas asli<span style={{ color: 'red' }}>*</span></span>} name='radioShowRealIdentity' rules={[{ required: true, message: 'Kolom Dapat Menunjukkan Identitas Wajib Diisi', min: 1 }]}>
-                        <Radio.Group onChange={(e) => setMenunjukanIdentitasRil(e.target.value)}>
+                        <Radio.Group onChange={handleShowRealIdentityChange}>
                             <Radio value="0">Bisa</Radio>
                             <Radio value="1">Tidak Bisa</Radio>
                         </Radio.Group>

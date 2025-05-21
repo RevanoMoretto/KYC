@@ -1,11 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { 
-  emergencyContact
+import {
+  emergencyContact,
+  InformasiNasabah
 } from "../../../constants/initialStateRedux";
 import { handleEmergencyContact } from "./handlers/emergencyContactHandler";
+import { informasiNasabahHandler } from "./handlers/informasiNasabahHandler";
 
 const initialStateData = {
   formData: {
+    ...InformasiNasabah,
     ...emergencyContact,
     hasil_kyc: ""
   },
@@ -19,8 +22,11 @@ const saveDataSlice = createSlice({
       const { subtab = "", fields } = action.payload
 
       const prev = state.formData
+      if (subtab == "informasi_nasabah") {
+        informasiNasabahHandler(state, fields, prev)
+      }
 
-      if(subtab == "emergency_contact"){
+      if (subtab == "emergency_contact") {
         handleEmergencyContact(state, fields, prev)
       }
 
