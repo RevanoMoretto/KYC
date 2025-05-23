@@ -5,28 +5,32 @@ import UploadImg from "../Helper/UploadImg";
 import classes from './style.module.less';
 import PhotoUploadSection from "../Helper/AddPhoto";
 import Storage from '../../utils/storage';
+import { fetchPekerjaan } from "../../redux/slice/kyc/action/fetch_pekerjaan";
+import { fetchJabatanBidangUsaha } from "../../redux/slice/kyc/action/fetch_jabatan_bidang_usaha";
+import { useDispatch, useSelector } from "react-redux";
+import { updateKycDetailPekerjaanNasabah } from "../../utils/general";
 
 
 const InformasiPekerjaanNasabah = () => {
-
-    // const optionDummy = [
-    //     { label: "Copet", value: "Copet" },
-    //     { label: "Begal", value: "Begal" },
-    //     { label: "Pemuda Pancasila", value: "Pemuda Pancasila" },
-    //     { label: "Ngepet", value: "Ngepet" },
-    // ]
-
+    const dataKyc = new Storage("kyc_detail").value;
+    const occupation = dataKyc?.detail?.debitur?.personal?.occupation || {};
+    const { debitur, occupation_type_code, occupation_type_desc} = occupation || {};
+    
     // const handleChangePekerjaanNasabah = (e) => {
     //     console.log("test option pekerjaan nasabah: ", e)
     // }
-    const dataKyc = new Storage("kyc_detail").value;
-    const occupation = dataKyc?.detail?.debitur?.personal?.occupation || {};
 
-    const {debitur, occupation_type_code, occupation_type_desc} = occupation || {}
+    // const [optionPekerjaanNas, setOptionPekerjaanNas] = useState([]);
+    // const [optionJabatanBidangUsaha, setOptionJabatanBidangUsaha] = useState([]);
+
+    // const {data: dataPekerjaan, loading: loadingDataPekerjaan} = useSelector((state) => state.kyc.pekerjaanNasabah);
+    // const {data: dataJabatanBidangUsaha, loading: loadingJabatanBidangUsaha} = useSelector((state) => state.kyc.jabatanBidangUsaha);
 
     const [form] = Form.useForm();
+    const dispatch = useDispatch();
     const [photoFiles, setPhotoFiles] = useState({});
 
+    // handle file upload
     const handleFileChange = (info, index) => {
         setPhotoFiles((prev) => ({
             ...prev,
@@ -34,9 +38,78 @@ const InformasiPekerjaanNasabah = () => {
         }));
     };
 
+    // set field values
     useEffect(() => {
 		form.setFieldsValue(debitur);
 	}, [debitur, form]);
+
+    // useEffect(  () => {
+    //     if(dataPekerjaan){
+    //         const result =  dataPekerjaan.data.map((e) => ({
+    //         label: `${e.pekerjaan_desc}`,
+    //         value: `${e.pekerjaan_code}`,
+    //         }))
+
+    //         setOptionPekerjaanNas(result)
+    //     }
+    // }, [dataPekerjaan])
+
+    // useEffect(  () => {
+    //     if(dataJabatanBidangUsaha){
+    //         const result =  dataJabatanBidangUsaha.data.map((e) => ({
+    //         label: `${e.pekerjaan_desc}`,
+    //         value: `${e.pekerjaan_desc}`,
+    //         }))
+
+    //         setOptionJabatanBidangUsaha(result)
+    //     }
+    // }, [dataJabatanBidangUsaha])
+
+    // useEffect(async () => {
+    //     try {
+    //       await dispatch(fetchPekerjaan()).unwrap()
+    //     } catch (err) {
+    //       console.error("Error terjadi pada saat fetching data pekerjaan nasabah kyc, message: ", err);
+    //       notify("error", "Error", `An error occurred from ${err.url}`)
+    //     }
+    //   }, [])
+
+    // useEffect(async () => {
+    //     try {
+    //         await dispatch(fetchJabatanBidangUsaha()).unwrap()
+    //     } catch (err) {
+    //         console.error("Error terjadi pada saat fetching data jabatan / bidang usaha kyc, message: ", err);
+    //         notify("error", "Error", `An error occurred from ${err.url}`)
+    //     }
+    // }, [])
+
+    //   const handleChangePekerjaanNasabah = (e) => {
+    //     if(e == undefined){
+    //         updateKycDetailPekerjaanNasabah({
+    //             pekerjaan_nasabah_code:"",
+    //             pekerjaan_nasabah_desc: "",
+    //             jenis_tempat_bekerja_code:"",
+    //             jenis_tempat_bekerja_desc:"",
+    //             nama_tempat_bekerja:"",
+    //             jabatan_nasabah_code:"",
+    //             jabatan_nasabah_desc:"",
+    //             //cek lagi
+    //         })
+    //         return
+    //     }
+    //     const selected = dataPekerjaan.data.find(
+    //         (e) => e.pekerjaan_nasabah_desc
+    //     )
+
+    //     updateKycDetailPekerjaanNasabah({
+    //         pekerjaan_nasabah_code: selected.debitur_occupation_c,
+    //         pekerjaan_nasabah_desc: selected.pekerjaan_nasabah_desc,
+    //     })
+    //     form.setFieldValue({
+    //         // pekerjaan_nasabah_desc: selected.debitur_occupation_desc, // ???
+    //         debitur_occupation_desc: selected.pekerjaan_nasabah_desc 
+    //     })
+    //   }
 
     return (
         <Form
@@ -54,7 +127,8 @@ const InformasiPekerjaanNasabah = () => {
                         <Select
                             placeholder="PILIH PEKERJAAN NASABAH"
                             // onChange={handleChangePekerjaanNasabah}
-                            // options={optionDummy}
+                            // options={optionPekerjaanNas}
+                            disabled={true}
                         // suffixIcon={<CaretDownOutlined />}
                         />
                     </Form.Item>
@@ -92,7 +166,7 @@ const InformasiPekerjaanNasabah = () => {
                         name="debitur_position_desc"
                     >
                         <Select
-                        // suffixIcon={<CaretDownOutlined />}
+                            disabled={true}
                         />
                     </Form.Item>
                 </Col>
@@ -102,7 +176,10 @@ const InformasiPekerjaanNasabah = () => {
                         label="Bidang Usaha" 
                         name="debitur_work_fields_desc"
                     >
-                        <Input readOnly />
+                        <Input 
+                            readOnly
+                            className={classes.readonly_input_field}
+                        />
 					</Form.Item>
                 </Col>
                 )}
@@ -114,7 +191,9 @@ const InformasiPekerjaanNasabah = () => {
                         label="Sektor Tempat Bekerja"
                         name="debitur_sector_bekerja"
                     >
-                        <Select />
+                        <Select
+                            disabled={true}
+                        />
                     </Form.Item>
                     </Col>
                 ) : (
@@ -123,7 +202,7 @@ const InformasiPekerjaanNasabah = () => {
                         label="Sektor Tempat Usaha"
                         name="debitur_sector_usaha"
                     >
-                        <Select />
+                        <Select disabled={true} />
                     </Form.Item>
                     </Col>
                 )}
@@ -162,7 +241,6 @@ const InformasiPekerjaanNasabah = () => {
                         label="Jarak Tempat Bekerja Nasabah ke MUF"
                         name=""
                     >
-                        {/* <Input suffix={<Button padding={0}>KM</Button>} /> */}
                         <Input addonAfter={<span style={{ fontWeight: 'bold' }}>KM</span>} />
                     </Form.Item>
                 </Col>
